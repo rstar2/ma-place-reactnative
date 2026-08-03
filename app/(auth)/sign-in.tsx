@@ -5,7 +5,8 @@ export default function SignIn() {
   return (
     <View>
       <Text>SignIn</Text>
-      <Link href="/(auth)/sign-up">Go to SignUp</Link>
+      <Link href="/sign-up">Go to SignUp</Link>
+      <Link href="/">Home</Link>
     </View>
   );
 }

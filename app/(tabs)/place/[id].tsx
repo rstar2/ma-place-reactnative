@@ -1,11 +1,13 @@
 import { useLocalSearchParams } from "expo-router";
-import { Text, View } from "react-native";
+import { Text } from "react-native";
+
+import ScreenBase from "@/app/components/ScreenBase";
 
 export default function PlaceDetails() {
   const { id } = useLocalSearchParams<{ id: string }>();
   return (
-    <View>
+    <ScreenBase>
       <Text>Place Details: {id}</Text>
-    </View>
+    </ScreenBase>
   );
 }

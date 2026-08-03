@@ -1,3 +1,5 @@
+import { type ImageSourcePropType } from "react-native/Libraries/Image/Image";
+
 import activity from "@/assets/icons/activity.png";
 import add from "@/assets/icons/add.png";
 import adobe from "@/assets/icons/adobe.png";
@@ -36,6 +38,6 @@ export const icons = {
   github,
   claude,
   canva,
-} as const;
+} as const satisfies Record<string, ImageSourcePropType>;
 
 export type IconKey = keyof typeof icons;

@@ -1,9 +1,11 @@
-import { Text, View } from "react-native";
+import { Text } from "react-native";
+
+import ScreenBase from "@/app/components/ScreenBase";
 
 export default function Settings() {
   return (
-    <View>
-        <Text>Settings</Text>
-    </View>
+    <ScreenBase>
+      <Text>Settings</Text>
+    </ScreenBase>
   );
 }

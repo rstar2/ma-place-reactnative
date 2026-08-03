@@ -5,7 +5,8 @@ export default function SignUp() {
   return (
     <View>
       <Text>SignIn</Text>
-      <Link href="/(auth)/sign-up">Go to SignUp</Link>
+      {/* Note: both "/sign-up" and "/(auth)/sign-up" values are valid*/}
+      <Link href="/sign-up">Go to SignUp</Link>
     </View>
   );
 }

@@ -1,4 +1,4 @@
-import { type ImageSourcePropType } from "react-native/Libraries/Image/Image";
+import { type ImageSourcePropType } from "react-native";
 
 import activity from "@/assets/icons/activity.png";
 import add from "@/assets/icons/add.png";

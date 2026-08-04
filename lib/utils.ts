@@ -2,7 +2,7 @@ import dayjs from "dayjs";
 import { twMerge } from "tailwind-merge";
 import {clsx,  ClassValue } from "clsx";
 
-export const formatCurrency = (value: number, currency = "USD"): string => {
+export function formatCurrency(value: number, currency = "USD"): string {
   try {
     return new Intl.NumberFormat("en-US", {
       style: "currency",
@@ -13,18 +13,20 @@ export const formatCurrency = (value: number, currency = "USD"): string => {
   } catch {
     return value.toFixed(2);
   }
-};
+}
 
-export const formatSubscriptionDateTime = (value?: string): string => {
+export function formatDateTime(value?: string, format = "MM/DD/YYYY"): string {
   if (!value) return "Not provided";
+
   const parsedDate = dayjs(value);
   return parsedDate.isValid()
-    ? parsedDate.format("MM/DD/YYYY")
+    ? parsedDate.format(format)
     : "Not provided";
-};
+}
 
-export const formatStatusLabel = (value?: string): string => {
+export function formatStatusLabel(value?: string): string {
   if (!value) return "Unknown";
+  
   return value.charAt(0).toUpperCase() + value.slice(1);
 };
 

@@ -1,5 +1,7 @@
 import { Link } from "expo-router";
-import { Text, View } from "react-native";
+import { View } from "react-native";
+
+import Text from "@/app/components/Text";
 
 export default function SignUp() {
   return (

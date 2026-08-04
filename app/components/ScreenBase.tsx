@@ -16,7 +16,7 @@ export default function ScreenBase({
   className?: string;
 }) {
   return (
-    <SafeAreaView className={cn("flex-1 bg-background", className)}>
+    <SafeAreaView className={cn("flex-1 p-5 bg-background", className)}>
       {children}
     </SafeAreaView>
   );

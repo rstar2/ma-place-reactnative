@@ -33,11 +33,11 @@ function TabIcon({
       <View className={cn("tabs-pill", focused && "tabs-active")}>
         <Image
           source={icon}
-          className="tabs-glyph"
+          //   className="tabs-glyph"
           style={{
             // the Image from expo-image requires width and height to be set, otherwise it will not render
             width: tabBar.iconSize,
-            // height: tabBar.iconSize,
+            // // height: tabBar.iconSize,
             aspectRatio: 1,
 
             // tintColor: "yellow",

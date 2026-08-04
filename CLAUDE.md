@@ -24,7 +24,7 @@ Expo SDK **54** (`~54.0.35`), React Native **0.81.5**, React **19.1**, New Archi
 - `app/_layout.tsx` — root `<Stack>` with global `headerShown: false`.
 - Route groups: `(auth)` and `(tabs)`, each with their own `_layout.tsx`.
 - `(tabs)/_layout.tsx` — bottom `<Tabs>` configured from a `tabs` array (Home / Settings / Places). Dynamic route `place/[id]` is hidden from the tab bar via `href: null`. Add tabs there, not as loose files.
-- `useLocalSearchParams<{id}>` for dynamic params.(tabs)
+- `useLocalSearchParams<{ id: string }>()` for dynamic params.
 
 ## Styling (NativeWind v5 preview + Tailwind v4)
 

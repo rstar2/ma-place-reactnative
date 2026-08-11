@@ -17,6 +17,7 @@ export default function SettingsScreen() {
       await signOut();
     } catch {
       // ignore — staying signed in is harmless
+      // TODO: show a toast or something to indicate failure
     } finally {
       setSubmitting(false);
     }
@@ -39,14 +40,14 @@ export default function SettingsScreen() {
         onPress={handleSignOut}
         disabled={submitting}
         className={cn(
-          "mt-6 items-center rounded-2xl bg-destructive py-4",
+          "auth-button bg-destructive",
           submitting && "opacity-50",
         )}
       >
         {submitting ? (
           <ActivityIndicator color="#ffffff" />
         ) : (
-          <Text className="font-sans-bold text-background">Sign out</Text>
+          <Text className="auth-button-text text-white">Sign out</Text>
         )}
       </Pressable>
     </ScreenBase>

@@ -1,4 +1,4 @@
-/* NOTE: Do not declare layers order as NativeWind will not transform CSS to native styles properly*/ 
+/* NOTE: Do not declare layers order as NativeWind will not transform CSS to native styles properly */ 
 /* @layer theme, base, components, utilities; */
 
 @import "tailwindcss/theme.css" layer(theme);

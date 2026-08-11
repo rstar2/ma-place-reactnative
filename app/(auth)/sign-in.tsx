@@ -24,7 +24,10 @@ export default function SignInScreen() {
   const [googleSubmitting, setGoogleSubmitting] = useState(false);
 
   const canSubmit =
-    email.trim().length > 0 && password.length > 0 && !submitting;
+    email.trim().length > 0 &&
+    password.length > 0 &&
+    !submitting &&
+    !googleSubmitting;
 
   // The root layout's auth gate redirects on success, so no manual navigation here.
   async function handleSignIn() {
@@ -41,6 +44,7 @@ export default function SignInScreen() {
   }
 
   async function handleGoogle() {
+    if (!canSubmit) return;
     setError(null);
     setGoogleSubmitting(true);
     try {

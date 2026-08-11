@@ -11,10 +11,8 @@ import { GoogleSignin } from "@react-native-google-signin/google-signin";
 
 import { GOOGLE_WEB_CLIENT_ID } from "@/lib/env";
 
-// Configure Google Sign-in once. No-op until you set EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID.
-if (GOOGLE_WEB_CLIENT_ID) {
-  GoogleSignin.configure({ webClientId: GOOGLE_WEB_CLIENT_ID });
-}
+// Configure Google Sign-in once
+GoogleSignin.configure({ webClientId: GOOGLE_WEB_CLIENT_ID });
 
 type AuthContextValue = {
   user: auth.User | null;

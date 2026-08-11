@@ -26,4 +26,5 @@ Project created with ```pnpm dlx create-expo-app --template default@54```, then 
   - Create a `global.css` file
   - Update `postcss.config.mjs`
   - Update `metro.config.js`
-- XXX
+- Firebase `@react-native-firebase/app` - only working with `development build`
+  - auth - `@react-native-firebase/auth` and `@react-native-google-signin/google-signin`.  Note that the Firebase Android app has to be with generate a SHA-fingerprint in order the Google sign-in method to work. One can be generated with `./android/gradlew signingReport` and added to the Firebase Android app [generate](https://developers.google.com/android/guides/client-auth)

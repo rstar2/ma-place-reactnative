@@ -349,7 +349,7 @@
   }
 
   .auth-link {
-    @apply text-sm font-sans-bold text-accent;
+    @apply text-sm font-sans-bold text-accent underline;
   }
 
   .modal-overlay {

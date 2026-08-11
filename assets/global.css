@@ -1,4 +1,5 @@
-@layer theme, base, components;
+/* NOTE: Do not declare layers order as NativeWind will not transform CSS to native styles properly*/ 
+/* @layer theme, base, components, utilities; */
 
 @import "tailwindcss/theme.css" layer(theme);
 @import "tailwindcss/preflight.css" layer(base);
@@ -228,10 +229,6 @@
     @apply py-4 text-sm font-sans-medium text-black/60;
   }
 
-  .auth-safe-area {
-    @apply flex-1 bg-background;
-  }
-
   .auth-screen {
     @apply flex-1 bg-background;
   }
@@ -349,7 +346,7 @@
   }
 
   .auth-link {
-    @apply text-sm font-sans-bold text-accent;
+    @apply text-sm font-sans-bold text-accent underline;
   }
 
   .modal-overlay {

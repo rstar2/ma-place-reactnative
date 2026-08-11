@@ -1,10 +1,54 @@
+import { useState } from "react";
+import { ActivityIndicator, Pressable, View } from "react-native";
+
 import ScreenBase from "@/app/components/ScreenBase";
 import Text from "@/app/components/Text";
+import { useAuth } from "@/lib/auth";
+import { cn } from "@/lib/utils";
 
-export default function Settings() {
+export default function SettingsScreen() {
+  const { user, signOut } = useAuth();
+  const [submitting, setSubmitting] = useState(false);
+
+  // The root layout's auth gate redirects back to sign-in after sign-out.
+  async function handleSignOut() {
+    setSubmitting(true);
+    try {
+      await signOut();
+    } catch {
+      // ignore — staying signed in is harmless
+    } finally {
+      setSubmitting(false);
+    }
+  }
+
   return (
     <ScreenBase>
-      <Text>Settings</Text>
+      <Text className="text-2xl font-sans-bold text-primary">Settings</Text>
+
+      <View className="mt-6 rounded-2xl border border-border bg-card p-4">
+        <Text className="text-sm font-sans-semibold text-muted-foreground">
+          Signed in as
+        </Text>
+        <Text className="mt-1 text-base font-sans-bold text-primary">
+          {user?.email ?? "Unknown"}
+        </Text>
+      </View>
+
+      <Pressable
+        onPress={handleSignOut}
+        disabled={submitting}
+        className={cn(
+          "mt-6 items-center rounded-2xl bg-destructive py-4",
+          submitting && "opacity-50",
+        )}
+      >
+        {submitting ? (
+          <ActivityIndicator color="#ffffff" />
+        ) : (
+          <Text className="font-sans-bold text-background">Sign out</Text>
+        )}
+      </Pressable>
     </ScreenBase>
   );
 }

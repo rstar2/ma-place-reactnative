@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "208563783798",
+    "firebase_url": "https://ma-place.firebaseio.com",
+    "project_id": "ma-place",
+    "storage_bucket": "ma-place.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:208563783798:android:d30f23cca28b2abecf7757",
+        "android_client_info": {
+          "package_name": "com.magicmedia.maplace"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "208563783798-lgn7r07qir9tgv2jth8h6vj5r9ht7f4r.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBRdMCa2oceCtQVcxH_YMf-dgfXIO3LeNs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "208563783798-lgn7r07qir9tgv2jth8h6vj5r9ht7f4r.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

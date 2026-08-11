@@ -54,9 +54,8 @@ export default function SignInScreen() {
 
   return (
     <KeyboardAvoidingView
-      behavior={Platform.OS === "ios" ? "padding" : undefined}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
       className="auth-screen"
-      keyboardVerticalOffset={Platform.OS === "ios" ? 40 : 0}
     >
       <ScrollView
         className="auth-scroll"
@@ -90,6 +89,7 @@ export default function SignInScreen() {
                 placeholderTextColor="rgba(0,0,0,0.35)"
                 keyboardType="email-address"
                 autoCapitalize="none"
+                autoComplete="email"
                 autoCorrect={false}
                 textContentType="emailAddress"
                 className={cn("auth-input", error && "auth-input-error")}
@@ -105,6 +105,7 @@ export default function SignInScreen() {
                 placeholderTextColor="rgba(0,0,0,0.35)"
                 secureTextEntry
                 autoCapitalize="none"
+                autoComplete="password"
                 autoCorrect={false}
                 textContentType="password"
                 className={cn("auth-input", error && "auth-input-error")}
@@ -116,7 +117,10 @@ export default function SignInScreen() {
             <Pressable
               onPress={handleSignIn}
               disabled={!canSubmit}
-              className={cn("auth-button", !canSubmit && "auth-button-disabled")}
+              className={cn(
+                "auth-button",
+                !canSubmit && "auth-button-disabled",
+              )}
             >
               {submitting ? (
                 <ActivityIndicator color="#081126" />
@@ -152,8 +156,10 @@ export default function SignInScreen() {
 
         <View className="auth-link-row">
           <Text className="auth-link-copy">Don&apos;t have an account?</Text>
-          <Link href="/sign-up">
-            <Text className="auth-link">Sign up</Text>
+          <Link href="/sign-up" asChild>
+            <Pressable>
+              <Text className="auth-link">Create account</Text>
+            </Pressable>
           </Link>
         </View>
       </ScrollView>

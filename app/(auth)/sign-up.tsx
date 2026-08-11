@@ -56,9 +56,8 @@ export default function SignUpScreen() {
 
   return (
     <KeyboardAvoidingView
-      behavior={Platform.OS === "ios" ? "padding" : undefined}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
       className="auth-screen"
-      keyboardVerticalOffset={Platform.OS === "ios" ? 40 : 0}
     >
       <ScrollView
         className="auth-scroll"
@@ -133,7 +132,10 @@ export default function SignUpScreen() {
             <Pressable
               onPress={handleSignUp}
               disabled={!canSubmit}
-              className={cn("auth-button", !canSubmit && "auth-button-disabled")}
+              className={cn(
+                "auth-button",
+                !canSubmit && "auth-button-disabled",
+              )}
             >
               {submitting ? (
                 <ActivityIndicator color="#081126" />
@@ -144,11 +146,12 @@ export default function SignUpScreen() {
           </View>
         </View>
 
-
         <View className="auth-link-row">
           <Text className="auth-link-copy">Already have an account?</Text>
-          <Link href="/sign-in">
-            <Text className="auth-link">Sign in</Text>
+          <Link href="/sign-in" asChild>
+            <Pressable>
+              <Text className="auth-link">Sign in</Text>
+            </Pressable>
           </Link>
         </View>
       </ScrollView>

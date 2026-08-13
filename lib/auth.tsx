@@ -15,6 +15,12 @@ import { posthog } from "@/lib/posthog";
 // Configure Google Sign-in once
 GoogleSignin.configure({ webClientId: GOOGLE_WEB_CLIENT_ID });
 
+/** Completion event to capture once the new UID is identified. */
+type AuthCompletion = {
+  event: string;
+  properties?: Record<string, string>;
+};
+
 type AuthContextValue = {
   user: auth.User | null;
   initializing: boolean;
@@ -31,32 +37,44 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [initializing, setInitializing] = useState(true);
   // onAuthStateChanged fires (possibly with null) while the persisted session is restored.
   const initialized = useRef(false);
-  const identifiedUserId = useRef<string | null>(null);
+
+  // undefined initially so the first (signed-out) null callback triggers a reset
+  const identifiedUserId = useRef<string | null | undefined>(undefined);
+  // Completion events deferred until the new UID is identified. A single slot
+  // (replaced per call) avoids attributing stale events from a failed attempt.
+  const authPendingCompletion = useRef<AuthCompletion | null>(null);
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged(auth.getAuth(), (nextUser) => {
       setUser(nextUser);
 
-      const nextUserId = nextUser?.uid ?? null;
-      if (nextUserId !== identifiedUserId.current) {
-        if (identifiedUserId.current) {
-          posthog?.reset();
-        }
-
-        if (nextUser) {
-          const personProperties: Record<string, string> = {};
-          if (nextUser.email) personProperties.email = nextUser.email;
-          if (nextUser.displayName) personProperties.name = nextUser.displayName;
-
-          posthog?.identify(nextUser.uid, personProperties);
-        }
-
-        identifiedUserId.current = nextUserId;
-      }
-
       if (!initialized.current) {
         initialized.current = true;
         setInitializing(false);
+      }
+
+      // Posthog identify/reset must be called after the auth state is known/restored,
+      // so we defer it until the first onAuthStateChanged callback.
+      const nextUserId = nextUser?.uid ?? null;
+      if (nextUserId !== identifiedUserId.current) {
+        // Reset on the initial signed-out null state and on sign-out;
+        // duplicate nulls are skipped because identifiedUserId is already null.
+        if (nextUserId === null) {
+          posthog?.reset();
+        } else {
+          // PII (email/display name) intentionally not sent as person properties.
+          posthog?.identify(nextUserId);
+
+          // Flush the deferred completion event now that the new UID is
+          // identified, so it attributes to the signed-in user.
+          const authCompletion = authPendingCompletion.current;
+          if (authCompletion) {
+            authPendingCompletion.current = null;
+            posthog?.capture(authCompletion.event, authCompletion.properties);
+          }
+        }
+
+        identifiedUserId.current = nextUserId;
       }
     });
     return unsubscribe;
@@ -66,9 +84,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     user,
     initializing,
     async signIn(email, password) {
+      authPendingCompletion.current = {
+        event: "sign_in_completed",
+        properties: { sign_in_method: "password" },
+      };
       await auth.signInWithEmailAndPassword(auth.getAuth(), email, password);
     },
     async signUp(email, password) {
+      authPendingCompletion.current = {
+        event: "account_created",
+        properties: { sign_up_method: "password" },
+      };
       await auth.createUserWithEmailAndPassword(
         auth.getAuth(),
         email,
@@ -76,6 +102,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       );
     },
     async signInWithGoogle() {
+      authPendingCompletion.current = {
+        event: "sign_in_completed",
+        properties: { sign_in_method: "google" },
+      };
       // hasPlayServices is a no-op on iOS; on Android it prompts to update if required.
       await GoogleSignin.hasPlayServices({
         showPlayServicesUpdateDialog: true,

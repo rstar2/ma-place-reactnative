@@ -13,7 +13,6 @@ import { Link } from "expo-router";
 import Text from "@/app/components/Text";
 import { friendlyAuthError, useAuth } from "@/lib/auth";
 import { cn } from "@/lib/utils";
-import { posthog } from "@/lib/posthog";
 
 export default function SignInScreen() {
   const { signIn, signInWithGoogle } = useAuth();
@@ -37,7 +36,6 @@ export default function SignInScreen() {
     setSubmitting(true);
     try {
       await signIn(email.trim(), password);
-      posthog?.capture("sign_in_completed", { sign_in_method: "password" });
     } catch (err) {
       setError(friendlyAuthError(err));
     } finally {
@@ -51,7 +49,6 @@ export default function SignInScreen() {
     setGoogleSubmitting(true);
     try {
       await signInWithGoogle();
-      posthog?.capture("sign_in_completed", { sign_in_method: "google" });
     } catch (err) {
       setError(friendlyAuthError(err));
     } finally {

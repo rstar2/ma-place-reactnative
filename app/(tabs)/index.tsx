@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { FlatList, View, Image } from "react-native";
 
 import ScreenBase from "@/app/components/ScreenBase";
@@ -6,8 +6,8 @@ import Text from "@/app/components/Text";
 import ListHeading from "@/app/components/ListHeading";
 import PlaceCard from "@/app/components/PlaceCard";
 import { formatCurrency, formatDateTime, noop } from "@/lib/utils";
-import { HOME_BALANCE, HOME_SUBSCRIPTIONS } from "@/constants/data";
-import { Subscription } from "@/lib/types";
+import { HOME_BALANCE, HOME_PLACES } from "@/constants/data";
+import { Place } from "@/lib/types";
 import images from "@/constants/images";
 import { posthog } from "@/lib/posthog";
 
@@ -19,12 +19,12 @@ const user = {
 export default function Index() {
   const [expandedPlaceId, setExpandedPlaceId] = useState<string>();
 
-  const handleExpandPlace = (item: Subscription) => {
+  const handleExpandPlace = (item: Place) => {
     const isExpanding = expandedPlaceId !== item.id;
-    posthog?.capture(isExpanding ? "subscription_expanded" : "subscription_collapsed", {
-      subscription_id: item.id,
-      subscription_category: item.category ?? "unknown",
-      subscription_status: item.status ?? "unknown",
+    posthog?.capture(isExpanding ? "place_expanded" : "place_collapsed", {
+      place_id: item.id,
+      place_category: item.category ?? "unknown",
+      place_status: item.status ?? "unknown",
     });
     setExpandedPlaceId(isExpanding ? item.id : undefined);
   };
@@ -33,7 +33,7 @@ export default function Index() {
     <ScreenBase>
       <FlatList
         ListHeaderComponent={() => <Header />}
-        data={HOME_SUBSCRIPTIONS}
+        data={HOME_PLACES}
         extraData={expandedPlaceId}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
@@ -94,7 +94,7 @@ function Header() {
         <ListHeading title="Upcoming" />
 
         <FlatList
-          data={HOME_SUBSCRIPTIONS}
+          data={HOME_PLACES}
           renderItem={({ item }) => (
             <PlaceCard {...item} expanded={false} onPress={noop} />
           )}

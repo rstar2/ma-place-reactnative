@@ -73,12 +73,12 @@ export default function SignUpScreen() {
             </View>
             <View>
               <Text className="auth-wordmark">ma-place</Text>
-              <Text className="auth-wordmark-sub">subscriptions</Text>
+              <Text className="auth-wordmark-sub">places</Text>
             </View>
           </View>
           <Text className="auth-title">Create account</Text>
           <Text className="auth-subtitle">
-            Start tracking your places and subscriptions in seconds.
+            Start tracking your places.
           </Text>
         </View>
 

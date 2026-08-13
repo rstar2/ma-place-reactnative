@@ -18,7 +18,7 @@
   --color-border: rgba(0, 0, 0, 0.1);
   --color-success: #16a34a;
   --color-destructive: #dc2626;
-  --color-subscription: #8fd1bd;
+  --color-place: #8fd1bd;
 
   --spacing-0: 0px;
   --spacing-1: 4px;
@@ -150,7 +150,7 @@
   }
 
   .sub-card-expanded {
-    @apply bg-subscription;
+    @apply bg-place;
   }
 
   .sub-head {

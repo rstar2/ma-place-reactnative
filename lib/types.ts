@@ -1,6 +1,6 @@
 import { ImageSourcePropType } from "react-native";
 
-export type Subscription = {
+export type Place = {
   id: string;
   icon: ImageSourcePropType;
   name: string;

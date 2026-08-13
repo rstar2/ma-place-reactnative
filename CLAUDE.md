@@ -31,7 +31,7 @@ Expo SDK **54** (`~54.0.35`), React Native **0.81.5**, React **19.1**, New Archi
 This is the non-obvious part. Almost all styling is **CSS-class-based**, not inline `className="flex p-4 ..."` utilities.
 
 - All styles live in `assets/global.css`:
-  - `@theme` block defines design tokens: colors (`--color-primary`, `--color-accent`, `--color-card`, `--color-subscription`, etc.), spacing scale, and font families (`--font-sans` → `sans-regular`, etc.).
+  - `@theme` block defines design tokens: colors (`--color-primary`, `--color-accent`, `--color-card`, `--color-place`, etc.), spacing scale, and font families (`--font-sans` → `sans-regular`, etc.).
   - `@layer components` defines named component classes grouped by feature: `.home-*`, `.sub-*`, `.auth-*`, `.modal-*`, `.tabs-*`, `.picker-*`, `.category-*`. Compose with `@apply`.
 - Components reference these by class name, e.g. `className="sub-card"` / `className="auth-input"`.
 - **Add new reusable styles as a component class in `global.css`**, then apply the class name. Reach for utility classes inline only for one-off tweaks.
@@ -47,5 +47,5 @@ Wiring: `metro.config.js` wraps the Metro config with `withNativeWind({ input: '
 
 - Images: use `expo-image` (`import { Image } from "expo-image"`), not RN `Image`.
 - Icons: import from `constants/icons.ts` (PNG assets). It exports the `icons` map and an `IconKey` type — the `(tabs)` layout's `tabs` array is `satisfies TabScreen[]` against it. Add new PNGs there. Same pattern for images in `constants/images.ts`.
-- Formatting/domain helpers live in `lib/utils.ts` (`formatCurrency`, `formatSubscriptionDateTime`, `formatStatusLabel`, `cn`).
+- Formatting/domain helpers live in `lib/utils.ts` (`formatCurrency`, `formatDateTime`, `formatStatusLabel`, `cn`).
 - Fonts: `global.css` `@theme` maps `--font-sans-*` to family names (`sans-regular` … `sans-extrabold`); the TTFs are in `assets/fonts/PlusJakartaSans-*.ttf`. No `expo-font` loader is wired into the layouts yet — add `useFonts` in a root layout if you start using `font-sans-*` classes.

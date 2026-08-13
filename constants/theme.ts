@@ -1,11 +1,11 @@
 /**
  * This file contains the theme constants for the application, including colors, spacing, and component-specific styles
  * These constants are used throughout the app to maintain a consistent look and feel.
- * 
+ *
  * It's actually "same" values as in the globals.css, but in TypeScript for type safety and intellisense.
  */
 
-export const colors = {
+const colors = {
   background: "#fff9e3",
   foreground: "#081126",
   card: "#fff8e7",
@@ -19,7 +19,7 @@ export const colors = {
   place: "#8fd1bd",
 } as const;
 
-export const spacing = {
+const spacing = {
   0: 0,
   1: 4,
   2: 8,
@@ -41,7 +41,7 @@ export const spacing = {
   30: 120,
 } as const;
 
-export const components = {
+const components = {
   tabBar: {
     height: spacing[18],
     horizontalInset: spacing[5],

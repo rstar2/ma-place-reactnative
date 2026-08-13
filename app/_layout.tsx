@@ -28,7 +28,15 @@ export default function RootLayout() {
   );
 
   return posthog ? (
-    <PostHogProvider client={posthog}>
+    <PostHogProvider
+      client={posthog}
+      //   autocapture={{
+      //     captureScreens: true,
+      //     captureTouches: false,
+      //     captureAppLifecycleEvents: true,
+      //     propsToCapture: ["testID"],
+      //   }}
+    >
       <PostHogErrorBoundary fallback={PostHogErrorFallback}>
         {app}
       </PostHogErrorBoundary>

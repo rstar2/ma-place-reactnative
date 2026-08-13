@@ -5,6 +5,7 @@ import ScreenBase from "@/app/components/ScreenBase";
 import Text from "@/app/components/Text";
 import { useAuth } from "@/lib/auth";
 import { cn } from "@/lib/utils";
+import { posthog } from "@/lib/posthog";
 
 export default function SettingsScreen() {
   const { user, signOut } = useAuth();
@@ -14,6 +15,7 @@ export default function SettingsScreen() {
   async function handleSignOut() {
     setSubmitting(true);
     try {
+      posthog?.capture("sign_out_requested");
       await signOut();
     } catch {
       // ignore — staying signed in is harmless

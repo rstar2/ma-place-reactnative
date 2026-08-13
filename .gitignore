@@ -45,3 +45,7 @@ app-example
 
 # AI
 .claude/settings.local.json
+
+
+# PostHog
+/.posthog-wizard-cache

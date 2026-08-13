@@ -13,6 +13,7 @@ import { Link } from "expo-router";
 import Text from "@/app/components/Text";
 import { friendlyAuthError, useAuth } from "@/lib/auth";
 import { cn } from "@/lib/utils";
+import { posthog } from "@/lib/posthog";
 
 export default function SignUpScreen() {
   const { signUp } = useAuth();
@@ -47,6 +48,7 @@ export default function SignUpScreen() {
     setSubmitting(true);
     try {
       await signUp(email.trim(), password);
+      posthog?.capture("account_created", { sign_up_method: "password" });
     } catch (err) {
       setError(friendlyAuthError(err));
     } finally {

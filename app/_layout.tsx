@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { Text, View } from "react-native";
 import { useFonts } from "expo-font";
 import {
   SplashScreen,
@@ -10,6 +11,8 @@ import {
 
 import "@/assets/global.css";
 import { AuthProvider, useAuth } from "@/lib/auth";
+import { posthog } from "@/lib/posthog";
+import { PostHogErrorBoundary, PostHogProvider } from "posthog-react-native";
 
 // do not auto-hide the splash screen while we fetch resources, hide it when the app is ready to render
 SplashScreen.preventAutoHideAsync();
@@ -18,10 +21,28 @@ export default function RootLayout() {
   // NOTE: The `expo-router` already wraps the root-layout in <SafeAreaProvider>,
   // so no need to wrap it again. Thus `useSafeAreaInsets` can be used directly even here
 
-  return (
+  const app = (
     <AuthProvider>
       <RootNavigator />
     </AuthProvider>
+  );
+
+  return posthog ? (
+    <PostHogProvider client={posthog}>
+      <PostHogErrorBoundary fallback={PostHogErrorFallback}>
+        {app}
+      </PostHogErrorBoundary>
+    </PostHogProvider>
+  ) : (
+    app
+  );
+}
+
+function PostHogErrorFallback() {
+  return (
+    <View>
+      <Text>Something went wrong. Please restart the app.</Text>
+    </View>
   );
 }
 

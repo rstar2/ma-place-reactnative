@@ -10,6 +10,7 @@ import * as auth from "@react-native-firebase/auth";
 import { GoogleSignin } from "@react-native-google-signin/google-signin";
 
 import { GOOGLE_WEB_CLIENT_ID } from "@/lib/env";
+import { posthog } from "@/lib/posthog";
 
 // Configure Google Sign-in once
 GoogleSignin.configure({ webClientId: GOOGLE_WEB_CLIENT_ID });
@@ -30,10 +31,29 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [initializing, setInitializing] = useState(true);
   // onAuthStateChanged fires (possibly with null) while the persisted session is restored.
   const initialized = useRef(false);
+  const identifiedUserId = useRef<string | null>(null);
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged(auth.getAuth(), (nextUser) => {
       setUser(nextUser);
+
+      const nextUserId = nextUser?.uid ?? null;
+      if (nextUserId !== identifiedUserId.current) {
+        if (identifiedUserId.current) {
+          posthog?.reset();
+        }
+
+        if (nextUser) {
+          const personProperties: Record<string, string> = {};
+          if (nextUser.email) personProperties.email = nextUser.email;
+          if (nextUser.displayName) personProperties.name = nextUser.displayName;
+
+          posthog?.identify(nextUser.uid, personProperties);
+        }
+
+        identifiedUserId.current = nextUserId;
+      }
+
       if (!initialized.current) {
         initialized.current = true;
         setInitializing(false);

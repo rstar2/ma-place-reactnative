@@ -9,6 +9,7 @@ import { formatCurrency, formatDateTime, noop } from "@/lib/utils";
 import { HOME_BALANCE, HOME_SUBSCRIPTIONS } from "@/constants/data";
 import { Subscription } from "@/lib/types";
 import images from "@/constants/images";
+import { posthog } from "@/lib/posthog";
 
 const user = {
   displayName: "John Doe",
@@ -19,18 +20,13 @@ export default function Index() {
   const [expandedPlaceId, setExpandedPlaceId] = useState<string>();
 
   const handleExpandPlace = (item: Subscription) => {
-    setExpandedPlaceId((currentId) =>
-      currentId === item.id ? undefined : item.id,
-    );
-
-    // const isExpanding = expandedPlaceId !== item.id;
-    // posthog.capture(
-    //   isExpanding ? "subscription_expanded" : "subscription_collapsed",
-    //   {
-    //     subscription_name: item.name,
-    //     subscription_id: item.id,
-    //   },
-    // );
+    const isExpanding = expandedPlaceId !== item.id;
+    posthog?.capture(isExpanding ? "subscription_expanded" : "subscription_collapsed", {
+      subscription_id: item.id,
+      subscription_category: item.category ?? "unknown",
+      subscription_status: item.status ?? "unknown",
+    });
+    setExpandedPlaceId(isExpanding ? item.id : undefined);
   };
 
   return (

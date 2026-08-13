@@ -10,9 +10,16 @@ import * as auth from "@react-native-firebase/auth";
 import { GoogleSignin } from "@react-native-google-signin/google-signin";
 
 import { GOOGLE_WEB_CLIENT_ID } from "@/lib/env";
+import { posthog } from "@/lib/posthog";
 
 // Configure Google Sign-in once
 GoogleSignin.configure({ webClientId: GOOGLE_WEB_CLIENT_ID });
+
+/** Completion event to capture once the new UID is identified. */
+type AuthCompletion = {
+  event: string;
+  properties?: Record<string, string>;
+};
 
 type AuthContextValue = {
   user: auth.User | null;
@@ -31,12 +38,49 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   // onAuthStateChanged fires (possibly with null) while the persisted session is restored.
   const initialized = useRef(false);
 
+  // null initially: the startup null callback is a no-op (null !== null is false),
+  // so the anonymous PostHog identity is preserved instead of being reset.
+  const identifiedUserId = useRef<string | null>(null);
+  // Completion events deferred until the new UID is identified. A single slot
+  // (replaced per call) avoids attributing stale events from a failed attempt.
+  const authPendingCompletion = useRef<AuthCompletion | null>(null);
+
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged(auth.getAuth(), (nextUser) => {
       setUser(nextUser);
+
       if (!initialized.current) {
         initialized.current = true;
         setInitializing(false);
+      }
+
+      // Posthog identify/reset must be called after the auth state is known/restored,
+      // so we defer it until the first onAuthStateChanged callback.
+      const nextUserId = nextUser?.uid ?? null;
+      if (nextUserId !== identifiedUserId.current) {
+        // Reset only on the identified → signed-out transition. The startup null
+        // never enters this block (null === null), preserving anonymous identity.
+        if (nextUserId === null) {
+          posthog?.reset();
+        } else {
+          // PII (email/display name) intentionally not sent as person properties.
+          posthog?.identify(nextUserId);
+
+          // Flush the deferred completion event now that the new UID is
+          // identified, so it attributes to the signed-in user.
+          const authCompletion = authPendingCompletion.current;
+          if (authCompletion) {
+            authPendingCompletion.current = null;
+            posthog?.capture(authCompletion.event, authCompletion.properties);
+          }
+        }
+
+        identifiedUserId.current = nextUserId;
+      } else {
+        // Same UID (e.g. re-authenticating as the current user) or a duplicate
+        // null: the UID-change guard skips capture, so drop any pending event to
+        // keep it from being attributed to a later identity change.
+        authPendingCompletion.current = null;
       }
     });
     return unsubscribe;
@@ -46,33 +90,66 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     user,
     initializing,
     async signIn(email, password) {
-      await auth.signInWithEmailAndPassword(auth.getAuth(), email, password);
+      authPendingCompletion.current = {
+        event: "sign_in_completed",
+        properties: { sign_in_method: "password" },
+      };
+      try {
+        await auth.signInWithEmailAndPassword(auth.getAuth(), email, password);
+      } catch (err) {
+        // Rejected sign-in: the completion callback won't fire, so clear the
+        // pending event to avoid stale attribution on a later success.
+        authPendingCompletion.current = null;
+        throw err;
+      }
     },
     async signUp(email, password) {
-      await auth.createUserWithEmailAndPassword(
-        auth.getAuth(),
-        email,
-        password,
-      );
+      authPendingCompletion.current = {
+        event: "account_created",
+        properties: { sign_up_method: "password" },
+      };
+      try {
+        await auth.createUserWithEmailAndPassword(
+          auth.getAuth(),
+          email,
+          password,
+        );
+      } catch (err) {
+        // Rejected sign-up: the completion callback won't fire, so clear the
+        // pending event to avoid stale attribution on a later success.
+        authPendingCompletion.current = null;
+        throw err;
+      }
     },
     async signInWithGoogle() {
-      // hasPlayServices is a no-op on iOS; on Android it prompts to update if required.
-      await GoogleSignin.hasPlayServices({
-        showPlayServicesUpdateDialog: true,
-      });
-
-      // Get the users ID token
-      const signInResult = await GoogleSignin.signIn();
-      // Try the new style of google-sign in result, from v13+ of that module
-      const idToken = signInResult.data?.idToken;
-
-      if (!idToken) {
-        throw Object.assign(new Error("Google sign-in was cancelled."), {
-          code: "auth/cancelled",
+      authPendingCompletion.current = {
+        event: "sign_in_completed",
+        properties: { sign_in_method: "google" },
+      };
+      try {
+        // hasPlayServices is a no-op on iOS; on Android it prompts to update if required.
+        await GoogleSignin.hasPlayServices({
+          showPlayServicesUpdateDialog: true,
         });
+
+        // Get the users ID token
+        const signInResult = await GoogleSignin.signIn();
+        // Try the new style of google-sign in result, from v13+ of that module
+        const idToken = signInResult.data?.idToken;
+
+        if (!idToken) {
+          throw Object.assign(new Error("Google sign-in was cancelled."), {
+            code: "auth/cancelled",
+          });
+        }
+        const credential = auth.GoogleAuthProvider.credential(idToken);
+        await auth.signInWithCredential(auth.getAuth(), credential);
+      } catch (err) {
+        // Cancellation or failure at any step aborts before the credential is
+        // applied, so clear the pending event to avoid stale attribution.
+        authPendingCompletion.current = null;
+        throw err;
       }
-      const credential = auth.GoogleAuthProvider.credential(idToken);
-      await auth.signInWithCredential(auth.getAuth(), credential);
     },
     async signOut() {
       try {

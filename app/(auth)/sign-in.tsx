@@ -73,12 +73,12 @@ export default function SignInScreen() {
             </View>
             <View>
               <Text className="auth-wordmark">ma-place</Text>
-              <Text className="auth-wordmark-sub">subscriptions</Text>
+              <Text className="auth-wordmark-sub">places</Text>
             </View>
           </View>
           <Text className="auth-title">Welcome back</Text>
           <Text className="auth-subtitle">
-            Sign in to manage your places and subscriptions.
+            Sign in to manage your places.
           </Text>
         </View>
 

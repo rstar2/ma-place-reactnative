@@ -4,10 +4,10 @@ import { View, type ImageSourcePropType } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { icons } from "@/constants/icons";
-import { colors, components } from "@/constants/theme";
+import { theme } from "@/constants/theme";
 import { cn } from "@/lib/utils";
 
-const tabBar = components.tabBar;
+const tabBar = theme.components.tabBar;
 
 type TabScreen = {
   name: string;
@@ -40,7 +40,7 @@ function TabIcon({
             // // height: tabBar.iconSize,
             aspectRatio: 1,
 
-            // tintColor: "yellow",
+            tintColor: theme.colors.background,
           }}
         />
       </View>
@@ -62,7 +62,7 @@ export default function TabsLayout() {
           height: tabBar.height,
           marginHorizontal: tabBar.horizontalInset,
           borderRadius: tabBar.radius,
-          backgroundColor: colors.primary,
+          backgroundColor: theme.colors.primary,
           borderTopWidth: 0,
           elevation: 0,
         },

@@ -8,9 +8,9 @@ import {
   formatStatusLabel,
   formatDateTime,
 } from "@/lib/utils";
-import { Subscription } from "@/lib/types";
+import { Place } from "@/lib/types";
 
-type PlaceCardProps = Omit<Subscription, "id"> & {
+type PlaceCardProps = Omit<Place, "id"> & {
   expanded: boolean;
   onPress: () => void;
   onCancelPress?: () => void;

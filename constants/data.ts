@@ -1,4 +1,4 @@
-import { Subscription } from "@/lib/types";
+import { Place } from "@/lib/types";
 import { icons } from "@/constants/icons";
 
 export const HOME_BALANCE = {
@@ -6,7 +6,7 @@ export const HOME_BALANCE = {
     nextRenewalDate: "2026-03-18T09:00:00.000Z",
 };
 
-export const HOME_SUBSCRIPTIONS: Subscription[] = [
+export const HOME_PLACES: Place[] = [
   {
     id: "adobe-creative-cloud",
     icon: icons.adobe,

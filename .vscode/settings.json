@@ -9,5 +9,8 @@
         "statusBar.debuggingForeground": "#FEFAF6",
         "statusBar.noFolderBackground": "#835113",
         "statusBar.noFolderForeground": "#FEFAF6"
-    }
+    },
+    "cSpell.words": [
+        "posthog"
+    ]
 } 

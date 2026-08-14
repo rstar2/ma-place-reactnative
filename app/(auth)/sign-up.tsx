@@ -10,7 +10,7 @@ import {
 } from "react-native";
 import { Link } from "expo-router";
 
-import Text from "@/app/components/Text";
+import Text from "@/components/Text";
 import { friendlyAuthError, useAuth } from "@/lib/auth";
 import { cn } from "@/lib/utils";
 
@@ -80,10 +80,10 @@ export default function SignUpScreen() {
           </Text>
         </View>
 
-        <View className="auth-card">
-          <View className="auth-form">
-            <View className="auth-field">
-              <Text className="auth-label">Email</Text>
+        <View className="card">
+          <View className="form">
+            <View className="text-input-field">
+              <Text className="text-input-label">Email</Text>
               <TextInput
                 value={email}
                 onChangeText={setEmail}
@@ -93,12 +93,12 @@ export default function SignUpScreen() {
                 autoCapitalize="none"
                 autoCorrect={false}
                 textContentType="emailAddress"
-                className={cn("auth-input", error && "auth-input-error")}
+                className={cn("text-input", error && "text-input-error")}
               />
             </View>
 
-            <View className="auth-field">
-              <Text className="auth-label">Password</Text>
+            <View className="text-input-field">
+              <Text className="text-input-label">Password</Text>
               <TextInput
                 value={password}
                 onChangeText={setPassword}
@@ -108,12 +108,12 @@ export default function SignUpScreen() {
                 autoCapitalize="none"
                 autoCorrect={false}
                 textContentType="newPassword"
-                className={cn("auth-input", error && "auth-input-error")}
+                className={cn("text-input", error && "text-input-error")}
               />
             </View>
 
-            <View className="auth-field">
-              <Text className="auth-label">Confirm password</Text>
+            <View className="text-input-field">
+              <Text className="text-input-label">Confirm password</Text>
               <TextInput
                 value={confirmPassword}
                 onChangeText={setConfirmPassword}
@@ -123,7 +123,7 @@ export default function SignUpScreen() {
                 autoCapitalize="none"
                 autoCorrect={false}
                 textContentType="newPassword"
-                className={cn("auth-input", error && "auth-input-error")}
+                className={cn("text-input", error && "text-input-error")}
               />
             </View>
 
@@ -133,14 +133,14 @@ export default function SignUpScreen() {
               onPress={handleSignUp}
               disabled={!canSubmit}
               className={cn(
-                "auth-button",
-                !canSubmit && "auth-button-disabled",
+                "button py-3 mt-6",
+                !canSubmit && "button-disabled",
               )}
             >
               {submitting ? (
                 <ActivityIndicator color="#081126" />
               ) : (
-                <Text className="auth-button-text">Sign up</Text>
+                <Text className="button-text">Sign up</Text>
               )}
             </Pressable>
           </View>

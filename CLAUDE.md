@@ -33,7 +33,7 @@ This is the non-obvious part. Almost all styling is **CSS-class-based**, not inl
 - All styles live in `assets/global.css`:
   - `@theme` block defines design tokens: colors (`--color-primary`, `--color-accent`, `--color-card`, `--color-place`, etc.), spacing scale, and font families (`--font-sans` → `sans-regular`, etc.).
   - `@layer components` defines named component classes grouped by feature: `.home-*`, `.sub-*`, `.auth-*`, `.modal-*`, `.tabs-*`, `.picker-*`, `.category-*`. Compose with `@apply`.
-- Components reference these by class name, e.g. `className="sub-card"` / `className="auth-input"`.
+- Components reference these by class name, e.g. `className="sub-card"` / `className="text-input"`.
 - **Add new reusable styles as a component class in `global.css`**, then apply the class name. Reach for utility classes inline only for one-off tweaks.
 - Conditional class toggling uses the `cn()` helper (`lib/utils.ts`, clsx + tailwind-merge), e.g. `cn("tabs-pill", focused && "tabs-active")`.
 

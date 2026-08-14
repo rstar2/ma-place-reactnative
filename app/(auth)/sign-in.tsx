@@ -10,7 +10,7 @@ import {
 } from "react-native";
 import { Link } from "expo-router";
 
-import Text from "@/app/components/Text";
+import Text from "@/components/Text";
 import { friendlyAuthError, useAuth } from "@/lib/auth";
 import { cn } from "@/lib/utils";
 
@@ -82,10 +82,10 @@ export default function SignInScreen() {
           </Text>
         </View>
 
-        <View className="auth-card">
-          <View className="auth-form">
-            <View className="auth-field">
-              <Text className="auth-label">Email</Text>
+        <View className="card">
+          <View className="form">
+            <View className="text-input-field">
+              <Text className="text-input-label">Email</Text>
               <TextInput
                 value={email}
                 onChangeText={setEmail}
@@ -96,12 +96,12 @@ export default function SignInScreen() {
                 autoComplete="email"
                 autoCorrect={false}
                 textContentType="emailAddress"
-                className={cn("auth-input", error && "auth-input-error")}
+                className={cn("text-input", error && "text-input-error")}
               />
             </View>
 
-            <View className="auth-field">
-              <Text className="auth-label">Password</Text>
+            <View className="text-input-field">
+              <Text className="text-input-label">Password</Text>
               <TextInput
                 value={password}
                 onChangeText={setPassword}
@@ -112,7 +112,7 @@ export default function SignInScreen() {
                 autoComplete="password"
                 autoCorrect={false}
                 textContentType="password"
-                className={cn("auth-input", error && "auth-input-error")}
+                className={cn("text-input", error && "text-input-error")}
               />
             </View>
 
@@ -122,14 +122,14 @@ export default function SignInScreen() {
               onPress={handleSignIn}
               disabled={!canSubmit}
               className={cn(
-                "auth-button",
-                !canSubmit && "auth-button-disabled",
+                "button py-3 mt-6",
+                !canSubmit && "button-disabled",
               )}
             >
               {submitting ? (
                 <ActivityIndicator color="#081126" />
               ) : (
-                <Text className="auth-button-text">Sign in</Text>
+                <Text className="button-text">Sign in</Text>
               )}
             </Pressable>
           </View>
@@ -145,14 +145,14 @@ export default function SignInScreen() {
           onPress={handleGoogle}
           disabled={googleSubmitting}
           className={cn(
-            "auth-secondary-button",
-            googleSubmitting && "opacity-50",
+            "button-secondary py-3",
+            googleSubmitting && "button-disabled",
           )}
         >
           {googleSubmitting ? (
             <ActivityIndicator color="#ea7a53" />
           ) : (
-            <Text className="auth-secondary-button-text">
+            <Text className="button-secondary-text">
               Continue with Google
             </Text>
           )}

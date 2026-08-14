@@ -1,15 +1,17 @@
 import { useState } from "react";
-import { FlatList, View, Image } from "react-native";
+import { FlatList, Image, Pressable, View } from "react-native";
 
-import ScreenBase from "@/app/components/ScreenBase";
-import Text from "@/app/components/Text";
-import ListHeading from "@/app/components/ListHeading";
-import PlaceCard from "@/app/components/PlaceCard";
+import ScreenBase from "@/components/ScreenBase";
+import Text from "@/components/Text";
+import ListHeading from "@/components/ListHeading";
+import PlaceCard from "@/components/PlaceCard";
 import { formatCurrency, formatDateTime, noop } from "@/lib/utils";
 import { HOME_BALANCE, HOME_PLACES } from "@/constants/data";
 import { Place } from "@/lib/types";
 import images from "@/constants/images";
 import { posthog } from "@/lib/posthog";
+import { icons } from "@/constants/icons";
+import { useAddEditPlace } from "@/lib/places";
 
 const user = {
   displayName: "John Doe",
@@ -17,6 +19,7 @@ const user = {
 };
 
 export default function Index() {
+  const { onAddPlacePress } = useAddEditPlace();
   const [expandedPlaceId, setExpandedPlaceId] = useState<string>();
 
   const handleExpandPlace = (item: Place) => {
@@ -32,7 +35,7 @@ export default function Index() {
   return (
     <ScreenBase>
       <FlatList
-        ListHeaderComponent={() => <Header />}
+        ListHeaderComponent={() => <Header onAddPlacePress={onAddPlacePress} />}
         data={HOME_PLACES}
         extraData={expandedPlaceId}
         keyExtractor={(item) => item.id}
@@ -60,7 +63,7 @@ export default function Index() {
 // This is a known issue with FlatList in React Native.
 // BUT, just extracting it to a separate component fixes the issue, as the horizontal FlatList is not rerendered when the "big" FlatList is rerendered.
 // Also note that the react-compiler is ON, so it does the memoization for use
-function Header() {
+function Header({ onAddPlacePress }: { onAddPlacePress: () => void }) {
   return (
     <>
       <View className="home-header">
@@ -72,9 +75,9 @@ function Header() {
           <Text className="home-user-name">{user.displayName}</Text>
         </View>
 
-        {/* <Pressable onPress={() => setIsModalVisible(true)}>
-                <Image source={icons.add} className="home-add-icon" />
-              </Pressable> */}
+        <Pressable onPress={onAddPlacePress}>
+          <Image source={icons.add} className="home-add-icon" />
+        </Pressable>
       </View>
 
       <View className="home-balance-card">

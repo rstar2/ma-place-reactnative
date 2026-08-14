@@ -1,7 +1,7 @@
 import React from "react";
 import { View, Image, Pressable } from "react-native";
 
-import Text from "@/app/components/Text";
+import Text from "@/components/Text";
 import {
   cn,
   formatCurrency,
@@ -13,17 +13,15 @@ import { Place } from "@/lib/types";
 type PlaceCardProps = Omit<Place, "id"> & {
   expanded: boolean;
   onPress: () => void;
-  onCancelPress?: () => void;
-  isCancelling?: boolean;
+  onEditPress?: () => void;
 };
 
 export default function PlaceCard({
+  // place props
   color,
   category,
   plan,
   renewalDate,
-  expanded,
-  onPress,
   paymentMethod,
   startDate,
   status,
@@ -32,6 +30,11 @@ export default function PlaceCard({
   price,
   currency,
   billing,
+
+  // additional
+  expanded,
+  onPress,
+  onEditPress,
 }: PlaceCardProps) {
   return (
     <Pressable
@@ -124,6 +127,12 @@ export default function PlaceCard({
               </View>
             </View>
           </View>
+
+          {onEditPress && (
+            <Pressable onPress={onEditPress} className="sub-edit">
+              <Text className="sub-edit-text">Edit</Text>
+            </Pressable>
+          )}
         </View>
       )}
     </Pressable>

@@ -1,7 +1,7 @@
 import { useLocalSearchParams } from "expo-router";
 
-import ScreenBase from "@/app/components/ScreenBase";
-import Text from "@/app/components/Text";
+import ScreenBase from "@/components/ScreenBase";
+import Text from "@/components/Text";
 
 export default function PlaceDetails() {
   const { id } = useLocalSearchParams<{ id: string }>();

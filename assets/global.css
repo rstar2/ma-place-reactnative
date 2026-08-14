@@ -1,4 +1,4 @@
-/* NOTE: Do not declare layers order as NativeWind will not transform CSS to native styles properly */ 
+/* NOTE: Do not declare layers order as NativeWind will not transform CSS to native styles properly */
 /* @layer theme, base, components, utilities; */
 
 @import "tailwindcss/theme.css" layer(theme);
@@ -63,6 +63,50 @@
 
   .tabs-glyph {
     @apply size-6;
+  }
+
+  .button {
+    @apply items-center rounded-2xl bg-accent;
+  }
+
+  .button-disabled {
+    @apply opacity-50;
+  }
+
+  .button-text {
+    @apply text-base font-sans-bold text-primary;
+  }
+
+  .button-secondary {
+    @apply items-center rounded-2xl border border-accent/30 bg-accent/10;
+  }
+
+  .button-secondary-text {
+    @apply text-sm font-sans-semibold text-accent;
+  }
+
+  .card {
+    @apply mt-8 rounded-3xl border border-border bg-card p-5;
+  }
+
+  .form {
+    @apply gap-4;
+  }
+
+  .text-input-field {
+    @apply gap-2;
+  }
+
+  .text-input-label {
+    @apply text-sm font-sans-semibold text-primary;
+  }
+
+  .text-input {
+    @apply rounded-2xl border border-border bg-background px-4 py-4 text-base font-sans-medium text-primary;
+  }
+
+  .text-input-error {
+    @apply border-destructive;
   }
 
   .home-header {
@@ -225,6 +269,14 @@
     @apply font-sans-bold text-background;
   }
 
+  .sub-edit {
+    @apply mt-6 items-center rounded-full bg-primary py-3;
+  }
+
+  .sub-edit-text {
+    @apply font-sans-bold text-background;
+  }
+
   .home-empty-state {
     @apply py-4 text-sm font-sans-medium text-black/60;
   }
@@ -273,56 +325,12 @@
     @apply mt-2 max-w-[320px] text-center text-base font-sans-medium text-muted-foreground;
   }
 
-  .auth-card {
-    @apply mt-8 rounded-3xl border border-border bg-card p-5;
-  }
-
-  .auth-form {
-    @apply gap-4;
-  }
-
-  .auth-field {
-    @apply gap-2;
-  }
-
-  .auth-label {
-    @apply text-sm font-sans-semibold text-primary;
-  }
-
-  .auth-input {
-    @apply rounded-2xl border border-border bg-background px-4 py-4 text-base font-sans-medium text-primary;
-  }
-
-  .auth-input-error {
-    @apply border-destructive;
-  }
-
   .auth-error {
     @apply text-xs font-sans-medium text-destructive;
   }
 
   .auth-helper {
     @apply text-sm font-sans-medium text-muted-foreground;
-  }
-
-  .auth-button {
-    @apply mt-1 items-center rounded-2xl bg-accent py-4;
-  }
-
-  .auth-button-disabled {
-    @apply bg-accent/45;
-  }
-
-  .auth-button-text {
-    @apply text-base font-sans-bold text-primary;
-  }
-
-  .auth-secondary-button {
-    @apply items-center rounded-2xl border border-accent/30 bg-accent/10 py-3;
-  }
-
-  .auth-secondary-button-text {
-    @apply text-sm font-sans-semibold text-accent;
   }
 
   .auth-divider-row {
@@ -350,7 +358,8 @@
   }
 
   .modal-overlay {
-    @apply flex-1 bg-black/50;
+    /* for some reason bg-black/50 is not parsed properly from NativeWind, so set it directly*/
+    @apply flex-1 bg-[rgba(0,0,0,0.5)];
   }
 
   .modal-container {

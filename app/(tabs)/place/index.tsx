@@ -7,14 +7,16 @@ import {
   View,
 } from "react-native";
 
-import ScreenBase from "@/app/components/ScreenBase";
-import Text from "@/app/components/Text";
-import PlaceCard from "@/app/components/PlaceCard";
+import ScreenBase from "@/components/ScreenBase";
+import Text from "@/components/Text";
+import PlaceCard from "@/components/PlaceCard";
 import { HOME_PLACES } from "@/constants/data";
 import { Place } from "@/lib/types";
 import { posthog } from "@/lib/posthog";
+import { useAddEditPlace } from "@/lib/places";
 
 export default function PlacesScreen() {
+  const { onEditPlacePress } = useAddEditPlace();
   const [expandedPlaceId, setExpandedPlaceId] = useState<string>();
   const [filterText, setFilterText] = useState("");
 
@@ -24,17 +26,9 @@ export default function PlacesScreen() {
     if (!query) return HOME_PLACES;
 
     return HOME_PLACES.filter((place) => {
-      const searchableText = [
-        place.name,
-        place.category,
-        place.plan,
-        place.status,
-      ]
+      return [place.name, place.category, place.plan, place.status]
         .filter(Boolean)
-        .join(" ")
-        .toLowerCase();
-
-      return searchableText.includes(query);
+        .some((val) => val!.toLowerCase().includes(query));
     });
   }, [filterText]);
 
@@ -57,12 +51,13 @@ export default function PlacesScreen() {
         <FlatList
           data={filteredPlaces}
           extraData={{ expandedPlaceId, filterText }}
-          keyExtractor={(item) => item.id}
-          renderItem={({ item }) => (
+          keyExtractor={(place) => place.id}
+          renderItem={({ item: place }) => (
             <PlaceCard
-              {...item}
-              expanded={expandedPlaceId === item.id}
-              onPress={() => handleExpandPlace(item)}
+              {...place}
+              expanded={expandedPlaceId === place.id}
+              onPress={() => handleExpandPlace(place)}
+              onEditPress={() => onEditPlacePress(place)}
             />
           )}
           ListHeaderComponent={
@@ -75,7 +70,7 @@ export default function PlacesScreen() {
                 placeholderTextColor="rgba(0,0,0,0.35)"
                 autoCapitalize="none"
                 autoCorrect={false}
-                className="auth-input mt-4"
+                className="text-input mt-4"
               />
             </View>
           }

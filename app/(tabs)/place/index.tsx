@@ -1,5 +1,11 @@
 import { useMemo, useState } from "react";
-import { FlatList, TextInput, View } from "react-native";
+import {
+  FlatList,
+  KeyboardAvoidingView,
+  Platform,
+  TextInput,
+  View,
+} from "react-native";
 
 import ScreenBase from "@/app/components/ScreenBase";
 import Text from "@/app/components/Text";
@@ -44,38 +50,46 @@ export default function PlacesScreen() {
 
   return (
     <ScreenBase>
-      <FlatList
-        data={filteredPlaces}
-        extraData={{ expandedPlaceId, filterText }}
-        keyExtractor={(item) => item.id}
-        renderItem={({ item }) => (
-          <PlaceCard
-            {...item}
-            expanded={expandedPlaceId === item.id}
-            onPress={() => handleExpandPlace(item)}
-          />
-        )}
-        ListHeaderComponent={
-          <View className="mb-4">
-            <Text className="list-title">All Places</Text>
-            <TextInput
-              value={filterText}
-              onChangeText={setFilterText}
-              placeholder="Filter places..."
-              placeholderTextColor="rgba(0,0,0,0.35)"
-              autoCapitalize="none"
-              autoCorrect={false}
-              className="auth-input mt-4"
+      <KeyboardAvoidingView
+        style={{ flex: 1 }}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+      >
+        <FlatList
+          data={filteredPlaces}
+          extraData={{ expandedPlaceId, filterText }}
+          keyExtractor={(item) => item.id}
+          renderItem={({ item }) => (
+            <PlaceCard
+              {...item}
+              expanded={expandedPlaceId === item.id}
+              onPress={() => handleExpandPlace(item)}
             />
-          </View>
-        }
-        ItemSeparatorComponent={() => <View className="h-4" />}
-        ListEmptyComponent={
-          <Text className="home-empty-state">No matching places found.</Text>
-        }
-        showsVerticalScrollIndicator={false}
-        contentContainerClassName="pb-30"
-      />
+          )}
+          ListHeaderComponent={
+            <View className="mb-4">
+              <Text className="list-title">All Places</Text>
+              <TextInput
+                value={filterText}
+                onChangeText={setFilterText}
+                placeholder="Filter places..."
+                placeholderTextColor="rgba(0,0,0,0.35)"
+                autoCapitalize="none"
+                autoCorrect={false}
+                className="auth-input mt-4"
+              />
+            </View>
+          }
+          ItemSeparatorComponent={() => <View className="h-4" />}
+          ListEmptyComponent={
+            <Text className="home-empty-state">No matching places found.</Text>
+          }
+          showsVerticalScrollIndicator={false}
+          contentContainerClassName="pb-30"
+          // this will make sure the keyboard is closed/dismissed when tapped inside the FlatList
+          // BUT the tab is NOT handled by some children (like from the expandable PlaceCard)
+          keyboardShouldPersistTaps="handled"
+        />
+      </KeyboardAvoidingView>
     </ScreenBase>
   );
 }

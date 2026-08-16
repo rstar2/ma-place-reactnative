@@ -1,20 +1,42 @@
+import { GeoPoint } from "@react-native-firebase/firestore";
 import { ImageSourcePropType } from "react-native";
+
+export type Tag = string;
 
 export type Place = {
   id: string;
+  createdAt: Date;
+
+  /**
+   * User ID - the user created the place
+   */
+  uid: string;
+
+  title: string;
+  description: string;
+  location: GeoPoint;
+  tags?: Tag[];
+  /**
+   * Image url - like:
+   * https://res.cloudinary.com/magic-media/image/upload/v1569150316/ma-place/m4b3lllxapindctqlxdq.jpg
+   */
+  imageUrl: string;
+  /**
+   * Any additional meta data,
+   * currently just the Cloudinary ID of the image
+   */
+  meta: {
+    // Like: ma-place/m4b3lllxapindctqlxdq
+    cloudinaryId: string;
+  };
+  //  meta: Record<string, string | number | boolean>;
+
+  /**
+   * Local icon based on the tags
+   */
   icon: ImageSourcePropType;
-  name: string;
-  plan?: string;
-  category?: string;
-  paymentMethod?: string;
-  status?: string;
-  startDate?: string;
-  price: number;
-  currency?: string;
-  billing: string;
-  frequency?: string;
-  renewalDate?: string;
-  color?: string;
+  /**
+   * Local color also based on the tags or on the current user
+   */
+  color: string;
 };
-
-

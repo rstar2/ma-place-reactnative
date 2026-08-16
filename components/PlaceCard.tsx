@@ -2,15 +2,10 @@ import React from "react";
 import { View, Image, Pressable } from "react-native";
 
 import Text from "@/components/Text";
-import {
-  cn,
-  formatCurrency,
-  formatStatusLabel,
-  formatDateTime,
-} from "@/lib/utils";
+import { cn, formatDateTime } from "@/lib/utils";
 import { Place } from "@/lib/types";
 
-type PlaceCardProps = Omit<Place, "id"> & {
+type PlaceCardProps = Place & {
   expanded: boolean;
   onPress: () => void;
   onEditPress?: () => void;
@@ -18,18 +13,14 @@ type PlaceCardProps = Omit<Place, "id"> & {
 
 export default function PlaceCard({
   // place props
-  color,
-  category,
-  plan,
-  renewalDate,
-  paymentMethod,
-  startDate,
-  status,
+  title,
+  description,
+  tags,
+  uid,
+  createdAt,
+  location,
   icon,
-  name,
-  price,
-  currency,
-  billing,
+  color,
 
   // additional
   expanded,
@@ -47,19 +38,17 @@ export default function PlaceCard({
           <Image source={icon} className="sub-icon" />
           <View className="sub-copy">
             <Text numberOfLines={1} className="sub-title">
-              {name}
+              {title}
             </Text>
             <Text numberOfLines={1} ellipsizeMode="tail" className="sub-meta">
-              {category?.trim() ||
-                plan?.trim() ||
-                (renewalDate ? formatDateTime(renewalDate) : "")}
+              {tags?.join(", ")}
             </Text>
           </View>
         </View>
 
         <View className="sub-price-box">
-          <Text className="sub-price">{formatCurrency(price, currency)}</Text>
-          <Text className="sub-billing">{billing}</Text>
+          <Text className="sub-price">{description}</Text>
+          {/* <Text className="sub-billing">By {uid}</Text> */}
         </View>
       </View>
 
@@ -68,61 +57,39 @@ export default function PlaceCard({
           <View className="sub-details">
             <View className="sub-row">
               <View className="sub-row-copy">
-                <Text className="sub-label">Payment:</Text>
+                <Text className="sub-label">Location:</Text>
                 <Text
                   className="sub-value"
                   numberOfLines={1}
                   ellipsizeMode="tail"
                 >
-                  {paymentMethod?.trim() ?? "Not provided"}
+                  {`${location.latitude} | ${location.longitude}`}
                 </Text>
               </View>
             </View>
+
             <View className="sub-row">
               <View className="sub-row-copy">
-                <Text className="sub-label">Category:</Text>
+                <Text className="sub-label">Created:</Text>
                 <Text
                   className="sub-value"
                   numberOfLines={1}
                   ellipsizeMode="tail"
                 >
-                  {(category?.trim() || plan?.trim()) ?? "Not provided"}
+                  {formatDateTime(createdAt)}
                 </Text>
               </View>
             </View>
+
             <View className="sub-row">
               <View className="sub-row-copy">
-                <Text className="sub-label">Started:</Text>
+                <Text className="sub-label">By:</Text>
                 <Text
                   className="sub-value"
                   numberOfLines={1}
                   ellipsizeMode="tail"
                 >
-                  {startDate ? formatDateTime(startDate) : "Not provided"}
-                </Text>
-              </View>
-            </View>
-            <View className="sub-row">
-              <View className="sub-row-copy">
-                <Text className="sub-label">Renewal date:</Text>
-                <Text
-                  className="sub-value"
-                  numberOfLines={1}
-                  ellipsizeMode="tail"
-                >
-                  {renewalDate ? formatDateTime(renewalDate) : "Not provided"}
-                </Text>
-              </View>
-            </View>
-            <View className="sub-row">
-              <View className="sub-row-copy">
-                <Text className="sub-label">Status:</Text>
-                <Text
-                  className="sub-value"
-                  numberOfLines={1}
-                  ellipsizeMode="tail"
-                >
-                  {status ? formatStatusLabel(status) : "Not provided"}
+                  {uid}
                 </Text>
               </View>
             </View>

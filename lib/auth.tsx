@@ -9,6 +9,7 @@ import {
 import * as auth from "@react-native-firebase/auth";
 import { GoogleSignin } from "@react-native-google-signin/google-signin";
 
+import { createUserProfile } from "@/lib/db";
 import { GOOGLE_WEB_CLIENT_ID } from "@/lib/env";
 import { posthog } from "@/lib/posthog";
 
@@ -25,7 +26,7 @@ type AuthContextValue = {
   user: auth.User | null;
   initializing: boolean;
   signIn: (email: string, password: string) => Promise<void>;
-  signUp: (email: string, password: string) => Promise<void>;
+  signUp: (name: string, email: string, password: string) => Promise<void>;
   signInWithGoogle: () => Promise<void>;
   signOut: () => Promise<void>;
 };
@@ -103,17 +104,25 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         throw err;
       }
     },
-    async signUp(email, password) {
+    async signUp(name, email, password) {
       authPendingCompletion.current = {
         event: "account_created",
         properties: { sign_up_method: "password" },
       };
       try {
-        await auth.createUserWithEmailAndPassword(
+        const { user } = await auth.createUserWithEmailAndPassword(
           auth.getAuth(),
           email,
           password,
         );
+
+        try {
+          await auth.updateProfile(user, { displayName: name });
+        } catch (err) {
+          // Non-fatal for the same reason as the Firestore doc write.
+          console.warn("Failed to update auth display name:", err);
+        }
+        await createUserProfile(user.uid, { name, service: "password" });
       } catch (err) {
         // Rejected sign-up: the completion callback won't fire, so clear the
         // pending event to avoid stale attribution on a later success.
@@ -143,7 +152,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           });
         }
         const credential = auth.GoogleAuthProvider.credential(idToken);
-        await auth.signInWithCredential(auth.getAuth(), credential);
+        const cred = await auth.signInWithCredential(auth.getAuth(), credential);
+
+        // First sign-in = registration: mirror the new account into Firestore.
+        if (cred.additionalUserInfo?.isNewUser) {
+          const name = cred.user.displayName ?? cred.user.email ?? "Anonymous";
+          await createUserProfile(cred.user.uid, { name, service: "Google" });
+        }
       } catch (err) {
         // Cancellation or failure at any step aborts before the credential is
         // applied, so clear the pending event to avoid stale attribution.

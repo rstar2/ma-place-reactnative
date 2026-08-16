@@ -25,7 +25,7 @@ export default function ModalAddEditPlace({
   onSubmit,
 }: ModalAddEditPlaceProps) {
   const [placeName, setPlaceName] = useState(
-    isBoolean(place) ? "" : place.name,
+    isBoolean(place) ? "" : place.title,
   );
   const canSubmit = placeName.trim().length > 0;
 

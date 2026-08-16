@@ -17,6 +17,7 @@ import { cn } from "@/lib/utils";
 export default function SignUpScreen() {
   const { signUp } = useAuth();
 
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -25,11 +26,13 @@ export default function SignUpScreen() {
 
   const canSubmit =
     !submitting &&
+    name.trim().length > 0 &&
     email.trim().length > 0 &&
     password.length > 0 &&
     confirmPassword.length > 0;
 
   function validate(): string | null {
+    if (name.trim().length < 2) return "Enter your name.";
     if (!email.trim().includes("@")) return "Enter a valid email address.";
     if (password.length < 6) return "Password must be at least 6 characters.";
     if (password !== confirmPassword) return "Passwords don't match.";
@@ -46,7 +49,7 @@ export default function SignUpScreen() {
     setError(null);
     setSubmitting(true);
     try {
-      await signUp(email.trim(), password);
+      await signUp(name.trim(), email.trim(), password);
     } catch (err) {
       setError(friendlyAuthError(err));
     } finally {
@@ -82,6 +85,20 @@ export default function SignUpScreen() {
 
         <View className="card">
           <View className="form">
+            <View className="text-input-field">
+              <Text className="text-input-label">Name</Text>
+              <TextInput
+                value={name}
+                onChangeText={setName}
+                placeholder="Your name"
+                placeholderTextColor="rgba(0,0,0,0.35)"
+                autoCapitalize="words"
+                autoCorrect={false}
+                textContentType="name"
+                className={cn("text-input", error && "text-input-error")}
+              />
+            </View>
+
             <View className="text-input-field">
               <Text className="text-input-label">Email</Text>
               <TextInput

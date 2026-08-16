@@ -26,8 +26,7 @@ export default function Index() {
     const isExpanding = expandedPlaceId !== item.id;
     posthog?.capture(isExpanding ? "place_expanded" : "place_collapsed", {
       place_id: item.id,
-      place_category: item.category ?? "unknown",
-      place_status: item.status ?? "unknown",
+      place_uid: item.uid,
     });
     setExpandedPlaceId(isExpanding ? item.id : undefined);
   };

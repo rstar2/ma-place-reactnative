@@ -26,7 +26,7 @@ export default function PlacesScreen() {
     if (!query) return HOME_PLACES;
 
     return HOME_PLACES.filter((place) => {
-      return [place.name, place.category, place.plan, place.status]
+      return [place.title, place.description /* , place.tags?.join() */]
         .filter(Boolean)
         .some((val) => val!.toLowerCase().includes(query));
     });
@@ -36,8 +36,7 @@ export default function PlacesScreen() {
     const isExpanding = expandedPlaceId !== item.id;
     posthog?.capture(isExpanding ? "place_expanded" : "place_collapsed", {
       place_id: item.id,
-      place_category: item.category ?? "unknown",
-      place_status: item.status ?? "unknown",
+      place_uid: item.uid,
     });
     setExpandedPlaceId(isExpanding ? item.id : undefined);
   };

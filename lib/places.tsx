@@ -1,30 +1,45 @@
 import ModalAddEditPlace from "@/components/ModalAddEditPlace";
 import { createContext, useContext, useState, type ReactNode } from "react";
 import { Place } from "./types";
+import { usePlacesStore } from "@/store/places-store";
 
 type AddEditPlaceContextValue = {
   onAddPlacePress: () => void;
   onEditPlacePress: (place: Place) => void;
 };
 
+/** `true` → add mode, a `Place` → edit mode, `null` → hidden. */
+type ModalPlace = Place | true | null;
+
 const AddEditPlaceContext = createContext<AddEditPlaceContextValue | undefined>(
   undefined,
 );
 
 export function AddEditPlaceProvider({ children }: { children: ReactNode }) {
-  const [addPlaceModalVisible, setAddPlaceModalVisible] = useState(false);
+  const [modalPlace, setModalPlace] = useState<ModalPlace>(null);
+  const addPlace = usePlacesStore((state) => state.addPlace);
+  const editPlace = usePlacesStore((state) => state.editPlace);
 
-  // TODO: persist the new place built from `place`
-  function handleAddPlace(place: { name: string }) {
-    setAddPlaceModalVisible(false);
+  function handleSubmit(place: { name: string }) {
+    const current = modalPlace;
+    setModalPlace(null);
+
+    const save =
+      current === true
+        ? addPlace({ title: place.name })
+        : current
+          ? editPlace({ ...current, title: place.name })
+          : null;
+
+    save?.catch((err) => console.warn("Failed to save place:", err));
   }
 
   const value: AddEditPlaceContextValue = {
     onAddPlacePress() {
-      setAddPlaceModalVisible(true);
+      setModalPlace(true);
     },
     onEditPlacePress(place: Place) {
-      setAddPlaceModalVisible(true);
+      setModalPlace(place);
     },
   };
 
@@ -33,9 +48,9 @@ export function AddEditPlaceProvider({ children }: { children: ReactNode }) {
       {children}
 
       <ModalAddEditPlace
-        place={addPlaceModalVisible}
-        onClose={() => setAddPlaceModalVisible(false)}
-        onSubmit={handleAddPlace}
+        place={modalPlace}
+        onClose={() => setModalPlace(null)}
+        onSubmit={handleSubmit}
       />
     </AddEditPlaceContext.Provider>
   );

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Modal,
   Pressable,
@@ -12,8 +12,8 @@ import { cn, isBoolean, noop } from "@/lib/utils";
 import { Place } from "@/lib/types";
 
 type ModalAddEditPlaceProps = {
-  /* Controls visibility of the modal */
-  place: boolean | Place;
+  /* Controls visibility of the modal: `true` = add, a `Place` = edit, `null`/`false` = hidden */
+  place: Place | boolean | null;
   onClose: () => void;
   /** Carries the values collected by the modal's inputs. */
   onSubmit: (place: { name: string }) => void;
@@ -24,10 +24,14 @@ export default function ModalAddEditPlace({
   onClose,
   onSubmit,
 }: ModalAddEditPlaceProps) {
-  const [placeName, setPlaceName] = useState(
-    isBoolean(place) ? "" : place.title,
-  );
+  const isEdit = !!place && !isBoolean(place);
+  const [placeName, setPlaceName] = useState(isEdit ? place.title : "");
   const canSubmit = placeName.trim().length > 0;
+
+  // Reseed the input whenever the modal is (re)opened for a place
+  useEffect(() => {
+    setPlaceName(isEdit ? place.title : "");
+  }, [place, isEdit]);
 
   function handleClose() {
     setPlaceName("");
@@ -55,7 +59,9 @@ export default function ModalAddEditPlace({
           {/* noop absorbs taps on the sheet so they don't bubble to the backdrop */}
           <Pressable className="modal-container" onPress={noop}>
             <View className="modal-header">
-              <Text className="modal-title">Add Place</Text>
+              <Text className="modal-title">
+                {isEdit ? "Edit Place" : "Add Place"}
+              </Text>
               <Pressable className="modal-close" onPress={handleClose}>
                 {/* NOTE: the ✕ is not the latter x but the unicode entity U+2715 (HTML entity &#10005;) - "multiplication x" */}
                 <Text className="modal-close-text">✕</Text>
@@ -68,7 +74,7 @@ export default function ModalAddEditPlace({
                 <TextInput
                   value={placeName}
                   onChangeText={setPlaceName}
-                  placeholder="e.g. Netflix"
+                  placeholder="e.g. Vitosha Trail"
                   placeholderTextColor="rgba(0,0,0,0.35)"
                   className="text-input"
                 />
@@ -89,9 +95,7 @@ export default function ModalAddEditPlace({
                     !canSubmit && "button-disabled",
                   )}
                 >
-                  <Text className="button-text">
-                    {isBoolean(place) ? "Add" : "Edit"}
-                  </Text>
+                  <Text className="button-text">{isEdit ? "Edit" : "Add"}</Text>
                 </Pressable>
               </View>
             </View>

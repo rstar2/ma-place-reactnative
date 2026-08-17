@@ -1,17 +1,25 @@
-import { useState } from "react";
-import { FlatList, Image, Pressable, View } from "react-native";
+import { useCallback, useState } from "react";
+import {
+  ActivityIndicator,
+  FlatList,
+  Image,
+  Pressable,
+  View,
+} from "react-native";
+import { useFocusEffect } from "expo-router";
 
 import ScreenBase from "@/components/ScreenBase";
 import Text from "@/components/Text";
 import ListHeading from "@/components/ListHeading";
 import PlaceCard from "@/components/PlaceCard";
 import { formatCurrency, formatDateTime, noop } from "@/lib/utils";
-import { HOME_BALANCE, HOME_PLACES } from "@/constants/data";
+import { HOME_BALANCE } from "@/constants/data";
 import { Place } from "@/lib/types";
 import images from "@/constants/images";
 import { posthog } from "@/lib/posthog";
 import { icons } from "@/constants/icons";
 import { useAddEditPlace } from "@/lib/places";
+import { usePlacesStore } from "@/store/places-store";
 
 const user = {
   displayName: "John Doe",
@@ -21,6 +29,19 @@ const user = {
 export default function Index() {
   const { onAddPlacePress } = useAddEditPlace();
   const [expandedPlaceId, setExpandedPlaceId] = useState<string>();
+  const places = usePlacesStore((state) => state.places);
+  const isLoading = usePlacesStore((state) => state.isLoadingPlaces);
+  const ensurePlacesLoaded = usePlacesStore(
+    (state) => state.ensurePlacesLoaded,
+  );
+
+  // Load on demand when this screen is shown; the store dedupes concurrent
+  // calls and caches the result, so screens never duplicate the DB call.
+  useFocusEffect(
+    useCallback(() => {
+      void ensurePlacesLoaded();
+    }, [ensurePlacesLoaded]),
+  );
 
   const handleExpandPlace = (item: Place) => {
     const isExpanding = expandedPlaceId !== item.id;
@@ -35,7 +56,7 @@ export default function Index() {
     <ScreenBase>
       <FlatList
         ListHeaderComponent={() => <Header onAddPlacePress={onAddPlacePress} />}
-        data={HOME_PLACES}
+        data={places}
         extraData={expandedPlaceId}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
@@ -47,7 +68,11 @@ export default function Index() {
         )}
         ItemSeparatorComponent={() => <View className="h-4" />}
         ListEmptyComponent={
-          <Text className="home-empty-state">No places yet.</Text>
+          isLoading ? (
+            <ActivityIndicator className="mt-10" />
+          ) : (
+            <Text className="home-empty-state">No places yet.</Text>
+          )
         }
         showsVerticalScrollIndicator={false}
         contentContainerClassName="pb-30"
@@ -62,7 +87,11 @@ export default function Index() {
 // This is a known issue with FlatList in React Native.
 // BUT, just extracting it to a separate component fixes the issue, as the horizontal FlatList is not rerendered when the "big" FlatList is rerendered.
 // Also note that the react-compiler is ON, so it does the memoization for use
+// That is also why Header reads the store directly instead of receiving
+// the places as a prop - a prop would rerender it on every Index render.
 function Header({ onAddPlacePress }: { onAddPlacePress: () => void }) {
+  const places = usePlacesStore((state) => state.places);
+
   return (
     <>
       <View className="home-header">
@@ -96,7 +125,7 @@ function Header({ onAddPlacePress }: { onAddPlacePress: () => void }) {
         <ListHeading title="Upcoming" />
 
         <FlatList
-          data={HOME_PLACES}
+          data={places}
           renderItem={({ item }) => (
             <PlaceCard {...item} expanded={false} onPress={noop} />
           )}

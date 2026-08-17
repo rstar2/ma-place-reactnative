@@ -1,36 +1,51 @@
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import {
+  ActivityIndicator,
   FlatList,
   KeyboardAvoidingView,
   Platform,
   TextInput,
   View,
 } from "react-native";
+import { useFocusEffect } from "expo-router";
 
 import ScreenBase from "@/components/ScreenBase";
 import Text from "@/components/Text";
 import PlaceCard from "@/components/PlaceCard";
-import { HOME_PLACES } from "@/constants/data";
 import { Place } from "@/lib/types";
 import { posthog } from "@/lib/posthog";
 import { useAddEditPlace } from "@/lib/places";
+import { usePlacesStore } from "@/store/places-store";
 
 export default function PlacesScreen() {
   const { onEditPlacePress } = useAddEditPlace();
   const [expandedPlaceId, setExpandedPlaceId] = useState<string>();
   const [filterText, setFilterText] = useState("");
+  const places = usePlacesStore((state) => state.places);
+  const isLoading = usePlacesStore((state) => state.isLoadingPlaces);
+  const ensurePlacesLoaded = usePlacesStore(
+    (state) => state.ensurePlacesLoaded,
+  );
+
+  // Load on demand when this screen is shown; the store dedupes concurrent
+  // calls and caches the result, so screens never duplicate the DB call.
+  useFocusEffect(
+    useCallback(() => {
+      void ensurePlacesLoaded();
+    }, [ensurePlacesLoaded]),
+  );
 
   const filteredPlaces = useMemo(() => {
     const query = filterText.trim().toLowerCase();
 
-    if (!query) return HOME_PLACES;
+    if (!query) return places;
 
-    return HOME_PLACES.filter((place) => {
+    return places.filter((place) => {
       return [place.title, place.description /* , place.tags?.join() */]
         .filter(Boolean)
         .some((val) => val!.toLowerCase().includes(query));
     });
-  }, [filterText]);
+  }, [filterText, places]);
 
   const handleExpandPlace = (item: Place) => {
     const isExpanding = expandedPlaceId !== item.id;
@@ -75,7 +90,11 @@ export default function PlacesScreen() {
           }
           ItemSeparatorComponent={() => <View className="h-4" />}
           ListEmptyComponent={
-            <Text className="home-empty-state">No matching places found.</Text>
+            isLoading ? (
+              <ActivityIndicator className="mt-10" />
+            ) : (
+              <Text className="home-empty-state">No matching places found.</Text>
+            )
           }
           showsVerticalScrollIndicator={false}
           contentContainerClassName="pb-30"

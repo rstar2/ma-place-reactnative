@@ -4,6 +4,7 @@ import { View, Image, Pressable } from "react-native";
 import Text from "@/components/Text";
 import { cn, formatDateTime } from "@/lib/utils";
 import { Place } from "@/lib/types";
+import { theme } from "@/constants/theme";
 
 type PlaceCardProps = Place & {
   expanded: boolean;
@@ -30,69 +31,77 @@ export default function PlaceCard({
   return (
     <Pressable
       onPress={onPress}
-      className={cn("sub-card", expanded ? "sub-card-expanded" : "bg-card")}
+      className={cn("place-card", expanded ? "place-card-expanded" : "bg-card")}
       style={!expanded && color ? { backgroundColor: color } : undefined}
     >
-      <View className="sub-head">
-        <View className="sub-main">
-          <Image source={icon} className="sub-icon" />
-          <View className="sub-copy">
-            <Text numberOfLines={1} className="sub-title">
+      <View className="place-head">
+        <View className="place-head-main">
+          <View className="place-head-main-icon-box">
+            <Image
+              source={icon}
+              className="place-head-main-icon"
+              tintColor={theme.colors.foreground}
+            />
+          </View>
+          <View className="place-head-main-copy">
+            <Text numberOfLines={1} className="place-head-main-title">
               {title}
             </Text>
-            <Text numberOfLines={1} ellipsizeMode="tail" className="sub-meta">
+            <Text
+              numberOfLines={1}
+              ellipsizeMode="tail"
+              className="place-head-main-desc"
+            >
               {tags?.join(", ")}
             </Text>
           </View>
         </View>
 
-        <View className="sub-price-box">
-          <Text className="sub-price">{description}</Text>
-          {/* <Text className="sub-billing">By {uid}</Text> */}
+        <View className="place-head-secondary">
+          <Text className="place-head-secondary-line1"></Text>
+          <Text className="place-head-secondary-line2">
+            {formatDateTime(createdAt)}
+          </Text>
         </View>
       </View>
 
       {expanded && (
-        <View className="sub-bdy">
-          <View className="sub-details">
-            <View className="sub-row">
-              <View className="sub-row-copy">
-                <Text className="sub-label">Location:</Text>
-                <Text
-                  className="sub-value"
-                  numberOfLines={1}
-                  ellipsizeMode="tail"
-                >
-                  {`${location.latitude} | ${location.longitude}`}
-                </Text>
-              </View>
-            </View>
+        <View className="place-body">
+          <View className="place-body-row">
+            <Text className="place-body-row-value">{description}</Text>
+          </View>
 
-            <View className="sub-row">
-              <View className="sub-row-copy">
-                <Text className="sub-label">Created:</Text>
-                <Text
-                  className="sub-value"
-                  numberOfLines={1}
-                  ellipsizeMode="tail"
-                >
-                  {formatDateTime(createdAt)}
-                </Text>
-              </View>
-            </View>
+          <View className="place-body-row">
+            <Text className="place-body-row-label">Location:</Text>
+            <Text
+              className="place-body-row-value"
+              numberOfLines={1}
+              ellipsizeMode="tail"
+            >
+              {`${location.latitude} | ${location.longitude}`}
+            </Text>
+          </View>
 
-            <View className="sub-row">
-              <View className="sub-row-copy">
-                <Text className="sub-label">By:</Text>
-                <Text
-                  className="sub-value"
-                  numberOfLines={1}
-                  ellipsizeMode="tail"
-                >
-                  {uid}
-                </Text>
-              </View>
-            </View>
+          <View className="place-body-row">
+            <Text className="place-body-row-label">Created:</Text>
+            <Text
+              className="place-body-row-value"
+              numberOfLines={1}
+              ellipsizeMode="tail"
+            >
+              {formatDateTime(createdAt)}
+            </Text>
+          </View>
+
+          <View className="place-body-row">
+            <Text className="place-body-row-label">By:</Text>
+            <Text
+              className="place-body-row-value"
+              numberOfLines={1}
+              ellipsizeMode="tail"
+            >
+              {uid}
+            </Text>
           </View>
 
           {onEditPress && (

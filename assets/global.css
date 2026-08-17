@@ -1,4 +1,4 @@
-/* NOTE: Do not declare layers order as NativeWind will not transform CSS to native styles properly */
+/* NOTE: Do not declare layers order as NativeWind will not transform CSS to native styles properly */ 
 /* @layer theme, base, components, utilities; */
 
 @import "tailwindcss/theme.css" layer(theme);
@@ -80,33 +80,9 @@
   .button-secondary {
     @apply items-center rounded-2xl border border-accent/30 bg-accent/10;
   }
-
+  
   .button-secondary-text {
     @apply text-sm font-sans-semibold text-accent;
-  }
-
-  .card {
-    @apply mt-8 rounded-3xl border border-border bg-card p-5;
-  }
-
-  .form {
-    @apply gap-4;
-  }
-
-  .text-input-field {
-    @apply gap-2;
-  }
-
-  .text-input-label {
-    @apply text-sm font-sans-semibold text-primary;
-  }
-
-  .text-input {
-    @apply rounded-2xl border border-border bg-background px-4 py-4 text-base font-sans-medium text-primary;
-  }
-
-  .text-input-error {
-    @apply border-destructive;
   }
 
   .home-header {
@@ -165,96 +141,68 @@
     @apply text-lg font-sans-semibold text-primary;
   }
 
-  .upcoming-card {
-    @apply mr-4 w-44 rounded-2xl border border-black/10 bg-background p-4;
+  .place-card {
+    @apply rounded-2xl border border-border px-4 py-2;
   }
 
-  .upcoming-row {
-    @apply flex-row items-center gap-3;
-  }
-
-  .upcoming-icon {
-    @apply size-14;
-  }
-
-  .upcoming-price {
-    @apply text-lg font-sans-bold text-primary;
-  }
-
-  .upcoming-meta {
-    @apply text-sm font-sans-semibold text-muted-foreground;
-  }
-
-  .upcoming-name {
-    @apply mt-2 text-lg font-sans-bold text-primary;
-  }
-
-  .sub-card {
-    @apply rounded-2xl border border-border p-4;
-  }
-
-  .sub-card-expanded {
+  .place-card-expanded {
     @apply bg-place;
   }
 
-  .sub-head {
+  .place-head {
     @apply flex-row items-center py-2;
   }
 
-  .sub-main {
+  .place-head-main {
     @apply min-w-0 flex-1 flex-row items-center gap-3;
   }
 
-  .sub-icon {
-    @apply size-16 rounded-lg;
+  .place-head-main-icon-box {
+    @apply rounded-2xl p-2 bg-white/30;
+  }
+  
+  .place-head-main-icon {
+    @apply size-12;
   }
 
-  .sub-copy {
+  .place-head-main-copy {
     @apply min-w-0 flex-1;
   }
 
-  .sub-title {
+  .place-head-main-title {
     @apply mb-1 text-lg font-sans-bold text-primary;
   }
 
-  .sub-meta {
+  .place-head-main-desc {
     @apply text-sm font-sans-semibold text-muted-foreground;
   }
 
-  .sub-price-box {
+  .place-head-secondary {
     @apply ml-3 shrink-0 items-end;
   }
 
-  .sub-price {
+  .place-head-secondary-line1 {
     @apply mb-1 text-lg font-sans-bold text-primary;
   }
 
-  .sub-billing {
+  .place-head-secondary-line2 {
     @apply text-sm font-sans-medium text-muted-foreground;
   }
 
-  .sub-body {
+  .place-body {
     @apply mt-6 gap-4;
   }
 
-  .sub-details {
-    @apply gap-6;
+  .place-body-row {
+    @apply flex-1 flex-row items-center justify-between gap-3;
   }
 
-  .sub-row {
-    @apply flex-row items-center justify-between gap-3;
-  }
-
-  .sub-row-copy {
-    @apply min-w-0 flex-1 flex-row items-center gap-2;
-  }
-
-  .sub-label {
+  .place-body-row-label {
     @apply shrink-0 text-base font-sans-medium text-muted-foreground;
   }
 
-  .sub-value {
-    @apply flex-1 font-sans-bold text-primary;
+  .place-body-row-value {
+    @apply shrink font-sans-bold text-primary;
   }
 
   .sub-cancel {
@@ -266,14 +214,6 @@
   }
 
   .sub-cancel-text {
-    @apply font-sans-bold text-background;
-  }
-
-  .sub-edit {
-    @apply mt-6 items-center rounded-full bg-primary py-3;
-  }
-
-  .sub-edit-text {
     @apply font-sans-bold text-background;
   }
 
@@ -323,6 +263,30 @@
 
   .auth-subtitle {
     @apply mt-2 max-w-[320px] text-center text-base font-sans-medium text-muted-foreground;
+  }
+
+  .card {
+    @apply mt-8 rounded-3xl border border-border bg-card p-5;
+  }
+
+  .form {
+    @apply gap-4;
+  }
+
+  .text-input-field {
+    @apply gap-2;
+  }
+
+  .text-input-label {
+    @apply text-sm font-sans-semibold text-primary;
+  }
+
+  .text-input {
+    @apply rounded-2xl border border-border bg-background px-4 py-4 text-base font-sans-medium text-primary;
+  }
+
+  .text-input-error {
+    @apply border-destructive;
   }
 
   .auth-error {

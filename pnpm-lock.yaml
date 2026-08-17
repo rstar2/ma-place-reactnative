@@ -23,6 +23,9 @@ importers:
       '@react-native-firebase/firestore':
         specifier: ^26.2.0
         version: 26.2.0(@react-native-firebase/app@26.1.0(expo@54.0.36)(react-native@0.81.5(@babel/core@7.29.7(supports-color@8.1.1))(@types/react@19.1.17)(react@19.1.0)(supports-color@8.1.1))(react@19.1.0))(react-native@0.81.5(@babel/core@7.29.7(supports-color@8.1.1))(@types/react@19.1.17)(react@19.1.0)(supports-color@8.1.1))
+      '@react-native-firebase/functions':
+        specifier: ^26.2.0
+        version: 26.2.0(@react-native-firebase/app@26.1.0(expo@54.0.36)(react-native@0.81.5(@babel/core@7.29.7(supports-color@8.1.1))(@types/react@19.1.17)(react@19.1.0)(supports-color@8.1.1))(react@19.1.0))
       '@react-native-google-signin/google-signin':
         specifier: ^16.1.4
         version: 16.1.4(expo@54.0.36)(react-native@0.81.5(@babel/core@7.29.7(supports-color@8.1.1))(@types/react@19.1.17)(react@19.1.0)(supports-color@8.1.1))(react@19.1.0)
@@ -1469,6 +1472,11 @@ packages:
 
   '@react-native-firebase/firestore@26.2.0':
     resolution: {integrity: sha512-7V9IAi1i1n4FIJf+IrrHIkvj/CBpw21LLhUeOWinXcc9NWyx61cbOYkr6PBaiRU1LV4dte87Mhhc4GD4Xc3Lbg==}
+    peerDependencies:
+      '@react-native-firebase/app': 26.2.0
+
+  '@react-native-firebase/functions@26.2.0':
+    resolution: {integrity: sha512-TI6Ef0mzsizqumUHVfjmelQ9cYwSnGbUe55DTzM69RBDM85I1dDPwtcl+C17vUAxJoZN1H/ny7INuLTZpZiK9Q==}
     peerDependencies:
       '@react-native-firebase/app': 26.2.0
 
@@ -6704,6 +6712,10 @@ snapshots:
       react-native-url-polyfill: 4.0.0(react-native@0.81.5(@babel/core@7.29.7(supports-color@8.1.1))(@types/react@19.1.17)(react@19.1.0)(supports-color@8.1.1))
     transitivePeerDependencies:
       - react-native
+
+  '@react-native-firebase/functions@26.2.0(@react-native-firebase/app@26.1.0(expo@54.0.36)(react-native@0.81.5(@babel/core@7.29.7(supports-color@8.1.1))(@types/react@19.1.17)(react@19.1.0)(supports-color@8.1.1))(react@19.1.0))':
+    dependencies:
+      '@react-native-firebase/app': 26.1.0(expo@54.0.36)(react-native@0.81.5(@babel/core@7.29.7(supports-color@8.1.1))(@types/react@19.1.17)(react@19.1.0)(supports-color@8.1.1))(react@19.1.0)
 
   '@react-native-google-signin/google-signin@16.1.4(expo@54.0.36)(react-native@0.81.5(@babel/core@7.29.7(supports-color@8.1.1))(@types/react@19.1.17)(react@19.1.0)(supports-color@8.1.1))(react@19.1.0)':
     dependencies:

@@ -12,5 +12,6 @@
     },
     "cSpell.words": [
         "posthog"
-    ]
+    ],
+    "css.lint.unknownAtRules": "ignore"
 } 

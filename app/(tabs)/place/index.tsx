@@ -68,7 +68,7 @@ export default function PlacesScreen() {
           keyExtractor={(place) => place.id}
           renderItem={({ item: place }) => (
             <PlaceCard
-              {...place}
+              place={place}
               expanded={expandedPlaceId === place.id}
               onPress={() => handleExpandPlace(place)}
               onEditPress={() => onEditPlacePress(place)}
@@ -93,7 +93,9 @@ export default function PlacesScreen() {
             isLoading ? (
               <ActivityIndicator className="mt-10" />
             ) : (
-              <Text className="home-empty-state">No matching places found.</Text>
+              <Text className="home-empty-state">
+                No matching places found.
+              </Text>
             )
           }
           showsVerticalScrollIndicator={false}

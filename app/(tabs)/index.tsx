@@ -6,16 +6,15 @@ import {
   Pressable,
   View,
 } from "react-native";
-import { useFocusEffect } from "expo-router";
+import { useFocusEffect, useRouter } from "expo-router";
 
 import ScreenBase from "@/components/ScreenBase";
 import Text from "@/components/Text";
 import ListHeading from "@/components/ListHeading";
 import PlaceCard from "@/components/PlaceCard";
-import { formatCurrency, formatDateTime, noop } from "@/lib/utils";
-import { HOME_BALANCE } from "@/constants/data";
+import { noop } from "@/lib/utils";
 import { Place } from "@/lib/types";
-import images from "@/constants/images";
+import { images } from "@/constants/images";
 import { posthog } from "@/lib/posthog";
 import { icons } from "@/constants/icons";
 import { useAddEditPlace } from "@/lib/places";
@@ -58,12 +57,12 @@ export default function Index() {
         ListHeaderComponent={() => <Header onAddPlacePress={onAddPlacePress} />}
         data={places}
         extraData={expandedPlaceId}
-        keyExtractor={(item) => item.id}
-        renderItem={({ item }) => (
+        keyExtractor={(place) => place.id}
+        renderItem={({ item: place }) => (
           <PlaceCard
-            {...item}
-            expanded={expandedPlaceId === item.id}
-            onPress={() => handleExpandPlace(item)}
+            place={place}
+            expanded={expandedPlaceId === place.id}
+            onPress={() => handleExpandPlace(place)}
           />
         )}
         ItemSeparatorComponent={() => <View className="h-4" />}
@@ -81,8 +80,13 @@ export default function Index() {
   );
 }
 
+// Horizontal FlatList items can't be sized with percentage width/max-width:
+// the content container's width is determined by the items themselves, so
+// percentages resolve against nothing. Measure the list width and size in JS.
+const HORIZONTAL_CARD_RATIO = 0.9;
+
 // NOTE: Extract this to a separate component as otherwise it messes
-// the rendering. When the "big" flat list is rerendered, like when expanding a place,
+// the rendering. When the "big" flat list is rerendered, like when expanding a place,le
 // the ListHeaderComponent is rerendered and thus the horizontal FlatList and some layout logic breaks as the refs are not same, etc... (I couldn't understand it fully)
 // This is a known issue with FlatList in React Native.
 // BUT, just extracting it to a separate component fixes the issue, as the horizontal FlatList is not rerendered when the "big" FlatList is rerendered.
@@ -90,7 +94,9 @@ export default function Index() {
 // That is also why Header reads the store directly instead of receiving
 // the places as a prop - a prop would rerender it on every Index render.
 function Header({ onAddPlacePress }: { onAddPlacePress: () => void }) {
+  const router = useRouter();
   const places = usePlacesStore((state) => state.places);
+  const [listWidth, setListWidth] = useState(0);
 
   return (
     <>
@@ -108,28 +114,26 @@ function Header({ onAddPlacePress }: { onAddPlacePress: () => void }) {
         </Pressable>
       </View>
 
-      <View className="home-balance-card">
-        <Text className="home-balance-label">Balance</Text>
-
-        <View className="home-balance-row">
-          <Text className="home-balance-amount">
-            {formatCurrency(HOME_BALANCE.amount)}
-          </Text>
-          <Text className="home-balance-date">
-            {formatDateTime(HOME_BALANCE.nextRenewalDate, "MM/DD")}
-          </Text>
-        </View>
+      <View className="home-map-card">
+        <Text className="home-map-label">Map</Text>
       </View>
 
-      <View className="mb-5">
-        <ListHeading title="Upcoming" />
+      <View
+        className="mb-5"
+        onLayout={(e) => setListWidth(e.nativeEvent.layout.width)}
+      >
+        <ListHeading title="Nearest Places" />
 
         <FlatList
           data={places}
-          renderItem={({ item }) => (
-            <PlaceCard {...item} expanded={false} onPress={noop} />
+          renderItem={({ item: place }) => (
+            <PlaceCard
+              place={place}
+              onPress={noop}
+              style={{ width: listWidth * HORIZONTAL_CARD_RATIO }}
+            />
           )}
-          keyExtractor={(item) => item.id}
+          keyExtractor={(place) => place.id}
           ItemSeparatorComponent={() => <View className="w-4" />}
           ListEmptyComponent={
             <Text className="home-empty-state">No upcoming renewals yet.</Text>
@@ -139,7 +143,10 @@ function Header({ onAddPlacePress }: { onAddPlacePress: () => void }) {
         />
       </View>
 
-      <ListHeading title="All Places" />
+      <ListHeading
+        title="All Places"
+        onViewAll={() => router.navigate("/(tabs)/place")}
+      />
     </>
   );
 }

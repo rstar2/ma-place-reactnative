@@ -1,6 +1,5 @@
 import { create } from "zustand";
 import * as auth from "@react-native-firebase/auth";
-import { GeoPoint } from "@react-native-firebase/firestore";
 
 import {
   addPlace as addPlaceDoc,
@@ -9,17 +8,7 @@ import {
   loadTags,
   updatePlace as updatePlaceDoc,
 } from "@/lib/db";
-import { Place } from "@/lib/types";
-
-/** Values for creating a place - `uid`/`createdAt` are filled in by the store. */
-export type NewPlaceInput = {
-  title: string;
-  description?: string;
-  location?: GeoPoint;
-  tags?: string[];
-  imageUrl?: string;
-  meta?: Place["meta"];
-};
+import { Place, NewPlaceInput } from "@/lib/types";
 
 type PlacesStore = {
   places: Place[];
@@ -109,14 +98,13 @@ export const usePlacesStore = create<PlacesStore>()((set, get) => ({
     if (!uid) throw new Error("You must be signed in to add a place.");
 
     const place = await addPlaceDoc({
-      createdAt: new Date(),
       uid,
       title: input.title,
-      description: input.description ?? "",
-      location: input.location ?? new GeoPoint(0, 0),
+      description: input.description,
+      location: input.location,
       tags: input.tags ?? [],
-      imageUrl: input.imageUrl ?? "",
-      meta: input.meta ?? { cloudinaryId: "" },
+      imageUrl: input.imageUrl,
+      meta: input.meta,
     });
 
     // the list is ordered by createdAt desc → the new place goes on top

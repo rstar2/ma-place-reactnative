@@ -40,3 +40,10 @@ export type Place = {
    */
   color: string;
 };
+
+export type NewPlaceInput = Omit<
+  Place,
+  "id" | "createdAt" | "location" | "color" | "icon"
+> & {
+  location: { latitude: number; longitude: number };
+};

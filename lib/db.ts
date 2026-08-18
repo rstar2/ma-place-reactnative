@@ -2,7 +2,6 @@ import {
   getFirestore,
   collection,
   doc,
-  addDoc,
   getDocs,
   limit,
   orderBy,
@@ -10,9 +9,11 @@ import {
   setDoc,
   updateDoc,
   deleteDoc,
+  GeoPoint,
   Timestamp,
 } from "@react-native-firebase/firestore";
-import { Place } from "./types";
+import { getFunctions, httpsCallable } from "@react-native-firebase/functions";
+import { NewPlaceInput, Place } from "./types";
 import { icons } from "@/constants/icons";
 
 /** Firestore database instance. */
@@ -70,10 +71,60 @@ export async function loadPlaces(count = -1): Promise<Place[]> {
     );
   });
 }
+/**
+ * Place doc as returned by `dbAddPlaceApp`: the stored doc shape, i.e. `url`
+ * instead of `imageUrl`, a plain lat/lng `location` (not a GeoPoint) and
+ * `createdAt` as epoch millis.
+ */
+type AddPlaceResult = Omit<PlaceDoc, "createdAt" | "location" | "imageUrl"> & {
+  id: string;
+  createdAt: number;
+  location: { latitude: number; longitude: number };
+  url?: string;
+};
 
-export async function addPlace(data: PlaceDoc): Promise<Place> {
-  const ref = await addDoc(placesRef, data);
-  return decoratePlace(data, ref.id);
+/**
+ * Callable that persists a place server-side (validates auth + location).
+ * NewPlaceInput - the payload of the `dbAddPlaceApp` callable - the backend's shape.
+ *
+ */
+const dbAddPlaceCallable = httpsCallable<NewPlaceInput, AddPlaceResult>(
+  getFunctions(),
+  "dbAddPlaceApp",
+);
+
+export async function addPlace(data: NewPlaceInput): Promise<Place> {
+  // 1. Use the client Firebase Firestore API - this could be disabled in the Firestore rules
+  // so that only Firebase Functions should be used
+  // const ref = await addDoc(placesRef, data);
+  // return decoratePlace(data, ref.id);
+
+  // 2. Use the Firebase HTTPS function (e.g. using normal fetch/axios)
+  // return fetch('https://us-central1-ma-place.cloudfunctions.net/dbAddPlaceWeb', {
+  //   method: 'POST',
+  //   headers: {
+  //     // NOTE: this is obligatory for JSON encoded data so that the Express 'body-parser' to parse it properly
+  //     'Content-Type': 'application/json'
+  //   },
+  //   body: JSON.stringify(data)
+  // }).then(res => res.json());
+
+  // 3. Use the Firebase Callable function
+  const { data: place } = await dbAddPlaceCallable(data);
+
+  return decoratePlace(
+    {
+      createdAt: toDate(place.createdAt),
+      uid: place.uid,
+      title: place.title,
+      description: place.description,
+      location: new GeoPoint(place.location.latitude, place.location.longitude),
+      tags: place.tags,
+      imageUrl: place.url ?? "",
+      meta: place.meta,
+    },
+    place.id,
+  );
 }
 
 export async function updatePlace(place: Place) {

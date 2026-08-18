@@ -4,16 +4,19 @@ import Text from "@/components/Text";
 
 type ListHeadingProps = {
   title: string;
+  onViewAll?: () => void;
 };
 
-export default function ListHeading({ title }: ListHeadingProps) {
+export default function ListHeading({ title, onViewAll }: ListHeadingProps) {
   return (
     <View className="list-head">
       <Text className="list-title">{title}</Text>
 
-      <TouchableOpacity className="list-action">
-        <Text className="list-action-text">View all</Text>
-      </TouchableOpacity>
+      {onViewAll && (
+        <TouchableOpacity className="list-action" onPress={onViewAll}>
+          <Text className="list-action-text">View all</Text>
+        </TouchableOpacity>
+      )}
     </View>
   );
 }

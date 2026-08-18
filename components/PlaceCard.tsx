@@ -1,38 +1,37 @@
 import React from "react";
-import { View, Image, Pressable } from "react-native";
+import { View, Image, Pressable, type StyleProp, type ViewStyle } from "react-native";
 
 import Text from "@/components/Text";
 import { cn, formatDateTime } from "@/lib/utils";
 import { Place } from "@/lib/types";
 import { theme } from "@/constants/theme";
 
-type PlaceCardProps = Place & {
-  expanded: boolean;
+type PlaceCardProps = {
+  place: Place;
+  style?: StyleProp<ViewStyle>;
+  expanded?: boolean;
   onPress: () => void;
   onEditPress?: () => void;
 };
 
 export default function PlaceCard({
-  // place props
-  title,
-  description,
-  tags,
-  uid,
-  createdAt,
-  location,
-  icon,
-  color,
+  // place
+  place: { title, description, tags, uid, createdAt, location, icon, color },
 
   // additional
-  expanded,
+  style,
+  expanded = false,
   onPress,
   onEditPress,
 }: PlaceCardProps) {
   return (
     <Pressable
       onPress={onPress}
-      className={cn("place-card", expanded ? "place-card-expanded" : "bg-card")}
-      style={!expanded && color ? { backgroundColor: color } : undefined}
+      className={cn(
+        "place-card",
+        expanded ? "place-card-expanded" : "bg-card",
+      )}
+      style={[style, !expanded && color ? { backgroundColor: color } : undefined]}
     >
       <View className="place-head">
         <View className="place-head-main">

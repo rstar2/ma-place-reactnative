@@ -134,7 +134,7 @@
   }
 
   .place-card-expanded {
-    @apply bg-place;
+    @apply elevation-md;
   }
 
   .place-head {
@@ -338,43 +338,48 @@
     @apply gap-5 p-5;
   }
 
-  .picker-row {
-    @apply flex-row gap-3;
+  .tag-filter {
+    @apply mt-3;
   }
 
-  .picker-option {
-    @apply flex-1 items-center rounded-2xl border border-border bg-background py-3;
+  .select-trigger {
+    @apply flex-row items-center justify-between rounded-2xl border border-border bg-background px-1 py-3;
   }
 
-  .picker-option-active {
-    @apply border-accent bg-accent/10;
+  .select-trigger-label {
+    @apply text-base font-sans-medium text-primary;
   }
 
-  .picker-option-text {
-    @apply text-sm font-sans-semibold text-muted-foreground;
+  .select-trigger-placeholder {
+    @apply text-base font-sans-medium text-muted-foreground;
   }
 
-  .picker-option-text-active {
-    @apply text-accent;
+  .select-chevron {
+    @apply ml-1 text-base text-muted-foreground;
   }
 
-  .category-scroll {
-    @apply flex-row flex-wrap gap-2;
+  .select-sheet {
+    @apply mt-auto max-h-[60%] gap-1 rounded-t-3xl bg-background pb-8 pt-3;
   }
 
-  .category-chip {
-    @apply rounded-full border border-border bg-background px-4 py-2;
+  .select-sheet-handle {
+    @apply mb-3 h-1.5 w-10 self-center rounded-full bg-muted;
   }
 
-  .category-chip-active {
-    @apply border-accent bg-accent/10;
+  .select-option {
+    @apply rounded-2xl px-4 py-3;
   }
 
-  .category-chip-text {
-    @apply text-sm font-sans-semibold text-muted-foreground;
+  .select-option-active {
+    @apply bg-accent/10;
   }
 
-  .category-chip-text-active {
-    @apply text-accent;
+  .select-option-text {
+    @apply text-base font-sans-medium text-primary;
   }
+
+  .select-option-text-active {
+    @apply font-sans-bold text-accent;
+  }
+ 
 }

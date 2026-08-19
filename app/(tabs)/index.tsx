@@ -19,6 +19,7 @@ import { posthog } from "@/lib/posthog";
 import { icons } from "@/constants/icons";
 import { useAddEditPlace } from "@/lib/places";
 import { usePlacesStore } from "@/store/places-store";
+import { useAuth } from "@/lib/auth";
 
 const user = {
   displayName: "John Doe",
@@ -27,6 +28,7 @@ const user = {
 
 export default function Index() {
   const { onAddPlacePress } = useAddEditPlace();
+  const { user } = useAuth();
   const [expandedPlaceId, setExpandedPlaceId] = useState<string>();
   const places = usePlacesStore((state) => state.places);
   const isLoading = usePlacesStore((state) => state.isLoadingPlaces);
@@ -51,11 +53,29 @@ export default function Index() {
     setExpandedPlaceId(isExpanding ? item.id : undefined);
   };
 
+  const { myPlaces, nearestPlaces } = places.reduce(
+    (out, place) => {
+        // check if this is "my" place (created by me)
+      if (place.uid === user!.uid) out.myPlaces.push(place);
+
+      // TODO: implement some logic
+      out.nearestPlaces.push(place);
+
+      return out;
+    },
+    {
+      myPlaces: [] as Place[],
+      nearestPlaces: [] as Place[],
+    },
+  );
+
   return (
     <ScreenBase>
       <FlatList
-        ListHeaderComponent={() => <Header onAddPlacePress={onAddPlacePress} />}
-        data={places}
+        ListHeaderComponent={() => (
+          <Header myPlaces={myPlaces} onAddPlacePress={onAddPlacePress} />
+        )}
+        data={nearestPlaces}
         extraData={expandedPlaceId}
         keyExtractor={(place) => place.id}
         renderItem={({ item: place }) => (
@@ -70,7 +90,7 @@ export default function Index() {
           isLoading ? (
             <ActivityIndicator className="mt-10" />
           ) : (
-            <Text className="home-empty-state">No places yet.</Text>
+            <Text className="home-empty-state">No places nearby</Text>
           )
         }
         showsVerticalScrollIndicator={false}
@@ -93,9 +113,14 @@ const HORIZONTAL_CARD_RATIO = 0.9;
 // Also note that the react-compiler is ON, so it does the memoization for use
 // That is also why Header reads the store directly instead of receiving
 // the places as a prop - a prop would rerender it on every Index render.
-function Header({ onAddPlacePress }: { onAddPlacePress: () => void }) {
+function Header({
+  myPlaces,
+  onAddPlacePress,
+}: {
+  myPlaces: Place[];
+  onAddPlacePress: () => void;
+}) {
   const router = useRouter();
-  const places = usePlacesStore((state) => state.places);
   const [listWidth, setListWidth] = useState(0);
 
   return (
@@ -122,10 +147,10 @@ function Header({ onAddPlacePress }: { onAddPlacePress: () => void }) {
         className="mb-5"
         onLayout={(e) => setListWidth(e.nativeEvent.layout.width)}
       >
-        <ListHeading title="Nearest Places" />
+        <ListHeading title="My Places" />
 
         <FlatList
-          data={places}
+          data={myPlaces}
           renderItem={({ item: place }) => (
             <PlaceCard
               place={place}
@@ -136,7 +161,7 @@ function Header({ onAddPlacePress }: { onAddPlacePress: () => void }) {
           keyExtractor={(place) => place.id}
           ItemSeparatorComponent={() => <View className="w-4" />}
           ListEmptyComponent={
-            <Text className="home-empty-state">No upcoming renewals yet.</Text>
+            <Text className="home-empty-state">No places by me yet</Text>
           }
           horizontal
           showsHorizontalScrollIndicator={false}
@@ -144,7 +169,7 @@ function Header({ onAddPlacePress }: { onAddPlacePress: () => void }) {
       </View>
 
       <ListHeading
-        title="All Places"
+        title="Nearest Places"
         onViewAll={() => router.navigate("/(tabs)/place")}
       />
     </>

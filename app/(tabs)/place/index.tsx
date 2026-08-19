@@ -12,40 +12,51 @@ import { useFocusEffect } from "expo-router";
 import ScreenBase from "@/components/ScreenBase";
 import Text from "@/components/Text";
 import PlaceCard from "@/components/PlaceCard";
-import { Place } from "@/lib/types";
+import SelectTagFilter from "@/components/SelectTagFilter";
+import { Place, Tag } from "@/lib/types";
 import { posthog } from "@/lib/posthog";
 import { useAddEditPlace } from "@/lib/places";
 import { usePlacesStore } from "@/store/places-store";
 
 export default function PlacesScreen() {
   const { onEditPlacePress } = useAddEditPlace();
-  const [expandedPlaceId, setExpandedPlaceId] = useState<string>();
-  const [filterText, setFilterText] = useState("");
   const places = usePlacesStore((state) => state.places);
+  const tags = usePlacesStore((state) => state.tags);
   const isLoading = usePlacesStore((state) => state.isLoadingPlaces);
   const ensurePlacesLoaded = usePlacesStore(
     (state) => state.ensurePlacesLoaded,
   );
+  const ensureTagsLoaded = usePlacesStore((state) => state.ensureTagsLoaded);
+
+  const [expandedPlaceId, setExpandedPlaceId] = useState<string>();
+  const [filterText, setFilterText] = useState("");
+  const [filterTag, setFilterTag] = useState<Tag | undefined>(undefined);
 
   // Load on demand when this screen is shown; the store dedupes concurrent
   // calls and caches the result, so screens never duplicate the DB call.
   useFocusEffect(
     useCallback(() => {
       void ensurePlacesLoaded();
-    }, [ensurePlacesLoaded]),
+      void ensureTagsLoaded();
+    }, [ensurePlacesLoaded, ensureTagsLoaded]),
   );
 
   const filteredPlaces = useMemo(() => {
     const query = filterText.trim().toLowerCase();
 
-    if (!query) return places;
-
     return places.filter((place) => {
-      return [place.title, place.description /* , place.tags?.join() */]
-        .filter(Boolean)
-        .some((val) => val!.toLowerCase().includes(query));
+      const matchesTag = !filterTag || place.tags?.includes(filterTag);
+      if (!matchesTag) return false;
+
+      const matchesText =
+        !query ||
+        [place.title, place.description]
+          .filter(Boolean)
+          .some((val) => val!.toLowerCase().includes(query));
+
+      return matchesText;
     });
-  }, [filterText, places]);
+  }, [filterText, filterTag, places]);
 
   const handleExpandPlace = (item: Place) => {
     const isExpanding = expandedPlaceId !== item.id;
@@ -64,7 +75,7 @@ export default function PlacesScreen() {
       >
         <FlatList
           data={filteredPlaces}
-          extraData={{ expandedPlaceId, filterText }}
+          extraData={{ expandedPlaceId, filterText, filterTag }}
           keyExtractor={(place) => place.id}
           renderItem={({ item: place }) => (
             <PlaceCard
@@ -85,6 +96,11 @@ export default function PlacesScreen() {
                 autoCapitalize="none"
                 autoCorrect={false}
                 className="text-input mt-4"
+              />
+              <SelectTagFilter
+                tags={tags}
+                value={filterTag}
+                onChange={setFilterTag}
               />
             </View>
           }

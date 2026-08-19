@@ -1,5 +1,11 @@
 import React from "react";
-import { View, Image, Pressable, type StyleProp, type ViewStyle } from "react-native";
+import {
+  View,
+  Image,
+  Pressable,
+  type StyleProp,
+  type ViewStyle,
+} from "react-native";
 
 import Text from "@/components/Text";
 import { cn, formatDateTime } from "@/lib/utils";
@@ -27,11 +33,11 @@ export default function PlaceCard({
   return (
     <Pressable
       onPress={onPress}
-      className={cn(
-        "place-card",
-        expanded ? "place-card-expanded" : "bg-card",
-      )}
-      style={[style, !expanded && color ? { backgroundColor: color } : undefined]}
+      className={cn("place-card", expanded && "place-card-expanded")}
+      style={[
+        style,
+        color ? { backgroundColor: color } : undefined,
+      ]}
     >
       <View className="place-head">
         <View className="place-head-main">

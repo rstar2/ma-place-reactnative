@@ -26,7 +26,8 @@ export function AddEditPlaceProvider({ children }: { children: ReactNode }) {
 
     const save =
       current === true
-        ? addPlace({ title: place.name })
+        // ? addPlace({ title: place.name })
+        ? console.log("todo")
         : current
           ? editPlace({ ...current, title: place.name })
           : null;

@@ -66,12 +66,12 @@ export default function Modal({
     };
   }, []);
 
-  const snapPoints = useMemo(() => ["50%", "90%"], []);
 
   return (
     <BottomSheetModal
       ref={sheetRef}
-      snapPoints={snapPoints}
+    //   enableDynamicSizing={false}
+    //   snapPoints={["50%", "90%"]}
       onChange={(index) => {
         // sheet closed by the user (gesture/backdrop/back button) → sync `visible`
         if (index === -1) onClose();

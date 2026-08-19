@@ -273,6 +273,10 @@
     @apply rounded-2xl border border-border bg-background px-4 py-4 text-base font-sans-medium text-primary;
   }
 
+  .text-input-multiline {
+    @apply min-h-[96px];
+  }
+
   .text-input-error {
     @apply border-destructive;
   }

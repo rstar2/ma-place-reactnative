@@ -20,14 +20,14 @@ export type Place = {
    * Image url - like:
    * https://res.cloudinary.com/magic-media/image/upload/v1569150316/ma-place/m4b3lllxapindctqlxdq.jpg
    */
-  imageUrl: string;
+  imageUrl?: string;
   /**
    * Any additional meta data,
    * currently just the Cloudinary ID of the image
    */
   meta: {
     // Like: ma-place/m4b3lllxapindctqlxdq
-    cloudinaryId: string;
+    cloudinaryId?: string;
   };
   //  meta: Record<string, string | number | boolean>;
 
@@ -41,9 +41,4 @@ export type Place = {
   color: string;
 };
 
-export type NewPlaceInput = Omit<
-  Place,
-  "id" | "createdAt" | "location" | "color" | "icon"
-> & {
-  location: { latitude: number; longitude: number };
-};
+export type NewPlaceInput = Omit<Place, "id" | "createdAt" | "color" | "icon">;

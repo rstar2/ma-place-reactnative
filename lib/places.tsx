@@ -1,7 +1,10 @@
-import ModalAddEditPlace from "@/components/ModalAddEditPlace";
+import { GeoPoint } from "@react-native-firebase/firestore";
 import { createContext, useContext, useState, type ReactNode } from "react";
-import { Place } from "./types";
+
+import ModalAddEditPlace from "@/components/ModalAddEditPlace";
 import { usePlacesStore } from "@/store/places-store";
+import type { NewPlaceInput, Place } from "./types";
+import { useAuth } from "./auth";
 
 type AddEditPlaceContextValue = {
   onAddPlacePress: () => void;
@@ -16,23 +19,37 @@ const AddEditPlaceContext = createContext<AddEditPlaceContextValue | undefined>(
 );
 
 export function AddEditPlaceProvider({ children }: { children: ReactNode }) {
+  const { user } = useAuth();
   const [modalPlace, setModalPlace] = useState<ModalPlace>(null);
   const addPlace = usePlacesStore((state) => state.addPlace);
   const editPlace = usePlacesStore((state) => state.editPlace);
 
-  function handleSubmit(place: { name: string }) {
+  async function handleSubmit(values: Omit<NewPlaceInput, "uid">) {
     const current = modalPlace;
     setModalPlace(null);
 
-    const save =
-      current === true
-        // ? addPlace({ title: place.name })
-        ? console.log("todo")
-        : current
-          ? editPlace({ ...current, title: place.name })
-          : null;
+    if (!current) return;
 
-    save?.catch((err) => console.warn("Failed to save place:", err));
+    try {
+      if (current === true) {
+        // add new
+        await addPlace({
+          uid: user!.uid,
+          ...values,
+        });
+      } else {
+        // edit current
+        await editPlace({
+          ...current,
+          ...values,
+        });
+      }
+
+      // TODO: show success notification
+    } catch (err) {
+      console.error(`Failed to save place`, err);
+      // TODO: show error notification
+    }
   }
 
   const value: AddEditPlaceContextValue = {

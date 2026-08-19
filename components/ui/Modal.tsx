@@ -1,10 +1,4 @@
-import {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  type ReactNode,
-} from "react";
+import { useCallback, useEffect, useMemo, useRef, type ReactNode } from "react";
 import { View } from "react-native";
 import {
   BottomSheetBackdrop,
@@ -41,17 +35,13 @@ export default function Modal({
   children,
 }: ModalProps) {
   const sheetRef = useRef<BottomSheetModal>(null);
-  // guards against dismiss() on mount, before the sheet was ever presented
-  const wasPresentedRef = useRef(false);
 
   // `visible` is the controlled source of truth: present/dismiss on change
   useEffect(() => {
     if (visible) {
-      wasPresentedRef.current = true;
       sheetRef.current?.present();
-    } else if (wasPresentedRef.current) {
-      wasPresentedRef.current = false;
-      sheetRef.current?.dismiss();
+    } else {
+      sheetRef.current?.close();
     }
   }, [visible]);
 
@@ -67,6 +57,14 @@ export default function Modal({
     ),
     [],
   );
+
+  useEffect(() => {
+    // dismiss the modal when unmount
+    const modal = sheetRef.current;
+    return () => {
+        modal?.dismiss();
+    };
+  }, []);
 
   const snapPoints = useMemo(() => ["50%", "90%"], []);
 
@@ -89,8 +87,8 @@ export default function Modal({
 
             {/* No need as this modal has its own gesture handle */}
             {/* <Pressable className="modal-close" onPress={onClose}> */}
-              {/* NOTE: the ✕ is not the latter x but the unicode entity U+2715 (HTML entity &#10005;) - "multiplication x" */}
-              {/* <Text className="modal-close-text">✕</Text> */}
+            {/* NOTE: the ✕ is not the latter x but the unicode entity U+2715 (HTML entity &#10005;) - "multiplication x" */}
+            {/* <Text className="modal-close-text">✕</Text> */}
             {/* </Pressable> */}
           </View>
         )}

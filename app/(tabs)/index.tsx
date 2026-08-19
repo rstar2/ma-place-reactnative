@@ -56,7 +56,7 @@ export default function Index() {
   const { myPlaces, nearestPlaces } = places.reduce(
     (out, place) => {
         // check if this is "my" place (created by me)
-      if (place.uid === user!.uid) out.myPlaces.push(place);
+      if (place.uid === user?.uid) out.myPlaces.push(place);
 
       // TODO: implement some logic
       out.nearestPlaces.push(place);

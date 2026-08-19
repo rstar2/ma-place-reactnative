@@ -4,7 +4,7 @@ import { GeoPoint } from "@react-native-firebase/firestore";
 
 import Text from "@/components/ui/Text";
 import Modal from "@/components/ui/Modal";
-import Select from "@/components/ui/Select";
+import MultiSelect from "@/components/ui/MultiSelect";
 import { cn, isBoolean } from "@/lib/utils";
 import type { NewPlaceInput, Place, Tag } from "@/lib/types";
 import { usePlacesStore } from "@/store/places-store";
@@ -40,8 +40,8 @@ export default function ModalAddEditPlace({
   const [locationText, setLocationText] = useState(
     isEdit ? `${place.location.latitude} ${place.location.longitude}` : "",
   );
-  const [tag, setTag] = useState<Tag | undefined>(
-    isEdit ? place.tags?.[0] : undefined,
+  const [selectedTags, setSelectedTags] = useState<Tag[]>(
+    isEdit ? (place.tags ?? []) : [],
   );
 
   const location = parseLocation(locationText);
@@ -58,7 +58,7 @@ export default function ModalAddEditPlace({
     setLocationText(
       isEdit ? `${place.location.latitude} ${place.location.longitude}` : "",
     );
-    setTag(isEdit ? place.tags?.[0] : undefined);
+    setSelectedTags(isEdit ? (place.tags ?? []) : []);
   }, [place, isEdit, ensureTagsLoaded]);
 
   function handleSubmit() {
@@ -66,7 +66,7 @@ export default function ModalAddEditPlace({
       title: title.trim(),
       description: description.trim(),
       location: location!,
-      tags: tag ? [tag] : [],
+      tags: selectedTags,
 
       // TODO
       imageUrl: "todo",
@@ -121,11 +121,11 @@ export default function ModalAddEditPlace({
 
       <View className="text-input-field">
         <Text className="text-input-label">Tags</Text>
-        <Select
+        <MultiSelect
           options={tags.map((t) => ({ label: t, value: t }))}
-          selected={tag}
-          onSelect={setTag}
-          placeholder="Select a tag..."
+          selected={selectedTags}
+          onSelect={setSelectedTags}
+          placeholder="Select tags..."
         />
       </View>
 

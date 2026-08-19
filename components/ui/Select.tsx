@@ -123,6 +123,9 @@ export default function Select<T extends string | number>({
       {/* NOTE: using the @gorhom/bottom-sheet */}
       <BottomSheetModal
         ref={sheetRef}
+        // "push": present on top of a parent modal sheet. The default "switch"
+        // minimizes the parent sheet, which its onChange(-1) reads as a close.
+        stackBehavior="push"
         snapPoints={snapPoints}
         backdropComponent={renderBackdrop}
         backgroundStyle={{ backgroundColor: theme.colors.background }}

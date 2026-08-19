@@ -1,6 +1,6 @@
 import { View, TouchableOpacity } from "react-native";
 
-import Text from "@/components/Text";
+import Text from "@/components/ui/Text";
 
 type ListHeadingProps = {
   title: string;

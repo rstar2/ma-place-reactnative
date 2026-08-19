@@ -10,7 +10,7 @@ import {
 } from "react-native";
 import { Link } from "expo-router";
 
-import Text from "@/components/Text";
+import Text from "@/components/ui/Text";
 import { friendlyAuthError, useAuth } from "@/lib/auth";
 import { cn } from "@/lib/utils";
 

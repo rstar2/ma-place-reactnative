@@ -10,7 +10,7 @@ import {
 import { useFocusEffect } from "expo-router";
 
 import ScreenBase from "@/components/ScreenBase";
-import Text from "@/components/Text";
+import Text from "@/components/ui/Text";
 import PlaceCard from "@/components/PlaceCard";
 import SelectTagFilter from "@/components/SelectTagFilter";
 import { Place, Tag } from "@/lib/types";

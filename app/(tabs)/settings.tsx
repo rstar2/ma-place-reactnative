@@ -2,7 +2,7 @@ import { useState } from "react";
 import { ActivityIndicator, Pressable, View } from "react-native";
 
 import ScreenBase from "@/components/ScreenBase";
-import Text from "@/components/Text";
+import Text from "@/components/ui/Text";
 import { useAuth } from "@/lib/auth";
 import { cn } from "@/lib/utils";
 import { posthog } from "@/lib/posthog";

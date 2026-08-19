@@ -9,7 +9,7 @@ import {
 import { useFocusEffect, useRouter } from "expo-router";
 
 import ScreenBase from "@/components/ScreenBase";
-import Text from "@/components/Text";
+import Text from "@/components/ui/Text";
 import ListHeading from "@/components/ListHeading";
 import PlaceCard from "@/components/PlaceCard";
 import { noop } from "@/lib/utils";

@@ -1,6 +1,6 @@
 import { View } from "react-native";
 
-import Select, { type SelectOption } from "@/components/Select";
+import Select, { type SelectOption } from "@/components/ui/Select";
 import { Tag } from "@/lib/types";
 
 /** Sentinel value for the "All" option (no tag filter). */

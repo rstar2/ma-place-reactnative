@@ -17,7 +17,7 @@ import { Place } from "@/lib/types";
 import { images } from "@/constants/images";
 import { posthog } from "@/lib/posthog";
 import { icons } from "@/constants/icons";
-import { useAddEditPlace } from "@/lib/places";
+import { useManagePlace } from "@/lib/places";
 import { usePlacesStore } from "@/store/places-store";
 import { useAuth } from "@/lib/auth";
 
@@ -27,7 +27,7 @@ const user = {
 };
 
 export default function Index() {
-  const { onAddPlacePress } = useAddEditPlace();
+  const { onAddPlace: onAddPlacePress } = useManagePlace();
   const { user } = useAuth();
   const [expandedPlaceId, setExpandedPlaceId] = useState<string>();
   const places = usePlacesStore((state) => state.places);
@@ -82,7 +82,7 @@ export default function Index() {
           <PlaceCard
             place={place}
             expanded={expandedPlaceId === place.id}
-            onPress={() => handleExpandPlace(place)}
+            onExpand={() => handleExpandPlace(place)}
           />
         )}
         ItemSeparatorComponent={() => <View className="h-4" />}
@@ -90,7 +90,7 @@ export default function Index() {
           isLoading ? (
             <ActivityIndicator className="mt-10" />
           ) : (
-            <Text className="home-empty-state">No places nearby</Text>
+            <Text className="empty-state">No places nearby</Text>
           )
         }
         showsVerticalScrollIndicator={false}
@@ -154,14 +154,14 @@ function Header({
           renderItem={({ item: place }) => (
             <PlaceCard
               place={place}
-              onPress={noop}
+              onExpand={noop}
               style={{ width: listWidth * HORIZONTAL_CARD_RATIO }}
             />
           )}
           keyExtractor={(place) => place.id}
           ItemSeparatorComponent={() => <View className="w-4" />}
           ListEmptyComponent={
-            <Text className="home-empty-state">No places by me yet</Text>
+            <Text className="empty-state">No places by me yet</Text>
           }
           horizontal
           showsHorizontalScrollIndicator={false}

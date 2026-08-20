@@ -13,8 +13,11 @@ import {
   Timestamp,
 } from "@react-native-firebase/firestore";
 import { getFunctions, httpsCallable } from "@react-native-firebase/functions";
-import { NewPlaceInput, Place } from "./types";
+import * as auth from "@react-native-firebase/auth";
+
+import type { NewPlaceInput, Place } from "./types";
 import { icons } from "@/constants/icons";
+import { theme } from "@/constants/theme";
 
 /** Firestore database instance. */
 const db = getFirestore();
@@ -93,7 +96,12 @@ const dbAddPlaceCallable = httpsCallable<NewPlaceInput, AddPlaceResult>(
   "dbAddPlaceApp",
 );
 
-export async function addPlace(data: NewPlaceInput): Promise<Place> {
+export async function addPlace(placeInput: NewPlaceInput): Promise<Place> {
+  const uid = auth.getAuth().currentUser?.uid;
+  if (!uid) throw new Error("You must be signed in to add a place.");
+
+  const data = { ...placeInput, uid };
+
   // 1. Use the client Firebase Firestore API - this could be disabled in the Firestore rules
   // so that only Firebase Functions should be used
   // const ref = await addDoc(placesRef, data);
@@ -127,12 +135,14 @@ export async function addPlace(data: NewPlaceInput): Promise<Place> {
   );
 }
 
-export async function updatePlace(place: Place) {
+export async function updatePlace(
+  id: string,
+  placeInput: NewPlaceInput,
+): Promise<Place> {
   // `icon`/`color` are derived locally - never persist them
-  const { id, icon: _icon, color: _color, ...fields } = place;
   // pass only "valid" fields - cannot pass 'undefined' (and 'null' is a valid value)
   const updates = Object.fromEntries(
-    Object.entries(fields).filter(([, value]) => value !== undefined),
+    Object.entries(placeInput).filter(([, value]) => value !== undefined),
   );
   return await updateDoc(doc(placesRef, id), updates);
 }
@@ -143,6 +153,7 @@ export async function deletePlace(placeId: string): Promise<void> {
 
 /** Icons/colors used to decorate places locally (never persisted). */
 const PLACE_ICONS = [
+    // TODO: create proper icons per tag
   icons.home,
   icons.wallet,
   icons.activity,
@@ -152,14 +163,7 @@ const PLACE_ICONS = [
   icons.github,
   icons.dropbox,
 ];
-const PLACE_COLORS = [
-  "#f5c542",
-  "#b8e8d0",
-  "#e8def8",
-  "#b8d4e3",
-  "#f8c8b8",
-  "#c8d9f8",
-];
+const PLACE_COLORS = Object.values(theme.colors.tag);
 
 /** Stable string hash → items index, so a place always decorates the same. */
 function pick<T>(items: T[], seed: string): T {

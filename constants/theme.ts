@@ -1,9 +1,17 @@
+import tailwindColors from "tailwindcss/colors";
+import { rgb, formatRgb } from "culori";
 /**
  * This file contains the theme constants for the application, including colors, spacing, and component-specific styles
  * These constants are used throughout the app to maintain a consistent look and feel.
  *
  * It's actually "same" values as in the globals.css, but in TypeScript for type safety and intellisense.
  */
+
+export function withAlpha(color: string, alpha: number): string {
+  const c = rgb(color);
+  // parses   hex / rgb / oklch / named → rgb
+  return c ? formatRgb({ ...c, alpha }) : color; // "rgba(220, 38,  38, 0.1)"
+}
 
 const colors = {
   background: "#fff9e3",
@@ -17,6 +25,22 @@ const colors = {
   success: "#16a34a",
   destructive: "#dc2626",
   place: "#8fd1bd",
+
+  tag: {
+    parking: "#f5c542",
+    crag: "#b8e8d0",
+    sleep: "#e8def8",
+    water: "#b8d4e3",
+    oil: "#f8c8b8",
+    playground: "#c8d9f8",
+    place: "#c8d9f8",
+  },
+
+  toast: {
+    // success: formatRgb(tailwindColors.green[900]),
+    success: withAlpha(tailwindColors.green[400], 0.3), // adds some transparency
+    error: withAlpha(tailwindColors.red[300], 0.5),
+  },
 } as const;
 
 const spacing = {

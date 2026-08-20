@@ -5,7 +5,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { icons } from "@/constants/icons";
 import { theme } from "@/constants/theme";
-import { AddEditPlaceProvider } from "@/lib/places";
+import { ManagePlaceProvider } from "@/lib/places";
 import { cn } from "@/lib/utils";
 
 const tabBar = theme.components.tabBar;
@@ -53,7 +53,7 @@ export default function TabsLayout() {
   const insets = useSafeAreaInsets();
 
   return (
-    <AddEditPlaceProvider>
+    <ManagePlaceProvider>
       <Tabs
         screenOptions={{
           headerShown: false,
@@ -94,6 +94,6 @@ export default function TabsLayout() {
         {/* Note: don't show this dynamic route in the Tabs */}
         <Tabs.Screen name="place/[id]" options={{ href: null }} />
       </Tabs>
-    </AddEditPlaceProvider>
+    </ManagePlaceProvider>
   );
 }

@@ -11,13 +11,15 @@ import Text from "@/components/ui/Text";
 import { cn, formatDateTime } from "@/lib/utils";
 import { Place } from "@/lib/types";
 import { theme } from "@/constants/theme";
+import Button from "./ui/Button";
 
 type PlaceCardProps = {
   place: Place;
   style?: StyleProp<ViewStyle>;
   expanded?: boolean;
-  onPress: () => void;
-  onEditPress?: () => void;
+  onExpand: () => void;
+  onEdit?: () => void;
+  onDelete?: () => void;
 };
 
 export default function PlaceCard({
@@ -27,17 +29,15 @@ export default function PlaceCard({
   // additional
   style,
   expanded = false,
-  onPress,
-  onEditPress,
+  onExpand,
+  onEdit,
+  onDelete,
 }: PlaceCardProps) {
   return (
     <Pressable
-      onPress={onPress}
+      onPress={onExpand}
       className={cn("place-card", expanded && "place-card-expanded")}
-      style={[
-        style,
-        color ? { backgroundColor: color } : undefined,
-      ]}
+      style={[style, color ? { backgroundColor: color } : undefined]}
     >
       <View className="place-head">
         <View className="place-head-main">
@@ -109,10 +109,22 @@ export default function PlaceCard({
             </Text>
           </View>
 
-          {onEditPress && (
-            <Pressable onPress={onEditPress} className="sub-edit">
-              <Text className="sub-edit-text">Edit</Text>
-            </Pressable>
+          {(onEdit || onDelete) && (
+            <View className="flex-row gap-3">
+              {onEdit && (
+                <Button
+                  className="flex-1 w-1/2"
+                  onPress={onEdit}
+                  label="Edit"
+                ></Button>
+              )}
+
+              <Button
+                onPress={onDelete}
+                className="bg-destructive flex-1 w-1/2"
+                label="Delete"
+              />
+            </View>
           )}
         </View>
       )}

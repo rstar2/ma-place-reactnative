@@ -34,3 +34,12 @@ export function cn(...inputs: ClassValue[]) {
 export function isBoolean(v: any): v is boolean {
   return typeof v === "boolean";
 }
+export function isString(v: any): v is string {
+  return v instanceof String || typeof v === "string";
+}
+
+export function toGeoPointCoordinate(val: number | string): string {
+  // 1. convert num to real Number if necessary,
+  // 2. use up to 6 precision points (toFixed(6) - it return String
+  return Number(val).toFixed(6);
+}

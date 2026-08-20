@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
-import { Pressable, TextInput, View } from "react-native";
-import { GeoPoint } from "@react-native-firebase/firestore";
+import { TextInput, View } from "react-native";
 
 import Text from "@/components/ui/Text";
+import Button from "@/components/ui/Button";
 import Modal from "@/components/ui/Modal";
 import MultiSelect from "@/components/ui/MultiSelect";
-import { cn, isBoolean } from "@/lib/utils";
+import { isBoolean, toGeoPointCoordinate } from "@/lib/utils";
 import type { NewPlaceInput, Place, Tag } from "@/lib/types";
 import { usePlacesStore } from "@/store/places-store";
 
@@ -14,14 +14,17 @@ type ModalAddEditPlaceProps = {
   place: Place | boolean | null;
   onClose: () => void;
   /** Carries the values collected by the modal's inputs. */
-  onSubmit: (values: Omit<NewPlaceInput, "uid">) => void;
+  onSubmit: (values: NewPlaceInput) => void;
 };
 
 /** Parses the location text field: "latitude longitude", e.g. "42.6333 23.3833". */
 function parseLocation(text: string): NewPlaceInput["location"] | null {
   const match = text.trim().match(/^(-?\d+(?:\.\d+)?)\s+(-?\d+(?:\.\d+)?)$/);
   if (!match) return null;
-  return new GeoPoint(Number(match[1]), Number(match[2]));
+  return {
+    longitude: toGeoPointCoordinate(match[1]),
+    latitude: toGeoPointCoordinate(match[2]),
+  };
 }
 
 export default function ModalAddEditPlace({
@@ -131,22 +134,17 @@ export default function ModalAddEditPlace({
 
       <View className="flex-row gap-3">
         {/* NOTE: No need for a cancel/close button */}
-        {/* <Pressable
-          className="button-secondary flex-1 py-4 w-1/2"
+        {/* <Button
+          className="button-secondary flex-1 w-1/2"
           onPress={onClose}
-        >
-          <Text className="button-secondary-text">Cancel</Text>
-        </Pressable> */}
-        <Pressable
+          label="Cancel"
+        /> */}
+        <Button
           onPress={handleSubmit}
           disabled={!canSubmit}
-          className={cn(
-            "button flex-1 py-4 w-1/2",
-            !canSubmit && "button-disabled",
-          )}
-        >
-          <Text className="button-text">{isEdit ? "Edit" : "Add"}</Text>
-        </Pressable>
+          label={isEdit ? "Edit" : "Add"}
+          className="flex-1 w-1/2"
+        />
       </View>
     </Modal>
   );

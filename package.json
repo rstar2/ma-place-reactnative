@@ -13,6 +13,7 @@
     "android:clean": "./android/gradlew clean *"
   },
   "dependencies": {
+    "@baronha/ting": "^1.2.3",
     "@expo/vector-icons": "^15.0.3",
     "@gorhom/bottom-sheet": "^5.2.14",
     "@react-native-firebase/app": "^26.1.0",
@@ -23,7 +24,9 @@
     "@react-navigation/bottom-tabs": "^7.4.0",
     "@react-navigation/elements": "^2.6.3",
     "@react-navigation/native": "^7.1.8",
+    "burnt": "^0.13.0",
     "clsx": "^2.1.1",
+    "culori": "^4.0.2",
     "dayjs": "^1.11.21",
     "expo": "~54.0.35",
     "expo-build-properties": "^57.0.10",
@@ -56,6 +59,7 @@
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.3.3",
+    "@types/culori": "^4.0.1",
     "@types/react": "~19.1.0",
     "eslint": "^9.25.0",
     "eslint-config-expo": "~10.0.0",

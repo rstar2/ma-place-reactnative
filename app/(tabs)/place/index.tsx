@@ -15,11 +15,11 @@ import PlaceCard from "@/components/PlaceCard";
 import SelectTagFilter from "@/components/SelectTagFilter";
 import { Place, Tag } from "@/lib/types";
 import { posthog } from "@/lib/posthog";
-import { useAddEditPlace } from "@/lib/places";
+import { useManagePlace } from "@/lib/places";
 import { usePlacesStore } from "@/store/places-store";
 
 export default function PlacesScreen() {
-  const { onEditPlacePress } = useAddEditPlace();
+  const { onEditPlace: handleEditPlace, onDeletePlace: handleDeletePlace } = useManagePlace();
   const places = usePlacesStore((state) => state.places);
   const tags = usePlacesStore((state) => state.tags);
   const isLoading = usePlacesStore((state) => state.isLoadingPlaces);
@@ -81,8 +81,9 @@ export default function PlacesScreen() {
             <PlaceCard
               place={place}
               expanded={expandedPlaceId === place.id}
-              onPress={() => handleExpandPlace(place)}
-              onEditPress={() => onEditPlacePress(place)}
+              onExpand={() => handleExpandPlace(place)}
+              onEdit={() => handleEditPlace(place)}
+              onDelete={() => handleDeletePlace(place)}
             />
           )}
           ListHeaderComponent={
@@ -109,7 +110,7 @@ export default function PlacesScreen() {
             isLoading ? (
               <ActivityIndicator className="mt-10" />
             ) : (
-              <Text className="home-empty-state">
+              <Text className="empty-state">
                 No matching places found.
               </Text>
             )

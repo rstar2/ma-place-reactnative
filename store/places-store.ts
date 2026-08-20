@@ -1,5 +1,4 @@
 import { create } from "zustand";
-import * as auth from "@react-native-firebase/auth";
 
 import {
   addPlace as addPlaceDoc,
@@ -8,7 +7,7 @@ import {
   loadTags,
   updatePlace as updatePlaceDoc,
 } from "@/lib/db";
-import { Place, NewPlaceInput } from "@/lib/types";
+import type { Place, NewPlaceInput } from "@/lib/types";
 
 type PlacesStore = {
   places: Place[];
@@ -34,7 +33,7 @@ type PlacesStore = {
   /** Persists a new place and prepends it to the cached list. */
   addPlace: (input: NewPlaceInput) => Promise<void>;
   /** Persists an edited place and updates it in the cached list. */
-  editPlace: (place: Place) => Promise<void>;
+  editPlace: (id: string, input: NewPlaceInput) => Promise<void>;
   /** Deletes a place and removes it from the cached list. */
   deletePlace: (placeId: string) => Promise<void>;
 };
@@ -94,25 +93,14 @@ export const usePlacesStore = create<PlacesStore>()((set, get) => ({
   },
 
   addPlace: async (input) => {
-    const uid = auth.getAuth().currentUser?.uid;
-    if (!uid) throw new Error("You must be signed in to add a place.");
-
-    const place = await addPlaceDoc({
-      uid,
-      title: input.title,
-      description: input.description,
-      location: input.location,
-      tags: input.tags ?? [],
-      imageUrl: input.imageUrl,
-      meta: input.meta,
-    });
+    const place = await addPlaceDoc(input);
 
     // the list is ordered by createdAt desc → the new place goes on top
     set({ places: [place, ...get().places] });
   },
 
-  editPlace: async (place) => {
-    await updatePlaceDoc(place);
+  editPlace: async (id, input) => {
+    const place = await updatePlaceDoc(id, input);
     set({
       places: get().places.map((p) => (p.id === place.id ? place : p)),
     });

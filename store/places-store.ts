@@ -100,7 +100,10 @@ export const usePlacesStore = create<PlacesStore>()((set, get) => ({
   },
 
   editPlace: async (id, input) => {
-    const place = await updatePlaceDoc(id, input);
+    const existing = get().places.find((p) => p.id === id);
+    if (!existing) throw new Error(`Place ${id} not found in the cache.`);
+
+    const place = await updatePlaceDoc(existing, input);
     set({
       places: get().places.map((p) => (p.id === place.id ? place : p)),
     });

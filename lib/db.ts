@@ -135,16 +135,31 @@ export async function addPlace(placeInput: NewPlaceInput): Promise<Place> {
   );
 }
 
+/**
+ * Persists an edited place and returns the updated `Place` by merging
+ * `placeInput` into `existing` locally - `updates` carries no
+ * server-generated fields, so no follow-up `getDoc` is needed.
+ */
 export async function updatePlace(
-  id: string,
+  existing: Place,
   placeInput: NewPlaceInput,
 ): Promise<Place> {
   // `icon`/`color` are derived locally - never persist them
   // pass only "valid" fields - cannot pass 'undefined' (and 'null' is a valid value)
-  const updates = Object.fromEntries(
-    Object.entries(placeInput).filter(([, value]) => value !== undefined),
+  const location = new GeoPoint(
+    +placeInput.location.latitude,
+    +placeInput.location.longitude,
   );
-  return await updateDoc(doc(placesRef, id), updates);
+  const updates = Object.fromEntries(
+    Object.entries(placeInput)
+      .filter(([, value]) => value !== undefined)
+      .map((entry) =>
+        entry[0] === "location" ? (["location", location] as const) : entry,
+      ),
+  );
+  await updateDoc(doc(placesRef, existing.id), updates);
+
+  return decoratePlace({ ...existing, ...placeInput, location }, existing.id);
 }
 
 export async function deletePlace(placeId: string): Promise<void> {
@@ -153,7 +168,7 @@ export async function deletePlace(placeId: string): Promise<void> {
 
 /** Icons/colors used to decorate places locally (never persisted). */
 const PLACE_ICONS = [
-    // TODO: create proper icons per tag
+  // TODO: create proper icons per tag
   icons.home,
   icons.wallet,
   icons.activity,

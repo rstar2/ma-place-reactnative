@@ -49,3 +49,13 @@ Wiring: `metro.config.js` wraps the Metro config with `withNativeWind({ input: '
 - Icons: import from `constants/icons.ts` (PNG assets). It exports the `icons` map and an `IconKey` type — the `(tabs)` layout's `tabs` array is `satisfies TabScreen[]` against it. Add new PNGs there. Same pattern for images in `constants/images.ts`.
 - Formatting/domain helpers live in `lib/utils.ts` (`formatCurrency`, `formatDateTime`, `formatStatusLabel`, `cn`).
 - Fonts: `global.css` `@theme` maps `--font-sans-*` to family names (`sans-regular` … `sans-extrabold`); the TTFs are in `assets/fonts/PlusJakartaSans-*.ttf`. No `expo-font` loader is wired into the layouts yet — add `useFonts` in a root layout if you start using `font-sans-*` classes.
+
+## UI style
+
+- Custom base UI components in `components/ui`, like `Button`, `Modal`, plain `Text` and etc.. Any new one should be put there.
+- Shared components in just `components` like `ScreenBase`
+
+## Backend/API
+
+- DB: uses `Firebase Firestore`.
+- Auth: uses `Firebase Auth` for both *email/password* and *Google* sign-in

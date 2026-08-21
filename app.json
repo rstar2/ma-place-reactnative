@@ -54,6 +54,14 @@
             "backgroundColor": "#000000"
           }
         }
+      ],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Allow ma-place to access your photos",
+          "cameraPermission": "Allow ma-place to take a photo",
+          "microphonePermission": false
+        }
       ]
     ],
     "experiments": {

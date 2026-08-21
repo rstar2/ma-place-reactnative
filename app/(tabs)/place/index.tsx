@@ -4,22 +4,24 @@ import {
   FlatList,
   KeyboardAvoidingView,
   Platform,
-  TextInput,
   View,
 } from "react-native";
 import { useFocusEffect } from "expo-router";
 
 import ScreenBase from "@/components/ScreenBase";
 import Text from "@/components/ui/Text";
+import TextInput from "@/components/ui/TextInput";
+import Select, { type SelectOption } from "@/components/ui/Select";
+import { ListItemSeparator } from "@/components/ListItemSeparator";
 import PlaceCard from "@/components/PlaceCard";
-import SelectTagFilter from "@/components/SelectTagFilter";
-import { Place, Tag } from "@/lib/types";
+import type { Place, Tag } from "@/lib/types";
 import { posthog } from "@/lib/posthog";
 import { useManagePlace } from "@/lib/places";
 import { usePlacesStore } from "@/store/places-store";
 
 export default function PlacesScreen() {
-  const { onEditPlace: handleEditPlace, onDeletePlace: handleDeletePlace } = useManagePlace();
+  const { onEditPlace: handleEditPlace, onDeletePlace: handleDeletePlace } =
+    useManagePlace();
   const places = usePlacesStore((state) => state.places);
   const tags = usePlacesStore((state) => state.tags);
   const isLoading = usePlacesStore((state) => state.isLoadingPlaces);
@@ -31,6 +33,11 @@ export default function PlacesScreen() {
   const [expandedPlaceId, setExpandedPlaceId] = useState<string>();
   const [filterText, setFilterText] = useState("");
   const [filterTag, setFilterTag] = useState<Tag | undefined>(undefined);
+
+  const filterTagOptions: SelectOption<Tag>[] = tags.map((t) => ({
+    label: t,
+    value: t,
+  }));
 
   // Load on demand when this screen is shown; the store dedupes concurrent
   // calls and caches the result, so screens never duplicate the DB call.
@@ -88,31 +95,31 @@ export default function PlacesScreen() {
           )}
           ListHeaderComponent={
             <View className="mb-4">
-              <Text className="list-title">All Places</Text>
+              <Text className="list-title mb-4">All Places</Text>
               <TextInput
                 value={filterText}
                 onChangeText={setFilterText}
-                placeholder="Filter places..."
-                placeholderTextColor="rgba(0,0,0,0.35)"
-                autoCapitalize="none"
-                autoCorrect={false}
-                className="text-input mt-4"
+                placeholder="Filter by name ..."
               />
-              <SelectTagFilter
-                tags={tags}
-                value={filterTag}
-                onChange={setFilterTag}
-              />
+
+              <View className="tag-filter">
+                <Select
+                  placeholder="Filter by tag ..."
+                  options={filterTagOptions}
+                  selected={filterTag}
+                  onSelect={(v) =>
+                    setFilterTag(v === filterTag ? undefined : (v as Tag))
+                  }
+                />
+              </View>
             </View>
           }
-          ItemSeparatorComponent={() => <View className="h-4" />}
+          ItemSeparatorComponent={ListItemSeparator}
           ListEmptyComponent={
             isLoading ? (
               <ActivityIndicator className="mt-10" />
             ) : (
-              <Text className="empty-state">
-                No matching places found.
-              </Text>
+              <Text className="empty-state">No matching places found.</Text>
             )
           }
           showsVerticalScrollIndicator={false}

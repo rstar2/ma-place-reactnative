@@ -12,6 +12,10 @@ import ScreenBase from "@/components/ScreenBase";
 import Text from "@/components/ui/Text";
 import ListHeading from "@/components/ListHeading";
 import PlaceCard from "@/components/PlaceCard";
+import {
+  ListItemSeparator,
+  ListItemSeparatorH,
+} from "@/components/ListItemSeparator";
 import { noop } from "@/lib/utils";
 import { Place } from "@/lib/types";
 import { images } from "@/constants/images";
@@ -55,7 +59,7 @@ export default function Index() {
 
   const { myPlaces, nearestPlaces } = places.reduce(
     (out, place) => {
-        // check if this is "my" place (created by me)
+      // check if this is "my" place (created by me)
       if (place.uid === user?.uid) out.myPlaces.push(place);
 
       // TODO: implement some logic
@@ -72,9 +76,13 @@ export default function Index() {
   return (
     <ScreenBase>
       <FlatList
-        ListHeaderComponent={() => (
+        // NOTE: must be an ELEMENT, not `() => <Header/>` — VirtualizedList
+        // uses the prop as a component TYPE, so an inline arrow means a new
+        // type on every render → the whole header REMOUNTS (listWidth resets
+        // to 0 → horizontal cards collapse → flicker on modal open/close).
+        ListHeaderComponent={
           <Header myPlaces={myPlaces} onAddPlacePress={onAddPlacePress} />
-        )}
+        }
         data={nearestPlaces}
         extraData={expandedPlaceId}
         keyExtractor={(place) => place.id}
@@ -85,7 +93,7 @@ export default function Index() {
             onExpand={() => handleExpandPlace(place)}
           />
         )}
-        ItemSeparatorComponent={() => <View className="h-4" />}
+        ItemSeparatorComponent={ListItemSeparator}
         ListEmptyComponent={
           isLoading ? (
             <ActivityIndicator className="mt-10" />
@@ -104,6 +112,10 @@ export default function Index() {
 // the content container's width is determined by the items themselves, so
 // percentages resolve against nothing. Measure the list width and size in JS.
 const HORIZONTAL_CARD_RATIO = 0.9;
+
+// NOTE: separators must be module-scope components — VirtualizedList uses the
+// prop as a component TYPE, so an inline arrow = new type on every render
+// → separators remount (same remount class as the ListHeaderComponent issue).
 
 // NOTE: Extract this to a separate component as otherwise it messes
 // the rendering. When the "big" flat list is rerendered, like when expanding a place,le
@@ -159,7 +171,7 @@ function Header({
             />
           )}
           keyExtractor={(place) => place.id}
-          ItemSeparatorComponent={() => <View className="w-4" />}
+          ItemSeparatorComponent={ListItemSeparatorH}
           ListEmptyComponent={
             <Text className="empty-state">No places by me yet</Text>
           }

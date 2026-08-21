@@ -1,8 +1,9 @@
-import { useCallback, useEffect, useMemo, useRef, type ReactNode } from "react";
+import { useCallback, useEffect, useRef, type ReactNode } from "react";
 import { View } from "react-native";
 import {
   BottomSheetBackdrop,
   BottomSheetModal,
+  BottomSheetScrollView,
   BottomSheetView,
   type BottomSheetBackdropProps,
 } from "@gorhom/bottom-sheet";
@@ -62,16 +63,15 @@ export default function Modal({
     // dismiss the modal when unmount
     const modal = sheetRef.current;
     return () => {
-        modal?.dismiss();
+      modal?.dismiss();
     };
   }, []);
-
 
   return (
     <BottomSheetModal
       ref={sheetRef}
-    //   enableDynamicSizing={false}
-    //   snapPoints={["50%", "90%"]}
+      //   enableDynamicSizing={true}
+      //   snapPoints={[/* "50%",  */"90%"]}
       onChange={(index) => {
         // sheet closed by the user (gesture/backdrop/back button) → sync `visible`
         if (index === -1) onClose();
@@ -79,8 +79,11 @@ export default function Modal({
       backdropComponent={renderBackdrop}
       backgroundStyle={{ backgroundColor: theme.colors.background }}
       handleIndicatorStyle={{ backgroundColor: theme.colors.mutedForeground }}
+      // on closing the keyboard then restore the sheet back as it was,
+      // otherwise empty space remain at the bottom 
+      keyboardBlurBehavior="restore"
     >
-      <BottomSheetView>
+      <BottomSheetScrollView>
         {title !== undefined && (
           <View className="modal-header">
             <Text className="modal-title">{title}</Text>
@@ -94,7 +97,7 @@ export default function Modal({
         )}
 
         <View className="modal-body">{children}</View>
-      </BottomSheetView>
+      </BottomSheetScrollView>
     </BottomSheetModal>
   );
 }

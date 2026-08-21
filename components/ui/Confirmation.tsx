@@ -52,12 +52,13 @@ export default function Confirmation({
             {isString(message) ? <Text>{message}</Text> : message}
           </View>
           <View className="confirm-buttons">
-            <Button onPress={confirm} label={noButton} />
             <Button
-              onPress={confirm}
-              className="bg-destructive"
-              label={yesButton}
+              label={noButton}
+              onPress={cancel}
+              className="button-secondary"
+              classNameLabel="button-secondary-text"
             />
+            <Button label={yesButton} onPress={confirm} />
           </View>
         </View>
       </Pressable>

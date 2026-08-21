@@ -34,7 +34,7 @@ export default function Button({
       {loading ? (
         <ActivityIndicator color="#ffffff" />
       ) : (
-        <Text className={cn("button-text text-white", classNameLabel)}>{label}</Text>
+        <Text className={cn("button-text", classNameLabel)}>{label}</Text>
       )}
     </Pressable>
   );

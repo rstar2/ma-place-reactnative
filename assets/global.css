@@ -11,7 +11,7 @@
   --color-foreground: #081126;
   --color-card: #fff8e7;
   --color-muted: #f6eecf;
-  --color-muted-foreground: rgba(0, 0, 0, 0.6);
+  --color-muted-foreground: rgba(0, 0, 0, 0.43);
   --color-primary: #081126;
   --color-accent: #ea7a53;
   --color-border: rgba(0, 0, 0, 0.1);
@@ -47,6 +47,198 @@
   --font-sans-extrabold: sans-extrabold;
 }
 
+
+@layer components{
+  .txt {
+    @apply font-sans text-foreground;
+  }
+
+  .button {
+    @apply items-center rounded-2xl bg-accent;
+  }
+
+  .button-disabled {
+    @apply opacity-50;
+  }
+
+  .button-text {
+    @apply text-base font-sans-bold text-white;
+  }
+
+  .button-destructive {
+    @apply items-center rounded-2xl bg-destructive;
+  }
+
+  .button-secondary {
+    @apply items-center rounded-2xl border border-accent/30 bg-accent/10;
+  }
+
+  .button-secondary-text {
+    @apply text-sm font-sans-semibold text-accent;
+  }
+
+  .confirm-overlay {
+    @apply flex-1 items-center justify-center bg-[rgba(0,0,0,0.5)];
+  }
+
+  .confirm-container {
+    @apply rounded-3xl bg-background min-w-xs;
+  }
+
+  .confirm-body {
+    @apply gap-5 p-5;
+  }
+
+  .confirm-buttons {
+    @apply flex-row justify-end gap-5 p-5 border-t border-border;
+  }
+
+  .modal-body {
+    @apply gap-5 p-5;
+  }
+
+  .modal-overlay {
+    /* for some reason bg-black/50 is not parsed properly from NativeWind, so set it directly*/
+    @apply flex-1 bg-[rgba(0,0,0,0.5)];
+  }
+
+  .modal-container {
+    @apply mt-auto max-h-[85%] rounded-t-3xl bg-background;
+  }
+
+  .modal-header {
+    @apply flex-row items-center justify-between border-b border-border px-5 py-4;
+  }
+
+  .modal-title {
+    @apply text-xl font-sans-bold text-primary;
+  }
+
+  .modal-close {
+    @apply size-8 items-center justify-center rounded-full bg-muted;
+  }
+
+  .modal-close-text {
+    @apply text-lg font-sans-bold text-primary;
+  }
+
+  .modal-body {
+    @apply gap-5 p-5;
+  }
+
+  .select-trigger {
+    @apply flex-row items-center justify-between rounded-2xl border border-border bg-background px-1 py-3;
+  }
+
+  .select-trigger-label {
+    @apply text-base font-sans-medium text-primary;
+  }
+
+  .select-trigger-placeholder {
+    @apply text-base font-sans-medium text-muted-foreground;
+  }
+
+  .select-chevron {
+    @apply ml-1 text-base text-muted-foreground;
+  }
+
+  .select-sheet {
+    @apply mt-auto max-h-[60%] gap-1 rounded-t-3xl bg-background pb-8 pt-3;
+  }
+
+  .select-sheet-handle {
+    @apply mb-3 h-1.5 w-10 self-center rounded-full bg-muted;
+  }
+
+  .select-option {
+    @apply rounded-2xl px-4 py-3;
+  }
+
+  .select-option-active {
+    @apply bg-accent/10;
+  }
+
+  .select-option-text {
+    @apply text-base font-sans-medium text-primary;
+  }
+
+  .select-option-text-active {
+    @apply font-sans-bold text-accent;
+  }
+
+  .multi-select-trigger {
+    @apply flex-row items-center justify-between gap-2 rounded-2xl border border-border bg-background px-4 py-3;
+  }
+
+  .multi-select-chips {
+    @apply flex-1 flex-row flex-wrap items-center gap-2;
+  }
+
+  .multi-select-chip {
+    @apply flex-row items-center gap-1 rounded-2xl border border-border bg-accent px-3 py-1;
+  }
+
+  .multi-select-chip-text {
+    @apply text-sm font-sans-medium text-primary;
+  }
+
+  .multi-select-chip-remove {
+    @apply text-xs text-muted-foreground;
+  }
+
+  .checkbox-row {
+    @apply flex-row items-center gap-3;
+  }
+
+  .checkbox-row-active {
+    @apply bg-accent/10;
+  }
+
+  .checkbox-label {
+    @apply text-base font-sans-medium text-primary;
+  }
+
+  .checkbox {
+    @apply h-5 w-5 items-center justify-center rounded-md border border-border;
+  }
+
+  .checkbox-active {
+    @apply border-transparent bg-accent;
+  }
+
+  .checkbox-check {
+    @apply text-xs font-sans-bold text-background;
+  }
+
+  .card {
+    @apply mt-8 rounded-3xl border border-border bg-card p-5;
+  }
+
+  .form {
+    @apply gap-4;
+  }
+
+  .input-field {
+    @apply gap-2;
+  }
+
+  .input-label {
+    @apply text-sm font-sans-semibold text-primary;
+  }
+
+  .input {
+    @apply rounded-2xl border border-border bg-background px-4 py-8 text-base font-sans-medium text-primary;
+  }
+
+  .input-multiline {
+    @apply min-h-24;
+  }
+
+  .input-error {
+    @apply border-destructive;
+  }
+}
+
 @layer components {
   .tabs-icon {
     @apply size-12 items-center justify-center;
@@ -62,30 +254,6 @@
 
   .tabs-glyph {
     @apply size-6;
-  }
-
-  .button {
-    @apply items-center rounded-2xl bg-accent;
-  }
-
-  .button-disabled {
-    @apply opacity-50;
-  }
-
-  .button-text {
-    @apply text-base font-sans-bold text-primary;
-  }
-
-  .button-destructive {
-    @apply items-center rounded-2xl bg-destructive;
-  }
-
-  .button-secondary {
-    @apply items-center rounded-2xl border border-accent/30 bg-accent/10;
-  }
-
-  .button-secondary-text {
-    @apply text-sm font-sans-semibold text-accent;
   }
 
   .home-header {
@@ -196,6 +364,20 @@
     @apply shrink font-sans-bold text-primary;
   }
 
+  .place-image-preview-wrap {
+    @apply relative;
+  }
+
+  /* NOTE: the Image from expo-image requires width/height (or width + aspect-ratio)
+     to be set, otherwise it will not render */
+  .place-image-preview {
+    @apply aspect-4/3 w-full rounded-2xl border border-border;
+  }
+
+  .place-image-remove {
+    @apply size-8 items-center justify-center rounded-full bg-muted absolute right-2 top-2;
+  }
+
   .empty-state {
     @apply py-4 text-sm font-sans-medium text-black/60;
   }
@@ -244,34 +426,6 @@
     @apply mt-2 max-w-[320px] text-center text-base font-sans-medium text-muted-foreground;
   }
 
-  .card {
-    @apply mt-8 rounded-3xl border border-border bg-card p-5;
-  }
-
-  .form {
-    @apply gap-4;
-  }
-
-  .text-input-field {
-    @apply gap-2;
-  }
-
-  .text-input-label {
-    @apply text-sm font-sans-semibold text-primary;
-  }
-
-  .text-input {
-    @apply rounded-2xl border border-border bg-background px-4 py-4 text-base font-sans-medium text-primary;
-  }
-
-  .text-input-multiline {
-    @apply min-h-[96px];
-  }
-
-  .text-input-error {
-    @apply border-destructive;
-  }
-
   .auth-error {
     @apply text-xs font-sans-medium text-destructive;
   }
@@ -304,141 +458,8 @@
     @apply text-sm font-sans-bold text-accent underline;
   }
 
-  .confirm-overlay {
-    @apply flex-1 items-center justify-center bg-[rgba(0,0,0,0.5)];
-  }
-
-  .confirm-container {
-    @apply rounded-3xl bg-background min-w-xs;
-  }
-
-  .confirm-body {
-    @apply gap-5 p-5;
-  }
-
-  .confirm-buttons {
-    @apply flex-row justify-end gap-5 p-5 border-t border-border;
-  }
-
-  .modal-body {
-    @apply gap-5 p-5;
-  }
-
-  .modal-overlay {
-    /* for some reason bg-black/50 is not parsed properly from NativeWind, so set it directly*/
-    @apply flex-1 bg-[rgba(0,0,0,0.5)];
-  }
-
-  .modal-container {
-    @apply mt-auto max-h-[85%] rounded-t-3xl bg-background;
-  }
-
-  .modal-header {
-    @apply flex-row items-center justify-between border-b border-border px-5 py-4;
-  }
-
-  .modal-title {
-    @apply text-xl font-sans-bold text-primary;
-  }
-
-  .modal-close {
-    @apply size-8 items-center justify-center rounded-full bg-muted;
-  }
-
-  .modal-close-text {
-    @apply text-lg font-sans-bold text-primary;
-  }
-
-  .modal-body {
-    @apply gap-5 p-5;
-  }
-
   .tag-filter {
     @apply mt-3;
-  }
-
-  .select-trigger {
-    @apply flex-row items-center justify-between rounded-2xl border border-border bg-background px-1 py-3;
-  }
-
-  .select-trigger-label {
-    @apply text-base font-sans-medium text-primary;
-  }
-
-  .select-trigger-placeholder {
-    @apply text-base font-sans-medium text-muted-foreground;
-  }
-
-  .select-chevron {
-    @apply ml-1 text-base text-muted-foreground;
-  }
-
-  .select-sheet {
-    @apply mt-auto max-h-[60%] gap-1 rounded-t-3xl bg-background pb-8 pt-3;
-  }
-
-  .select-sheet-handle {
-    @apply mb-3 h-1.5 w-10 self-center rounded-full bg-muted;
-  }
-
-  .select-option {
-    @apply rounded-2xl px-4 py-3;
-  }
-
-  .select-option-active {
-    @apply bg-accent/10;
-  }
-
-  .select-option-text {
-    @apply text-base font-sans-medium text-primary;
-  }
-
-  .select-option-text-active {
-    @apply font-sans-bold text-accent;
-  }
-
-  .multi-select-trigger {
-    @apply flex-row items-center justify-between gap-2 rounded-2xl border border-border bg-background px-4 py-3;
-  }
-
-  .multi-select-chips {
-    @apply flex-1 flex-row flex-wrap items-center gap-2;
-  }
-
-  .multi-select-chip {
-    @apply flex-row items-center gap-1 rounded-2xl border border-border bg-accent px-3 py-1;
-  }
-
-  .multi-select-chip-text {
-    @apply text-sm font-sans-medium text-primary;
-  }
-
-  .multi-select-chip-remove {
-    @apply text-xs text-muted-foreground;
-  }
-
-  .checkbox-row {
-    @apply flex-row items-center gap-3;
-  }
-
-  .checkbox-row-active {
-    @apply bg-accent/10;
-  }
-
-  .checkbox-label {
-    @apply text-base font-sans-medium text-primary;
-  }
-
-  .checkbox {
-    @apply h-5 w-5 items-center justify-center rounded-md border border-border;
-  }
-
-  .checkbox-active {
-    @apply border-transparent bg-accent;
-  }
-
-  .checkbox-check {
-    @apply text-xs font-sans-bold text-background;
   }
 }
 

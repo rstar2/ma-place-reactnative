@@ -18,7 +18,7 @@ const colors = {
   foreground: "#081126",
   card: "#fff8e7",
   muted: "#f6eecf",
-  mutedForeground: "rgba(0, 0, 0, 0.6)",
+  mutedForeground: "rgba(0, 0, 0, 0.43)",
   primary: "#081126",
   accent: "#ea7a53",
   border: "rgba(0, 0, 0, 0.1)",

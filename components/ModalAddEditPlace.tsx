@@ -132,6 +132,18 @@ export default function ModalAddEditPlace({
         />
       </View>
 
+      <View className="text-input-field">
+        <Text className="text-input-label">Image</Text>
+        <Button
+          label="Choose"
+          className="button-secondary"
+          classNameLabel="text-foreground"
+          onPress={() => {
+            console.log("Choose an image");
+          }}
+        />
+      </View>
+
       <View className="flex-row gap-3">
         {/* NOTE: No need for a cancel/close button */}
         {/* <Button

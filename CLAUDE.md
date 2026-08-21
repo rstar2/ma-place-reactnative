@@ -59,3 +59,4 @@ Wiring: `metro.config.js` wraps the Metro config with `withNativeWind({ input: '
 
 - DB: uses `Firebase Firestore`.
 - Auth: uses `Firebase Auth` for both *email/password* and *Google* sign-in
+- Uploaded images: uses `Claudinary` for images for a place

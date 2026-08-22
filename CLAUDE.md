@@ -60,3 +60,4 @@ Wiring: `metro.config.js` wraps the Metro config with `withNativeWind({ input: '
 - DB: uses `Firebase Firestore`.
 - Auth: uses `Firebase Auth` for both *email/password* and *Google* sign-in
 - Uploaded images: uses `Claudinary` for images for a place
+- Maps: `react-native-maps` - both `Google Maps for Android` and `Google Maps for iOS` APIs are enabled and proper API keys are created and saved in to `.env`

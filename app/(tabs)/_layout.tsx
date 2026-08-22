@@ -19,6 +19,7 @@ type TabScreen = {
 const tabs = [
   { name: "index", title: "Home", icon: icons.home },
   { name: "place/index", title: "Places", icon: icons.activity },
+  { name: "map", title: "Map", icon: icons.map },
   { name: "add", title: "Add Place", icon: icons.plus },
   { name: "settings", title: "Settings", icon: icons.setting },
 ] as const satisfies TabScreen[];

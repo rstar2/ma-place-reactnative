@@ -1,0 +1,19 @@
+diff --git a/cpp/HybridClusterer.hpp b/cpp/HybridClusterer.hpp
+index c346765a32c1357c0c0dbeb9813b94b9aaac76e6..ef60e23c698fe0cccf8892e0501301c9a3c41182 100644
+--- a/cpp/HybridClusterer.hpp
++++ b/cpp/HybridClusterer.hpp
+@@ -8,8 +8,12 @@ class HybridClusterer final : public HybridClustererSpec {
+  public:
+   HybridClusterer() : HybridObject(TAG) {}
+   ~HybridClusterer() {
+-    auto instancePtr = instance.value();
+-    delete instancePtr;
++    // load() may have thrown before `instance` was set (e.g. malformed
++    // input). Calling .value() on the empty optional throws
++    // std::bad_optional_access out of the destructor → std::terminate →
++    // SIGABRT when Hermes GC finalizes the orphaned object. Deleting a
++    // null pointer is a no-op, so value_or(nullptr) is safe either way.
++    delete instance.value_or(nullptr);
+   }
+ 
+  public:

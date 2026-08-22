@@ -277,11 +277,26 @@
   }
 
   .home-map-card {
-    @apply my-2.5 min-h-50 justify-between gap-5 rounded-bl-4xl rounded-tr-4xl bg-accent p-6;
+    @apply my-2.5 min-h-50 rounded-bl-4xl rounded-tr-4xl bg-accent relative;
+  }
+  .home-map-card-open {
+    @apply absolute right-3 bottom-3 bg-white/90 p-0.5 shadow;
+  }
+  .home-map-card-open-icon {
+    @apply size-8;
+  }
+  .home-map-card-map {
+    /* overflow-hidden is what actually clips the square MapView to the
+       rounded shape — borderRadius alone does not clip children */
+    @apply flex-1 overflow-hidden rounded-bl-4xl rounded-tr-4xl;
   }
 
   .home-map-label {
     @apply text-xl font-sans-semibold text-white/80;
+  }
+
+  .mini-map {
+    @apply h-32 w-full overflow-hidden rounded-2xl;
   }
 
   .list-head {
@@ -460,6 +475,58 @@
 
   .tag-filter {
     @apply mt-3;
+  }
+
+  .map-screen {
+    @apply flex-1 bg-background;
+  }
+
+  .map-overlay-top {
+    @apply absolute inset-x-5 flex-row items-center justify-between;
+  }
+
+  .map-title-chip {
+    @apply rounded-full bg-background/80 px-4 py-1;
+  }
+
+  .map-title {
+    @apply text-lg font-sans-bold text-primary;
+  }
+
+  .map-status-wrap {
+    @apply absolute inset-0 items-center justify-center;
+  }
+
+  .map-status {
+    @apply rounded-full bg-background/80 px-4 py-1;
+  }
+
+  .map-status-text {
+    @apply text-sm font-sans-medium text-primary;
+  }
+
+  .map-cluster {
+    @apply size-10 items-center justify-center rounded-full border-2 border-white bg-primary;
+  }
+
+  .map-cluster-text {
+    @apply text-sm font-sans-bold text-white;
+  }
+
+  .map-pin {
+    @apply size-8 items-center justify-center rounded-full border-2 border-white;
+  }
+
+  .map-pin-icon {
+    @apply size-6;
+  }
+
+  .map-callout {
+    @apply w-72 gap-2 rounded-2xl bg-background p-2 shadow-lg;
+  }
+
+  .map-callout-actions {
+    @apply flex-row gap-3;
   }
 }
 

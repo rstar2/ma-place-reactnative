@@ -15,7 +15,7 @@ import {
 import { getFunctions, httpsCallable } from "@react-native-firebase/functions";
 import * as auth from "@react-native-firebase/auth";
 
-import type { NewPlaceInput, Place } from "./types";
+import type { NewPlaceInput, Place, Tag } from "./types";
 import { icons } from "@/constants/icons";
 import { theme } from "@/constants/theme";
 
@@ -167,17 +167,14 @@ export async function deletePlace(placeId: string): Promise<void> {
 }
 
 /** Icons/colors used to decorate places locally (never persisted). */
-const PLACE_ICONS = [
-  // TODO: create proper icons per tag
-  icons.home,
-  icons.wallet,
-  icons.activity,
-  icons.medium,
-  icons.spotify,
-  icons.figma,
-  icons.github,
-  icons.dropbox,
-];
+const PLACE_ICONS : Record<Tag, string> = {
+  water: icons.water,
+  crag: icons.crag,
+  sleep: icons.sleep,
+  oil: icons.oil,
+  playground: icons.playground,
+  parking: icons.parking,
+};
 const PLACE_COLORS = Object.values(theme.colors.tag);
 
 /** Stable string hash → items index, so a place always decorates the same. */
@@ -191,12 +188,12 @@ function pick<T>(items: T[], seed: string): T {
 
 /** Fill in the client-only `icon`/`color` of a place, derived from its tags. */
 function decoratePlace(data: PlaceDoc, id: string): Place {
-  const seed = data.tags?.[0] ?? id;
+    const tag = data.tags?.[0];
   return {
     ...data,
     id,
-    icon: pick(PLACE_ICONS, seed),
-    color: pick(PLACE_COLORS, seed),
+    icon: (tag && PLACE_ICONS[tag]) ?? icons.place,
+    color: pick(PLACE_COLORS, tag ?? id),
   };
 }
 

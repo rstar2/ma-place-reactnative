@@ -12,6 +12,7 @@ import ScreenBase from "@/components/ScreenBase";
 import Text from "@/components/ui/Text";
 import ListHeading from "@/components/ListHeading";
 import PlaceCard from "@/components/PlaceCard";
+import MiniMap from "@/components/MiniMap";
 import {
   ListItemSeparator,
   ListItemSeparatorH,
@@ -24,6 +25,8 @@ import { icons } from "@/constants/icons";
 import { useManagePlace } from "@/lib/places";
 import { usePlacesStore } from "@/store/places-store";
 import { useAuth } from "@/lib/auth";
+import { theme } from "@/constants/theme";
+import { useUserLocation } from "@/lib/location";
 
 const user = {
   displayName: "John Doe",
@@ -134,6 +137,8 @@ function Header({
 }) {
   const router = useRouter();
   const [listWidth, setListWidth] = useState(0);
+  const { region, granted } = useUserLocation();
+  console.log("location", granted, region);
 
   return (
     <>
@@ -152,7 +157,21 @@ function Header({
       </View>
 
       <View className="home-map-card">
-        <Text className="home-map-label">Map</Text>
+        <MiniMap
+          region={region}
+          showsUserLocation={granted}
+          className="home-map-card-map"
+        />
+        <Pressable
+          className="home-map-card-open"
+          onPress={() => router.navigate("/(tabs)/map")}
+        >
+          <Image
+            source={icons.map}
+            className="home-map-card-open-icon"
+            tintColor={theme.colors.primary}
+          />
+        </Pressable>
       </View>
 
       <View

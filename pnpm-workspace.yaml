@@ -8,3 +8,6 @@ allowBuilds:
 
 onlyBuiltDependencies:
   - unrs-resolver
+
+patchedDependencies:
+  react-native-clusterer@5.0.2: patches/react-native-clusterer@5.0.2.patch

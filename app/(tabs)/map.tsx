@@ -18,7 +18,7 @@ import Text from "@/components/ui/Text";
 import Button from "@/components/ui/Button";
 import PlaceCard from "@/components/PlaceCard";
 import { DEFAULT_REGION } from "@/components/MiniMap";
-import { noop } from "@/lib/utils";
+import { openNavigation } from "@/lib/location";
 import { posthog } from "@/lib/posthog";
 import type { Place } from "@/lib/types";
 import { usePlacesStore } from "@/store/places-store";
@@ -255,7 +255,17 @@ export default function MapScreen() {
                   router.push(`/place/${selected.id}`);
                 }}
               />
-              <Button className="flex-1" label="Go" onPress={noop} />
+              <Button
+                className="flex-1"
+                label="Go"
+                onPress={() => {
+                  dismissCallout();
+                  void openNavigation(
+                    selected.location.latitude,
+                    selected.location.longitude,
+                  );
+                }}
+              />
             </View>
           </View>
         </View>

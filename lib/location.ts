@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import * as Location from "expo-location";
+import { Linking, Platform } from "react-native";
 import { type Region } from "react-native-maps";
 
 // The permission+position request lives OUTSIDE the hook state (same pattern
@@ -58,4 +59,19 @@ export function useUserLocation() {
   }, []);
 
   return { region, granted };
+}
+
+/**
+ * Opens turn-by-turn navigation to the coordinate in the platform's maps
+ * app (Google Maps / Apple Maps); falls back to the universal Google Maps
+ * URL when no app handles the deep link.
+ */
+export function openNavigation(latitude: number, longitude: number) {
+  const appUrl =
+    Platform.OS === "ios"
+      ? `maps://?daddr=${latitude},${longitude}`
+      : `google.navigation:q=${latitude},${longitude}`;
+  const webUrl = `https://www.google.com/maps/dir/?api=1&destination=${latitude},${longitude}`;
+
+  return Linking.openURL(appUrl).catch(() => Linking.openURL(webUrl));
 }

@@ -80,6 +80,10 @@ function TabsNavigator() {
         },
       }}
     >
+      {/* NOTE: routes are file-based discovered -
+         e.g. all files in this (tabs) folder will be registered as Tab.
+         Describing them with <Tabs.Screen...> just overwrites the default screen options.
+         NOTE: All <Tabs.Screen...> can be used in the the tab file to configure itself, lik in map.tsx */}
       {tabs.map(({ name, title, icon }) => (
         <Tabs.Screen
           key={name}
@@ -106,9 +110,9 @@ function TabsNavigator() {
         />
       ))}
 
-      {/* Note: don't show this dynamic route in the Tabs,
-        but still describe it so it can be accessed */}
-      <Tabs.Screen name="place/[id]" options={{ href: null }} />
+      {/* NOTE: in order to not show some route in the Tabs,
+        but still keep it accessible as a Tab then it needs to be described with `href: null` */}
+      {/* <Tabs.Screen name="place/[id]" options={{ href: null }} /> */}
     </Tabs>
   );
 }

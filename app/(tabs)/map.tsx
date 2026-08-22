@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { router, useFocusEffect } from "expo-router";
-import { Image, useWindowDimensions, View } from "react-native";
+import { router, Tabs, useFocusEffect } from "expo-router";
+import { Image, Pressable, useWindowDimensions, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import MapView, {
   Marker,
@@ -22,6 +22,7 @@ import { openNavigation } from "@/lib/location";
 import { posthog } from "@/lib/posthog";
 import type { Place } from "@/lib/types";
 import { usePlacesStore } from "@/store/places-store";
+import { icons } from "@/constants/icons";
 
 type PlaceFeature = Supercluster.PointFeature<{ place: Place }>;
 
@@ -54,22 +55,19 @@ export default function MapScreen() {
   const [calloutHeight, setCalloutHeight] = useState(0);
   const selectedRef = useRef<Place | null>(null);
 
-  const selectPlace = useCallback(
-    async (place: Place) => {
-      selectedRef.current = place;
-      setSelected(place);
-      posthog?.capture("map_marker_tapped", {
-        place_id: place.id,
-        place_uid: place.uid,
-      });
-      const point = await mapRef.current?.pointForCoordinate({
-        latitude: place.location.latitude,
-        longitude: place.location.longitude,
-      });
-      if (point && selectedRef.current?.id === place.id) setAnchor(point);
-    },
-    [],
-  );
+  const selectPlace = useCallback(async (place: Place) => {
+    selectedRef.current = place;
+    setSelected(place);
+    posthog?.capture("map_marker_tapped", {
+      place_id: place.id,
+      place_uid: place.uid,
+    });
+    const point = await mapRef.current?.pointForCoordinate({
+      latitude: place.location.latitude,
+      longitude: place.location.longitude,
+    });
+    if (point && selectedRef.current?.id === place.id) setAnchor(point);
+  }, []);
 
   const dismissCallout = useCallback(() => {
     selectedRef.current = null;
@@ -159,6 +157,10 @@ export default function MapScreen() {
 
   return (
     <View className="map-screen">
+      {/* Self-configures this tab: no tab bar while the map is on screen.
+          The bar is position:absolute in the layout, so hiding it does not
+          resize the map. */}
+      <Tabs.Screen options={{ tabBarStyle: { display: "none" } }} />
       <MapView
         ref={mapRef}
         provider={PROVIDER_GOOGLE}
@@ -273,7 +275,10 @@ export default function MapScreen() {
 
       <View className="map-overlay-top" style={{ top: insets.top + 8 }}>
         <View className="map-title-chip">
-          <Text className="map-title">Map</Text>
+          <Image source={icons.back} className="size-6" />
+          <Pressable onPress={() => router.back()}>
+            <Text className="map-title">Back</Text>
+          </Pressable>
         </View>
       </View>
 

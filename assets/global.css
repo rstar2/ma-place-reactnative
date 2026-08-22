@@ -324,42 +324,35 @@
   }
 
   .place-head {
-    @apply flex-row items-center py-2;
+    @apply flex-row items-center py-2 gap-3;
   }
 
-  .place-head-main {
-    @apply min-w-0 flex-1 flex-row items-center gap-3;
-  }
-
-  .place-head-main-icon-box {
+  .place-head-icon-box {
     @apply rounded-2xl p-2 bg-white/30;
   }
 
-  .place-head-main-icon {
+  .place-head-icon {
     @apply size-12;
   }
 
-  .place-head-main-copy {
-    @apply min-w-0 flex-1;
+  .place-head-main {
+    @apply min-w-0 flex-1 gap-1;
+  }
+  
+  .place-head-main-title {
+    @apply text-lg font-sans-bold text-primary;
   }
 
-  .place-head-main-title {
-    @apply mb-1 text-lg font-sans-bold text-primary;
+
+  .place-head-main-meta {
+    @apply flex-row items-center gap-1;
   }
 
   .place-head-main-desc {
-    @apply text-sm font-sans-semibold text-muted-foreground;
+    @apply flex-1 text-sm font-sans-semibold text-muted-foreground;
   }
 
-  .place-head-secondary {
-    @apply ml-3 shrink-0 items-end;
-  }
-
-  .place-head-secondary-line1 {
-    @apply mb-1 text-lg font-sans-bold text-primary;
-  }
-
-  .place-head-secondary-line2 {
+  .place-head-main-date {
     @apply text-sm font-sans-medium text-muted-foreground;
   }
 
@@ -522,7 +515,7 @@
   }
 
   .map-callout {
-    @apply w-72 gap-2 rounded-2xl bg-background p-2 shadow-lg;
+    @apply w-full gap-2 rounded-2xl bg-background p-2 shadow-lg;
   }
 
   .map-callout-actions {

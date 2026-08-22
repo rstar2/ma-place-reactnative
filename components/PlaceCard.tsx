@@ -40,18 +40,19 @@ export default function PlaceCard({
       style={[style, color ? { backgroundColor: color } : undefined]}
     >
       <View className="place-head">
+        <View className="place-head-icon-box">
+          <Image
+            source={icon}
+            className="place-head-icon"
+            tintColor={theme.colors.foreground}
+          />
+        </View>
+
         <View className="place-head-main">
-          <View className="place-head-main-icon-box">
-            <Image
-              source={icon}
-              className="place-head-main-icon"
-              tintColor={theme.colors.foreground}
-            />
-          </View>
-          <View className="place-head-main-copy">
             <Text numberOfLines={1} className="place-head-main-title">
               {title}
             </Text>
+          <View className="place-head-main-meta">
             <Text
               numberOfLines={1}
               ellipsizeMode="tail"
@@ -59,14 +60,10 @@ export default function PlaceCard({
             >
               {tags?.join(", ")}
             </Text>
-          </View>
-        </View>
-
-        <View className="place-head-secondary">
-          <Text className="place-head-secondary-line1"></Text>
-          <Text className="place-head-secondary-line2">
+            <Text className="place-head-main-date">
             {formatDateTime(createdAt)}
           </Text>
+          </View>
         </View>
       </View>
 

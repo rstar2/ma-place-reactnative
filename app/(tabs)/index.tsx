@@ -11,7 +11,7 @@ import { useFocusEffect, useRouter } from "expo-router";
 import ScreenBase from "@/components/ScreenBase";
 import Text from "@/components/ui/Text";
 import ListHeading from "@/components/ListHeading";
-import PlaceCard from "@/components/PlaceCard";
+import PlaceCard, { PlaceShowInMap } from "@/components/PlaceCard";
 import MiniMap from "@/components/MiniMap";
 import {
   ListItemSeparator,
@@ -94,6 +94,7 @@ export default function Index() {
             place={place}
             expanded={expandedPlaceId === place.id}
             onExpand={() => handleExpandPlace(place)}
+            showOnMap
           />
         )}
         ItemSeparatorComponent={ListItemSeparator}
@@ -187,6 +188,7 @@ function Header({
               place={place}
               onExpand={noop}
               style={{ width: listWidth * HORIZONTAL_CARD_RATIO }}
+              showOnMap
             />
           )}
           keyExtractor={(place) => place.id}

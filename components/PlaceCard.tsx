@@ -6,12 +6,14 @@ import {
   type StyleProp,
   type ViewStyle,
 } from "react-native";
+import { useRouter } from "expo-router";
 
 import Text from "@/components/ui/Text";
+import Button from "@/components/ui/Button";
 import { cn, formatDateTime } from "@/lib/utils";
 import { Place } from "@/lib/types";
 import { theme } from "@/constants/theme";
-import Button from "./ui/Button";
+import { icons } from "@/constants/icons";
 
 type PlaceCardProps = {
   place: Place;
@@ -20,18 +22,29 @@ type PlaceCardProps = {
   onExpand: () => void;
   onEdit?: () => void;
   onDelete?: () => void;
+  showOnMap?: boolean;
 };
 
 export default function PlaceCard({
   // place
-  place: { title, description, tags, uid, createdAt, location, icon, color },
+  place: {
+    id,
+    title,
+    description,
+    tags,
+    uid,
+    createdAt,
+    location,
+    icon,
+    color,
+  },
 
-  // additional
   style,
   expanded = false,
   onExpand,
   onEdit,
   onDelete,
+  showOnMap,
 }: PlaceCardProps) {
   return (
     <Pressable
@@ -49,9 +62,9 @@ export default function PlaceCard({
         </View>
 
         <View className="place-head-main">
-            <Text numberOfLines={1} className="place-head-main-title">
-              {title}
-            </Text>
+          <Text numberOfLines={1} className="place-head-main-title">
+            {title}
+          </Text>
           <View className="place-head-main-meta">
             <Text
               numberOfLines={1}
@@ -61,10 +74,16 @@ export default function PlaceCard({
               {tags?.join(", ")}
             </Text>
             <Text className="place-head-main-date">
-            {formatDateTime(createdAt)}
-          </Text>
+              {formatDateTime(createdAt)}
+            </Text>
           </View>
         </View>
+
+        {showOnMap && (
+          <View className="absolute -right-2 -top-2">
+            <PlaceShowOnMap placeId={id} />
+          </View>
+        )}
       </View>
 
       {expanded && (
@@ -125,6 +144,23 @@ export default function PlaceCard({
           )}
         </View>
       )}
+    </Pressable>
+  );
+}
+
+export function PlaceShowOnMap({ placeId }: { placeId: string }) {
+  const router = useRouter();
+  return (
+    <Pressable
+      onPress={() =>
+        router.push({ pathname: "/map", params: { place: placeId } })
+      }
+    >
+      <Image
+        source={icons.map}
+        className="place-card-show_in_map-icon"
+        tintColor={theme.colors.primary}
+      />
     </Pressable>
   );
 }

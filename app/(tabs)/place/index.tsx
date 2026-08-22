@@ -91,6 +91,7 @@ export default function PlacesScreen() {
               onExpand={() => handleExpandPlace(place)}
               onEdit={() => handleEditPlace(place)}
               onDelete={() => handleDeletePlace(place)}
+              showOnMap
             />
           )}
           ListHeaderComponent={

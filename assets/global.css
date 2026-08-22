@@ -316,7 +316,7 @@
   }
 
   .place-card {
-    @apply rounded-2xl border border-border px-4 py-2;
+    @apply rounded-2xl border border-border px-4 py-4;
   }
 
   .place-card-expanded {
@@ -354,6 +354,10 @@
 
   .place-head-main-date {
     @apply text-sm font-sans-medium text-muted-foreground;
+  }
+
+  .place-card-show_in_map-icon {
+    @apply size-8;
   }
 
   .place-body {

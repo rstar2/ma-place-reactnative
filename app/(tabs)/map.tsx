@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { router, Tabs, useFocusEffect } from "expo-router";
+import { router, Tabs, useFocusEffect, useLocalSearchParams } from "expo-router";
 import { Image, Pressable, useWindowDimensions, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import MapView, {
@@ -46,6 +46,11 @@ export default function MapScreen() {
   /** Fits the camera to the markers only on the first non-empty load. */
   const didFitRef = useRef(false);
   const [region, setRegion] = useState<Region>(DEFAULT_REGION);
+  const [mapReady, setMapReady] = useState(false);
+
+  // /map?place=<id> — pushed by PlaceCard's map button. Camera commands are
+  // dropped by the native map before onMapReady, so gate on mapReady.
+  const { place: focusPlaceId } = useLocalSearchParams<{ place?: string }>();
 
   // The native <Callout> can't auto-measure custom content on Android (it
   // clips to a sliver), so marker taps open this custom overlay instead.
@@ -119,6 +124,26 @@ export default function MapScreen() {
 
   const [clustered] = useClusterer(points, { width, height }, region);
 
+  // A param-targeted camera replaces the initial fit-to-markers move, then
+  // the param is cleared so a later tab-bar visit doesn't re-center.
+  // Runs before the fit effect below so didFitRef is set first.
+  useEffect(() => {
+    if (!focusPlaceId) return;
+    didFitRef.current = true;
+    const place = places.find((p) => p.id === focusPlaceId);
+    if (!place || !mapReady) return;
+    router.setParams({ place: undefined });
+    mapRef.current?.animateToRegion(
+      {
+        latitude: place.location.latitude,
+        longitude: place.location.longitude,
+        latitudeDelta: 0.01,
+        longitudeDelta: 0.01,
+      },
+      400,
+    );
+  }, [focusPlaceId, places, mapReady]);
+
   useEffect(() => {
     if (didFitRef.current || places.length === 0) return;
     didFitRef.current = true;
@@ -169,6 +194,7 @@ export default function MapScreen() {
         // style the map gets zero size and renders as an empty screen.
         style={{ flex: 1 }}
         initialRegion={DEFAULT_REGION}
+        onMapReady={() => setMapReady(true)}
         onPress={dismissCallout}
         onRegionChange={() => void updateAnchor()}
         onRegionChangeComplete={handleRegionChangeComplete}
@@ -250,7 +276,7 @@ export default function MapScreen() {
 
             <View className="map-callout-actions">
               <Button
-                className="flex-1"
+                className="p-1 flex-1"
                 label="View"
                 onPress={() => {
                   dismissCallout();
@@ -258,7 +284,7 @@ export default function MapScreen() {
                 }}
               />
               <Button
-                className="flex-1"
+                className="p-1  flex-1"
                 label="Go"
                 onPress={() => {
                   dismissCallout();
@@ -274,12 +300,10 @@ export default function MapScreen() {
       )}
 
       <View className="map-overlay-top" style={{ top: insets.top + 8 }}>
-        <View className="map-title-chip">
+        <Pressable className="map-title-chip" onPress={() => router.back()}>
           <Image source={icons.back} className="size-6" />
-          <Pressable onPress={() => router.back()}>
-            <Text className="map-title">Back</Text>
-          </Pressable>
-        </View>
+          <Text className="map-title">Back</Text>
+        </Pressable>
       </View>
 
       {status && (

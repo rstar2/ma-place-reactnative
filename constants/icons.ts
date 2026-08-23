@@ -4,7 +4,7 @@ import activity from "@/assets/icons/activity.png";
 import add from "@/assets/icons/add.png";
 import back from "@/assets/icons/back.png";
 import home from "@/assets/icons/home.png";
-import map from "@/assets/icons/map.png";
+import map from "@/assets/icons/map2.png";
 import plus from "@/assets/icons/plus.png";
 import setting from "@/assets/icons/setting.png";
 

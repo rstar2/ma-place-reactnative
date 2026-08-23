@@ -157,7 +157,7 @@ export function PlaceShowOnMap({ placeId }: { placeId: string }) {
       }
     >
       <Image
-        source={icons.map}
+        source={icons.place}
         className="place-card-show_in_map-icon"
         tintColor={theme.colors.primary}
       />

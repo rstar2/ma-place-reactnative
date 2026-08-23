@@ -35,5 +35,4 @@ Project created with ```pnpm dlx create-expo-app --template default@54```, then 
 - On `deletePlace` can also delete the image from `Claudinary`
 - Show user's name in the `PlaceCard` instead of user's UID
 - Implement `place/[id]./tsx` - add `View` link to the `PlaceCard`
-- Get current location and then show nearby places
 - Real splash screen and logo and avatar for the authenticated user

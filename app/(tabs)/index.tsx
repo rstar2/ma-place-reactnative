@@ -11,13 +11,13 @@ import { useFocusEffect, useRouter } from "expo-router";
 import ScreenBase from "@/components/ScreenBase";
 import Text from "@/components/ui/Text";
 import ListHeading from "@/components/ListHeading";
-import PlaceCard, { PlaceShowInMap } from "@/components/PlaceCard";
+import PlaceCard from "@/components/PlaceCard";
 import MiniMap from "@/components/MiniMap";
 import {
   ListItemSeparator,
   ListItemSeparatorH,
 } from "@/components/ListItemSeparator";
-import { noop } from "@/lib/utils";
+import { isNearBy, noop } from "@/lib/utils";
 import { Place } from "@/lib/types";
 import { images } from "@/constants/images";
 import { posthog } from "@/lib/posthog";
@@ -27,11 +27,10 @@ import { usePlacesStore } from "@/store/places-store";
 import { useAuth } from "@/lib/auth";
 import { theme } from "@/constants/theme";
 import { useUserLocation } from "@/lib/location";
+import { EXPO_PUBLIC_NEARBY_RADIUS_KM } from "@/lib/env";
 
-const user = {
-  displayName: "John Doe",
-  imageUrl: null,
-};
+// in kilometer
+const nearByRadiusKm = EXPO_PUBLIC_NEARBY_RADIUS_KM;
 
 export default function Index() {
   const { onAddPlace: onAddPlacePress } = useManagePlace();
@@ -42,6 +41,10 @@ export default function Index() {
   const ensurePlacesLoaded = usePlacesStore(
     (state) => state.ensurePlacesLoaded,
   );
+
+  // Deduped with the Header's call (module-level request in lib/location.ts),
+  // so no extra permission prompt or position fetch happens here.
+  const { region } = useUserLocation();
 
   // Load on demand when this screen is shown; the store dedupes concurrent
   // calls and caches the result, so screens never duplicate the DB call.
@@ -65,8 +68,8 @@ export default function Index() {
       // check if this is "my" place (created by me)
       if (place.uid === user?.uid) out.myPlaces.push(place);
 
-      // TODO: implement some logic
-      out.nearestPlaces.push(place);
+      if (region && isNearBy(region, place.location, nearByRadiusKm))
+        out.nearestPlaces.push(place);
 
       return out;
     },
@@ -102,7 +105,7 @@ export default function Index() {
           isLoading ? (
             <ActivityIndicator className="mt-10" />
           ) : (
-            <Text className="empty-state">No places nearby</Text>
+            <Text className="empty-state">{region ? "No places nearby" : "Checking your location"}</Text>
           )
         }
         showsVerticalScrollIndicator={false}
@@ -136,6 +139,7 @@ function Header({
   myPlaces: Place[];
   onAddPlacePress: () => void;
 }) {
+  const { user } = useAuth();
   const router = useRouter();
   const [listWidth, setListWidth] = useState(0);
   const { region, granted } = useUserLocation();
@@ -144,13 +148,15 @@ function Header({
   return (
     <>
       <View className="home-header">
-        <View className="home-user">
-          <Image
-            source={user?.imageUrl ? { uri: user.imageUrl } : images.avatar}
-            className="home-avatar"
-          />
-          <Text className="home-user-name">{user.displayName}</Text>
-        </View>
+        {user && (
+          <View className="home-user">
+            <Image
+              source={user.photoURL ? { uri: user.photoURL } : images.avatar}
+              className="home-avatar"
+            />
+            <Text className="home-user-name">{user.displayName}</Text>
+          </View>
+        )}
 
         <Pressable onPress={onAddPlacePress}>
           <Image source={icons.add} className="home-add-icon" />

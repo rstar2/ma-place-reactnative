@@ -19,6 +19,7 @@ import Button from "@/components/ui/Button";
 import PlaceCard from "@/components/PlaceCard";
 import { DEFAULT_REGION } from "@/components/MiniMap";
 import { openNavigation } from "@/lib/location";
+import { useAuth } from "@/lib/auth";
 import { posthog } from "@/lib/posthog";
 import type { Place } from "@/lib/types";
 import { usePlacesStore } from "@/store/places-store";
@@ -35,6 +36,7 @@ const CALLOUT_GAP = 10;
 export default function MapScreen() {
   const insets = useSafeAreaInsets();
   const { width, height } = useWindowDimensions();
+  const { user } = useAuth();
 
   const places = usePlacesStore((state) => state.places);
   const isLoading = usePlacesStore((state) => state.isLoadingPlaces);
@@ -272,7 +274,11 @@ export default function MapScreen() {
             className="map-callout"
             onLayout={(e) => setCalloutHeight(e.nativeEvent.layout.height)}
           >
-            <PlaceCard place={selected} onExpand={dismissCallout} />
+            <PlaceCard
+              place={selected}
+              onExpand={dismissCallout}
+              currentUid={user?.uid}
+            />
 
             <View className="map-callout-actions">
               <Button

@@ -23,6 +23,8 @@ type PlaceCardProps = {
   onEdit?: () => void;
   onDelete?: () => void;
   showOnMap?: boolean;
+  /** Auth uid of the currently signed-in user - shows "Me" for own places. */
+  currentUid?: string;
 };
 
 export default function PlaceCard({
@@ -37,6 +39,7 @@ export default function PlaceCard({
     location,
     icon,
     color,
+    creatorName,
   },
 
   style,
@@ -45,6 +48,7 @@ export default function PlaceCard({
   onEdit,
   onDelete,
   showOnMap,
+  currentUid,
 }: PlaceCardProps) {
   return (
     <Pressable
@@ -121,7 +125,7 @@ export default function PlaceCard({
               numberOfLines={1}
               ellipsizeMode="tail"
             >
-              {uid}
+              {uid === currentUid ? "Me" : (creatorName ?? "Unknown")}
             </Text>
           </View>
 

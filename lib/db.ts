@@ -2,6 +2,8 @@ import {
   getFirestore,
   collection,
   doc,
+  documentId,
+  getDoc,
   getDocs,
   limit,
   orderBy,
@@ -9,6 +11,7 @@ import {
   setDoc,
   updateDoc,
   deleteDoc,
+  where,
   GeoPoint,
   Timestamp,
 } from "@react-native-firebase/firestore";
@@ -28,9 +31,9 @@ const placesRef = collection(db, "places");
 
 /**
  * A place as stored in Firestore - the client-only derived fields
- * (`icon`, `color`) and the doc `id` are excluded.
+ * (`icon`, `color`, `creatorName`) and the doc `id` are excluded.
  */
-export type PlaceDoc = Omit<Place, "id" | "icon" | "color">;
+export type PlaceDoc = Omit<Place, "id" | "icon" | "color" | "creatorName">;
 
 /**
  * Mirror a newly registered auth account into Firestore under the same UID.
@@ -55,6 +58,41 @@ export async function loadTags(): Promise<string[]> {
   return snapshot.docs.map((docSnap) => docSnap.id);
 }
 
+/** Firestore `in` filter accepts at most 30 values per query. */
+const USER_NAMES_CHUNK = 30;
+
+/**
+ * Resolve creator uids to display names via follow-up reads on the
+ * `users` collection (doc id = uid). Returns only uids that have a doc
+ * with a non-empty `name`; callers fall back to a placeholder.
+ */
+export async function loadUserNames(
+  uids: string[],
+): Promise<Record<string, string>> {
+  const unique = [...new Set(uids.filter(Boolean))];
+  if (unique.length === 0) return {};
+
+  const chunks: string[][] = [];
+  for (let i = 0; i < unique.length; i += USER_NAMES_CHUNK) {
+    chunks.push(unique.slice(i, i + USER_NAMES_CHUNK));
+  }
+
+  const snapshots = await Promise.all(
+    chunks.map((chunk) =>
+      getDocs(query(usersRef, where(documentId(), "in", chunk))),
+    ),
+  );
+
+  const names: Record<string, string> = {};
+  for (const snapshot of snapshots) {
+    for (const docSnap of snapshot.docs) {
+      const name = (docSnap.data() as { name?: string }).name;
+      if (name) names[docSnap.id] = name;
+    }
+  }
+  return names;
+}
+
 export async function loadPlaces(count = -1): Promise<Place[]> {
   const q = query(
     placesRef,
@@ -64,7 +102,7 @@ export async function loadPlaces(count = -1): Promise<Place[]> {
     ...(count > 0 ? [limit(count)] : []),
   );
   const snapshot = await getDocs(q);
-  return snapshot.docs.map((docSnap) => {
+  const places = snapshot.docs.map((docSnap) => {
     const data = docSnap.data() as PlaceDoc & {
       createdAt?: Timestamp | Date | null;
     };
@@ -73,6 +111,18 @@ export async function loadPlaces(count = -1): Promise<Place[]> {
       docSnap.id,
     );
   });
+
+  // Firestore has no joins - resolve creator names best-effort: on failure
+  // (e.g. security rules) the cards keep showing the fallback text.
+  try {
+    const names = await loadUserNames(places.map((place) => place.uid));
+    return places.map((place) =>
+      names[place.uid] ? { ...place, creatorName: names[place.uid] } : place,
+    );
+  } catch (err) {
+    console.warn("Failed to load creator names:", err);
+    return places;
+  }
 }
 /**
  * Place doc as returned by `dbAddPlaceApp`: the stored doc shape, i.e. `url`
@@ -95,6 +145,19 @@ const dbAddPlaceCallable = httpsCallable<NewPlaceInput, AddPlaceResult>(
   getFunctions(),
   "dbAddPlaceApp",
 );
+
+/**
+ * Get a user name by ID, used to get current authorized user's name.
+ */
+export async function getUserName(uid: string): Promise<string | undefined> {
+  try {
+    const snap = await getDoc(doc(usersRef, uid));
+    return (snap.data() as { name?: string } | undefined)?.name;
+  } catch {
+    // fall through to the auth profile
+  }
+  return undefined;
+}
 
 export async function addPlace(placeInput: NewPlaceInput): Promise<Place> {
   const uid = auth.getAuth().currentUser?.uid;
@@ -120,7 +183,7 @@ export async function addPlace(placeInput: NewPlaceInput): Promise<Place> {
   // 3. Use the Firebase Callable function
   const { data: place } = await dbAddPlaceCallable(data);
 
-  return decoratePlace(
+  const created = decoratePlace(
     {
       createdAt: toDate(place.createdAt),
       uid: place.uid,
@@ -133,6 +196,8 @@ export async function addPlace(placeInput: NewPlaceInput): Promise<Place> {
     },
     place.id,
   );
+  created.creatorName = auth.getAuth().currentUser?.displayName ?? "Unknown";
+  return created;
 }
 
 /**
@@ -167,7 +232,7 @@ export async function deletePlace(placeId: string): Promise<void> {
 }
 
 /** Icons/colors used to decorate places locally (never persisted). */
-const PLACE_ICONS : Record<Tag, string> = {
+const PLACE_ICONS: Record<Tag, string> = {
   water: icons.water,
   crag: icons.crag,
   sleep: icons.sleep,
@@ -188,7 +253,7 @@ function pick<T>(items: T[], seed: string): T {
 
 /** Fill in the client-only `icon`/`color` of a place, derived from its tags. */
 function decoratePlace(data: PlaceDoc, id: string): Place {
-    const tag = data.tags?.[0];
+  const tag = data.tags?.[0];
   return {
     ...data,
     id,

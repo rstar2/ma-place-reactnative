@@ -95,6 +95,7 @@ export default function Index() {
         renderItem={({ item: place }) => (
           <PlaceCard
             place={place}
+            currentUid={user?.uid}
             expanded={expandedPlaceId === place.id}
             onExpand={() => handleExpandPlace(place)}
             showOnMap
@@ -192,6 +193,7 @@ function Header({
           renderItem={({ item: place }) => (
             <PlaceCard
               place={place}
+              currentUid={user?.uid}
               onExpand={noop}
               style={{ width: listWidth * HORIZONTAL_CARD_RATIO }}
               showOnMap

@@ -17,11 +17,13 @@ import PlaceCard from "@/components/PlaceCard";
 import type { Place, Tag } from "@/lib/types";
 import { posthog } from "@/lib/posthog";
 import { useManagePlace } from "@/lib/places";
+import { useAuth } from "@/lib/auth";
 import { usePlacesStore } from "@/store/places-store";
 
 export default function PlacesScreen() {
   const { onEditPlace: handleEditPlace, onDeletePlace: handleDeletePlace } =
     useManagePlace();
+  const { user } = useAuth();
   const places = usePlacesStore((state) => state.places);
   const tags = usePlacesStore((state) => state.tags);
   const isLoading = usePlacesStore((state) => state.isLoadingPlaces);
@@ -87,6 +89,7 @@ export default function PlacesScreen() {
           renderItem={({ item: place }) => (
             <PlaceCard
               place={place}
+              currentUid={user?.uid}
               expanded={expandedPlaceId === place.id}
               onExpand={() => handleExpandPlace(place)}
               onEdit={() => handleEditPlace(place)}

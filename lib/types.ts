@@ -39,11 +39,17 @@ export type Place = {
    * Local color also based on the tags or on the current user
    */
   color: string;
+
+  /**
+   * Creator's display name, resolved client-side from the `users`
+   * collection (Firestore has no joins)
+   */
+  creatorName?: string;
 };
 
 export type NewPlaceInput = Omit<
   Place,
-  "id" | "uid" | "createdAt" | "color" | "icon" | "location"
+  "id" | "uid" | "createdAt" | "color" | "icon" | "creatorName" | "location"
 > & {
   location: {
     longitude: string;

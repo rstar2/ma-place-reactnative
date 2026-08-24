@@ -1,10 +1,16 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { router, Tabs, useFocusEffect, useLocalSearchParams } from "expo-router";
+import {
+  router,
+  Tabs,
+  useFocusEffect,
+  useLocalSearchParams,
+} from "expo-router";
 import { Image, Pressable, useWindowDimensions, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import MapView, {
   Marker,
   PROVIDER_GOOGLE,
+  type LatLng,
   type Point,
   type Region,
 } from "react-native-maps";
@@ -20,6 +26,8 @@ import PlaceCard from "@/components/PlaceCard";
 import { DEFAULT_REGION } from "@/components/MiniMap";
 import { openNavigation } from "@/lib/location";
 import { useAuth } from "@/lib/auth";
+import { useManagePlace } from "@/lib/places";
+import { toGeoPointCoordinate } from "@/lib/utils";
 import { posthog } from "@/lib/posthog";
 import type { Place } from "@/lib/types";
 import { usePlacesStore } from "@/store/places-store";
@@ -27,16 +35,31 @@ import { icons } from "@/constants/icons";
 
 type PlaceFeature = Supercluster.PointFeature<{ place: Place }>;
 
+/** What the callout overlay is attached to: an existing place's marker or
+ * the "create here?" pending pin dropped by an empty-map tap. */
+type MapSelection =
+  | { kind: "place"; place: Place }
+  | { kind: "pending"; coordinate: LatLng };
+
 /** .map-pin is size-8 → 32px; the coordinate anchors its center. */
 const PIN_RADIUS = 16;
 /** .map-callout is w-72 → 288px. */
 const CALLOUT_WIDTH = 288;
 const CALLOUT_GAP = 10;
 
+const coordOf = (sel: MapSelection): LatLng =>
+  sel.kind === "place"
+    ? {
+        latitude: sel.place.location.latitude,
+        longitude: sel.place.location.longitude,
+      }
+    : sel.coordinate;
+
 export default function MapScreen() {
   const insets = useSafeAreaInsets();
   const { width, height } = useWindowDimensions();
   const { user } = useAuth();
+  const { onAddPlace, onEditPlace } = useManagePlace();
 
   const places = usePlacesStore((state) => state.places);
   const isLoading = usePlacesStore((state) => state.isLoadingPlaces);
@@ -57,40 +80,68 @@ export default function MapScreen() {
   // The native <Callout> can't auto-measure custom content on Android (it
   // clips to a sliver), so marker taps open this custom overlay instead.
   // It is glued to the pin via pointForCoordinate while the camera moves.
-  const [selected, setSelected] = useState<Place | null>(null);
+  const [selection, setSelection] = useState<MapSelection | null>(null);
   const [anchor, setAnchor] = useState<Point | null>(null);
   const [calloutHeight, setCalloutHeight] = useState(0);
-  const selectedRef = useRef<Place | null>(null);
+  const selectionRef = useRef<MapSelection | null>(null);
+  // Android fires MapView.onPress again right after a marker press; the
+  // timestamp lets handleMapPress skip that echo.
+  const lastMarkerPressAtRef = useRef(0);
 
-  const selectPlace = useCallback(async (place: Place) => {
-    selectedRef.current = place;
-    setSelected(place);
-    posthog?.capture("map_marker_tapped", {
-      place_id: place.id,
-      place_uid: place.uid,
-    });
-    const point = await mapRef.current?.pointForCoordinate({
-      latitude: place.location.latitude,
-      longitude: place.location.longitude,
-    });
-    if (point && selectedRef.current?.id === place.id) setAnchor(point);
+  const selectOnMap = useCallback(async (sel: MapSelection) => {
+    selectionRef.current = sel;
+    setSelection(sel);
+    if (sel.kind === "place") {
+      posthog?.capture("map_marker_tapped", {
+        place_id: sel.place.id,
+        place_uid: sel.place.uid,
+      });
+    }
+    const point = await mapRef.current?.pointForCoordinate(coordOf(sel));
+    // guard against a newer selection winning the pointForCoordinate race
+    if (point && selectionRef.current === sel) setAnchor(point);
   }, []);
 
-  const dismissCallout = useCallback(() => {
-    selectedRef.current = null;
-    setSelected(null);
+  const clearSelection = useCallback(() => {
+    selectionRef.current = null;
+    setSelection(null);
     setAnchor(null);
   }, []);
 
   const updateAnchor = useCallback(async () => {
-    const place = selectedRef.current;
-    if (!place) return;
-    const point = await mapRef.current?.pointForCoordinate({
-      latitude: place.location.latitude,
-      longitude: place.location.longitude,
-    });
-    if (point && selectedRef.current?.id === place.id) setAnchor(point);
+    const sel = selectionRef.current;
+    if (!sel) return;
+    const point = await mapRef.current?.pointForCoordinate(coordOf(sel));
+    if (point && selectionRef.current === sel) setAnchor(point);
   }, []);
+
+  const handleMapPress = useCallback(
+    (e: { nativeEvent: { coordinate: LatLng } }) => {
+      if (Date.now() - lastMarkerPressAtRef.current < 300) return;
+      // with a place callout open, the first tap just dismisses it
+      if (selectionRef.current?.kind === "place") {
+        clearSelection();
+        return;
+      }
+      posthog?.capture("map_background_tapped", {
+        action: selectionRef.current?.kind === "pending" ? "move" : "create",
+      });
+      // a tap with the tooltip already open moves the pending pin
+      void selectOnMap({
+        kind: "pending",
+        coordinate: e.nativeEvent.coordinate,
+      });
+    },
+    [clearSelection, selectOnMap],
+  );
+
+  const confirmPendingPlace = useCallback(() => {
+    const sel = selectionRef.current;
+    if (!sel || sel.kind !== "pending") return;
+    posthog?.capture("map_create_place_here_tapped");
+    clearSelection();
+    onAddPlace(sel.coordinate);
+  }, [clearSelection, onAddPlace]);
 
   useFocusEffect(
     useCallback(() => {
@@ -197,7 +248,7 @@ export default function MapScreen() {
         style={{ flex: 1 }}
         initialRegion={DEFAULT_REGION}
         onMapReady={() => setMapReady(true)}
-        onPress={dismissCallout}
+        onPress={handleMapPress}
         onRegionChange={() => void updateAnchor()}
         onRegionChangeComplete={handleRegionChangeComplete}
         showsMyLocationButton
@@ -208,6 +259,7 @@ export default function MapScreen() {
         pitchEnabled
         toolbarEnabled
         showsCompass
+        mapPadding={{ top: 50, right: 0, bottom: 20, left: 10 }}
       >
         {clustered.map((point) => {
           const [longitude, latitude] = point.geometry.coordinates;
@@ -221,7 +273,7 @@ export default function MapScreen() {
                 key={`cluster-${cluster_id}`}
                 coordinate={{ latitude, longitude }}
                 onPress={() => {
-                  dismissCallout();
+                  clearSelection();
                   mapRef.current?.animateToRegion(getExpansionRegion(), 300);
                 }}
               >
@@ -240,7 +292,10 @@ export default function MapScreen() {
             <Marker
               key={place.id}
               coordinate={{ latitude, longitude }}
-              onPress={() => void selectPlace(place)}
+              onPress={() => {
+                lastMarkerPressAtRef.current = Date.now();
+                void selectOnMap({ kind: "place", place });
+              }}
             >
               <View
                 className="map-pin"
@@ -251,11 +306,32 @@ export default function MapScreen() {
             </Marker>
           );
         })}
+
+        {/* Pending "create here?" pin dropped by an empty-map tap. Tapping
+            it is a no-op (the tooltip is already open) — it only stamps the
+            marker-press guard so the echoed map press can't move it. */}
+        {selection?.kind === "pending" && (
+          <Marker
+            coordinate={selection.coordinate}
+            onPress={() => {
+              lastMarkerPressAtRef.current = Date.now();
+            }}
+          >
+            <View className="map-pin map-pin-pending">
+              <Image
+                source={icons.plus}
+                className="map-pin-icon"
+                tintColor="#fff"
+              />
+            </View>
+          </Marker>
+        )}
       </MapView>
 
-      {selected && anchor && (
+      {selection && anchor && (
         // box-none → taps outside the card fall through to the map, where
-        // MapView's onPress dismisses the overlay.
+        // MapView's onPress dismisses the place callout / moves the pending
+        // pin.
         <View
           pointerEvents="box-none"
           style={{
@@ -264,7 +340,12 @@ export default function MapScreen() {
               Math.max(anchor.x - CALLOUT_WIDTH / 2, 8),
               width - CALLOUT_WIDTH - 8,
             ),
-            top: anchor.y - PIN_RADIUS - CALLOUT_GAP - calloutHeight,
+            // clamp so a pin near the top edge can't push the callout
+            // under the Back chip / off screen
+            top: Math.max(
+              anchor.y - PIN_RADIUS - CALLOUT_GAP - calloutHeight,
+              insets.top + 8,
+            ),
             width: CALLOUT_WIDTH,
             // avoid a first frame at the wrong position before onLayout
             opacity: calloutHeight ? 1 : 0,
@@ -274,33 +355,74 @@ export default function MapScreen() {
             className="map-callout"
             onLayout={(e) => setCalloutHeight(e.nativeEvent.layout.height)}
           >
-            <PlaceCard
-              place={selected}
-              onExpand={dismissCallout}
-              currentUid={user?.uid}
-            />
+            {selection.kind === "place" ? (
+              <>
+                <PlaceCard
+                  place={selection.place}
+                  onExpand={clearSelection}
+                  currentUid={user?.uid}
+                />
 
-            <View className="map-callout-actions">
-              <Button
-                className="p-1 flex-1"
-                label="View"
-                onPress={() => {
-                  dismissCallout();
-                  router.push(`/place/${selected.id}`);
-                }}
-              />
-              <Button
-                className="p-1  flex-1"
-                label="Go"
-                onPress={() => {
-                  dismissCallout();
-                  void openNavigation(
-                    selected.location.latitude,
-                    selected.location.longitude,
-                  );
-                }}
-              />
-            </View>
+                <View className="map-callout-actions">
+                  <Button
+                    className="p-1 flex-1"
+                    label="View"
+                    onPress={() => {
+                      clearSelection();
+                      router.push(`/place/${selection.place.id}`);
+                    }}
+                  />
+                  {selection.place.uid === user?.uid && (
+                    <Button
+                      className="p-1 flex-1"
+                      label="Edit"
+                      onPress={() => {
+                        posthog?.capture("map_marker_edit_tapped", {
+                          place_id: selection.place.id,
+                        });
+                        clearSelection();
+                        onEditPlace(selection.place);
+                      }}
+                    />
+                  )}
+                  <Button
+                    className="p-1 flex-1"
+                    label="Go"
+                    onPress={() => {
+                      clearSelection();
+                      void openNavigation(
+                        selection.place.location.latitude,
+                        selection.place.location.longitude,
+                      );
+                    }}
+                  />
+                </View>
+              </>
+            ) : (
+              <>
+                <Text className="map-callout-pending-title">
+                  Add a place here?
+                </Text>
+                <Text className="map-callout-pending-coords" numberOfLines={1}>
+                  {toGeoPointCoordinate(selection.coordinate.latitude)}{" "}
+                  {toGeoPointCoordinate(selection.coordinate.longitude)}
+                </Text>
+
+                <View className="map-callout-actions">
+                  <Button
+                    className="button-secondary p-1 flex-1"
+                    classNameLabel="button-secondary-text"
+                    label="Cancel"
+                    onPress={clearSelection}
+                  />
+                  <Button
+                    className="p-1 flex-1"
+                    label="Create Place"
+                    onPress={confirmPendingPlace}
+                  />
+                </View>
+              </>
+            )}
           </View>
         </View>
       )}

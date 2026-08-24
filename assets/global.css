@@ -525,6 +525,19 @@
   .map-callout-actions {
     @apply flex-row gap-3;
   }
+
+  /* must come after .map-pin so it wins its border color */
+  .map-pin-pending {
+    @apply border-dashed border-accent bg-accent/25;
+  }
+
+  .map-callout-pending-title {
+    @apply px-1 text-base font-sans-bold text-primary;
+  }
+
+  .map-callout-pending-coords {
+    @apply px-1 text-sm font-sans-medium text-muted-foreground;
+  }
 }
 
 /*

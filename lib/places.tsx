@@ -6,8 +6,11 @@ import type { NewPlaceInput, Place } from "./types";
 import { Toast } from "@/components/ui/Toast";
 import Confirmation from "@/components/ui/Confirmation";
 
+/** Prefills the add modal's location field (e.g. a coordinate picked on the map). */
+type InitialLocation = { latitude: number; longitude: number };
+
 type ManagePlaceContextValue = {
-  onAddPlace: () => void;
+  onAddPlace: (initialLocation?: InitialLocation) => void;
   onEditPlace: (place: Place) => void;
   onDeletePlace: (place: Place) => void;
 };
@@ -21,6 +24,11 @@ const ManagePlaceContext = createContext<ManagePlaceContextValue | undefined>(
 
 export function ManagePlaceProvider({ children }: { children: ReactNode }) {
   const [modalPlace, setModalPlace] = useState<AddEditModalPlace>(null);
+  // Location seed for add mode (map tap); must be cleared whenever the modal
+  // closes so it can't leak into a later "+" add.
+  const [addInitialLocation, setAddInitialLocation] = useState<
+    InitialLocation | undefined
+  >(undefined);
   const addPlace = usePlacesStore((state) => state.addPlace);
   const editPlace = usePlacesStore((state) => state.editPlace);
   const deletePlace = usePlacesStore((state) => state.deletePlace);
@@ -32,6 +40,7 @@ export function ManagePlaceProvider({ children }: { children: ReactNode }) {
   async function handleSubmit(values: NewPlaceInput) {
     const current = modalPlace;
     setModalPlace(null);
+    setAddInitialLocation(undefined);
 
     if (!current) return;
 
@@ -58,7 +67,8 @@ export function ManagePlaceProvider({ children }: { children: ReactNode }) {
   }
 
   const value: ManagePlaceContextValue = {
-    onAddPlace() {
+    onAddPlace(initialLocation) {
+      setAddInitialLocation(initialLocation);
       setModalPlace(true);
     },
     onEditPlace(place) {
@@ -76,7 +86,13 @@ export function ManagePlaceProvider({ children }: { children: ReactNode }) {
 
       <ModalAddEditPlace
         place={modalPlace}
-        onClose={() => setModalPlace(null)}
+        initialLocation={
+          modalPlace === true ? addInitialLocation : undefined
+        }
+        onClose={() => {
+          setModalPlace(null);
+          setAddInitialLocation(undefined);
+        }}
         onSubmit={handleSubmit}
       />
 

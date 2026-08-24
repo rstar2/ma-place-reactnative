@@ -18,6 +18,8 @@ import { usePlacesStore } from "@/store/places-store";
 type ModalAddEditPlaceProps = {
   /* Controls visibility of the modal: `true` = add, a `Place` = edit, `null`/`false` = hidden */
   place: Place | boolean | null;
+  /** Prefills the location field in ADD mode (e.g. a coordinate picked on the map). */
+  initialLocation?: { latitude: number; longitude: number };
   onClose: () => void;
   /** Carries the values collected by the modal's inputs. */
   onSubmit: (values: NewPlaceInput) => void;
@@ -28,13 +30,16 @@ function parseLocation(text: string): NewPlaceInput["location"] | null {
   const match = text.trim().match(/^(-?\d+(?:\.\d+)?)\s+(-?\d+(?:\.\d+)?)$/);
   if (!match) return null;
   return {
-    longitude: toGeoPointCoordinate(match[1]),
-    latitude: toGeoPointCoordinate(match[2]),
+    // the field is "latitude longitude" (lat first) — keep the mapping in
+    // sync with the placeholder and the edit-mode seeding below
+    latitude: toGeoPointCoordinate(match[1]),
+    longitude: toGeoPointCoordinate(match[2]),
   };
 }
 
 export default function ModalAddEditPlace({
   place,
+  initialLocation,
   onClose,
   onSubmit,
 }: ModalAddEditPlaceProps) {
@@ -68,11 +73,15 @@ export default function ModalAddEditPlace({
     setTitle(isEdit ? place.title : "");
     setDescription(isEdit ? place.description : "");
     setLocationText(
-      isEdit ? `${place.location.latitude} ${place.location.longitude}` : "",
+      isEdit
+        ? `${place.location.latitude} ${place.location.longitude}`
+        : initialLocation
+          ? `${toGeoPointCoordinate(initialLocation.latitude)} ${toGeoPointCoordinate(initialLocation.longitude)}`
+          : "",
     );
     setSelectedTags(isEdit ? (place.tags ?? []) : []);
     setPickedImage(null);
-  }, [place, isEdit, ensureTagsLoaded]);
+  }, [place, isEdit, ensureTagsLoaded, initialLocation]);
 
   async function handleTakePhoto() {
     // launchCameraAsync rejects unless the CAMERA permission is already granted

@@ -1,11 +1,11 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
-  router,
   Tabs,
   useFocusEffect,
   useLocalSearchParams,
+  useRouter,
 } from "expo-router";
-import { Image, Pressable, useWindowDimensions, View } from "react-native";
+import { Image, useWindowDimensions, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import MapView, {
   Marker,
@@ -23,6 +23,7 @@ import {
 import Text from "@/components/ui/Text";
 import Button from "@/components/ui/Button";
 import PlaceCard from "@/components/PlaceCard";
+import BackButton from "@/components/BackButton";
 import { DEFAULT_REGION } from "@/components/MiniMap";
 import { openNavigation } from "@/lib/location";
 import { useAuth } from "@/lib/auth";
@@ -56,6 +57,7 @@ const coordOf = (sel: MapSelection): LatLng =>
     : sel.coordinate;
 
 export default function MapScreen() {
+  const router = useRouter();
   const insets = useSafeAreaInsets();
   const { width, height } = useWindowDimensions();
   const { user } = useAuth();
@@ -185,16 +187,22 @@ export default function MapScreen() {
     didFitRef.current = true;
     const place = places.find((p) => p.id === focusPlaceId);
     if (!place || !mapReady) return;
-    router.setParams({ place: undefined });
-    mapRef.current?.animateToRegion(
-      {
-        latitude: place.location.latitude,
-        longitude: place.location.longitude,
-        latitudeDelta: 0.01,
-        longitudeDelta: 0.01,
-      },
-      400,
-    );
+    // Android's Google provider drops camera commands issued in the same
+    // frame as onMapReady — defer the move until the map is laid out.
+    const timer = setTimeout(() => {
+      mapRef.current?.animateToRegion(
+        {
+          latitude: place.location.latitude,
+          longitude: place.location.longitude,
+          latitudeDelta: 0.01,
+          longitudeDelta: 0.01,
+        },
+        400,
+      );
+      // cleared after the move is issued so a re-run can't skip it
+      router.setParams({ place: undefined });
+    }, 300);
+    return () => clearTimeout(timer);
   }, [focusPlaceId, places, mapReady]);
 
   useEffect(() => {
@@ -428,10 +436,7 @@ export default function MapScreen() {
       )}
 
       <View className="map-overlay-top" style={{ top: insets.top + 8 }}>
-        <Pressable className="map-title-chip" onPress={() => router.back()}>
-          <Image source={icons.back} className="size-6" />
-          <Text className="map-title">Back</Text>
-        </Pressable>
+        <BackButton />
       </View>
 
       {status && (

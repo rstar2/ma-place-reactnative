@@ -33,5 +33,4 @@ Project created with ```pnpm dlx create-expo-app --template default@54```, then 
 
 - Upload the selected image to `Claudinary` on `addPlace/editPlace`
 - On `deletePlace` can also delete the image from `Claudinary`
-- Implement `place/[id]./tsx` - add `View` link to the `PlaceCard`
 - Proper splash screen, logo and avatar for the authenticated user

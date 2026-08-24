@@ -1,7 +1,7 @@
-diff --git a/cpp/HybridClusterer.hpp b/cpp/HybridClusterer.hpp
-index c346765a32c1357c0c0dbeb9813b94b9aaac76e6..ef60e23c698fe0cccf8892e0501301c9a3c41182 100644
---- a/cpp/HybridClusterer.hpp
-+++ b/cpp/HybridClusterer.hpp
+diff --git a/node_modules/react-native-clusterer/cpp/HybridClusterer.hpp b/node_modules/react-native-clusterer/cpp/HybridClusterer.hpp
+index c346765..ef60e23 100644
+--- a/node_modules/react-native-clusterer/cpp/HybridClusterer.hpp
++++ b/node_modules/react-native-clusterer/cpp/HybridClusterer.hpp
 @@ -8,8 +8,12 @@ class HybridClusterer final : public HybridClustererSpec {
   public:
    HybridClusterer() : HybridObject(TAG) {}

@@ -3,6 +3,7 @@ import { type ImageSourcePropType } from "react-native";
 import activity from "@/assets/icons/activity.png";
 import add from "@/assets/icons/add.png";
 import back from "@/assets/icons/back.png";
+import copy from "@/assets/icons/copy.png";
 import home from "@/assets/icons/home.png";
 import map from "@/assets/icons/map2.png";
 import plus from "@/assets/icons/plus.png";
@@ -23,6 +24,7 @@ export const icons = {
   map,
   add,
   back,
+  copy,
   plus,
 
   place,

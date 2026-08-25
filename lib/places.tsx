@@ -1,10 +1,9 @@
 import { createContext, useContext, useState, type ReactNode } from "react";
 
-import ModalAddEditPlace from "@/components/ModalAddEditPlace";
 import { usePlacesStore } from "@/store/places-store";
-import type { NewPlaceInput, Place } from "./types";
+import type { NewPlaceInput, Place } from "@/lib/types";
+import ModalAddEditPlace from "@/components/ModalAddEditPlace";
 import { Toast } from "@/components/ui/Toast";
-import Confirmation from "@/components/ui/Confirmation";
 
 /** Prefills the add modal's location field (e.g. a coordinate picked on the map). */
 type InitialLocation = { latitude: number; longitude: number };
@@ -12,7 +11,6 @@ type InitialLocation = { latitude: number; longitude: number };
 type ManagePlaceContextValue = {
   onAddPlace: (initialLocation?: InitialLocation) => void;
   onEditPlace: (place: Place) => void;
-  onDeletePlace: (place: Place) => void;
 };
 
 /** `true` → add mode, a `Place` → edit mode, `null` → hidden. */
@@ -31,11 +29,6 @@ export function ManagePlaceProvider({ children }: { children: ReactNode }) {
   >(undefined);
   const addPlace = usePlacesStore((state) => state.addPlace);
   const editPlace = usePlacesStore((state) => state.editPlace);
-  const deletePlace = usePlacesStore((state) => state.deletePlace);
-
-  const [confirmDelete, setConfirmDelete] = useState<string | undefined>(
-    undefined,
-  );
 
   async function handleSubmit(values: NewPlaceInput) {
     const current = modalPlace;
@@ -74,10 +67,6 @@ export function ManagePlaceProvider({ children }: { children: ReactNode }) {
     onEditPlace(place) {
       setModalPlace(place);
     },
-    async onDeletePlace(place) {
-      // show a confirm dialog before real deleting
-      setConfirmDelete(place.id);
-    },
   };
 
   return (
@@ -86,32 +75,12 @@ export function ManagePlaceProvider({ children }: { children: ReactNode }) {
 
       <ModalAddEditPlace
         place={modalPlace}
-        initialLocation={
-          modalPlace === true ? addInitialLocation : undefined
-        }
+        initialLocation={modalPlace === true ? addInitialLocation : undefined}
         onClose={() => {
           setModalPlace(null);
           setAddInitialLocation(undefined);
         }}
         onSubmit={handleSubmit}
-      />
-
-      <Confirmation
-        message="Delete the place"
-        visible={!!confirmDelete}
-        onClose={async (confirmed) => {
-          setConfirmDelete(undefined);
-          if (confirmed) {
-            try {
-              await deletePlace(confirmDelete!);
-
-              Toast.success("Success", "Place deleted");
-            } catch (err) {
-              console.error(`Failed to save place`, err);
-              Toast.error("Failure", "Place not deleted");
-            }
-          }
-        }}
       />
     </ManagePlaceContext.Provider>
   );

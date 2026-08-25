@@ -16,6 +16,14 @@ export const POSTHOG = {
   host: env.EXPO_PUBLIC_POSTHOG_HOST,
 };
 
+export const CLOUDINARY = {
+  cloudName: env.EXPO_PUBLIC_CLOUDINARY_CLOUD_NAME,
+  uploadPreset: env.EXPO_PUBLIC_CLOUDINARY_UPLOAD_PRESET,
+  // needed if using signed upload
+  uploadSignedPreset: env.EXPO_PUBLIC_CLOUDINARY_UPLOAD_SIGNED_PRESET,
+  apiKey: env.EXPO_PUBLIC_CLOUDINARY_API_KEY,
+};
+
 if (__DEV__) {
   if (!POSTHOG.projectToken) {
     console.error(

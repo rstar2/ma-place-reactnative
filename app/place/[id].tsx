@@ -17,11 +17,12 @@ import MiniMap from "@/components/MiniMap";
 import PlaceImageCarousel, {
   placeImageUrls,
 } from "@/components/PlaceImageCarousel";
+import BackButton from "@/components/BackButton";
+import PlaceDeleteButton from "@/components/PlaceDeleteButton";
 import { usePlacesStore } from "@/store/places-store";
 import { icons } from "@/constants/icons";
 import { theme } from "@/constants/theme";
 import type { Place } from "@/lib/types";
-import BackButton from "@/components/BackButton";
 
 export default function PlaceDetails() {
   const router = useRouter();
@@ -78,83 +79,91 @@ export default function PlaceDetails() {
       </View>
 
       {place ? (
-        <ScrollView
-          className="flex-1"
-          contentContainerClassName="gap-5 pb-10"
-          showsVerticalScrollIndicator={false}
-        >
-          <View className="input-field">
-            <Text className="input-label font-sans-bold">Title</Text>
-            <Text className="place-details-title">{place.title}</Text>
-          </View>
-
-          <View className="input-field">
-            <Text className="input-label font-sans-bold">Description</Text>
-            <Text className="place-details-text">{place.description}</Text>
-          </View>
-
-          <View className="input-field">
-            <Text className="input-label font-sans-bold">Location</Text>
-            <View className="place-details-coords">
-              <Text className="place-details-text">
-                {`${place.location.latitude} ${place.location.longitude}`}
-              </Text>
-              <Pressable
-                hitSlop={8}
-                onPress={() =>
-                  void Clipboard.setStringAsync(
-                    `${place.location.latitude} ${place.location.longitude}`,
-                  )
-                }
-              >
-                <Image
-                  source={icons.copy}
-                  className="place-details-copy-icon"
-                  tintColor={theme.colors.mutedForeground}
-                />
-              </Pressable>
-            </View>
-            {region && (
-              <MiniMap
-                region={region}
-                location={{
-                  latitude: place.location.latitude,
-                  longitude: place.location.longitude,
-                  icon: place.icon,
-                  color: place.color,
-                }}
-              />
-            )}
-            <Button
-              label="Show on map"
-              className="button-secondary"
-              classNameLabel="button-secondary-text"
-              onPress={() =>
-                router.push({ pathname: "/map", params: { place: place.id } })
-              }
-            />
-          </View>
-
-          {!!place.tags?.length && (
+        <>
+          <ScrollView
+            className="flex-1"
+            contentContainerClassName="gap-5 pb-10"
+            showsVerticalScrollIndicator={false}
+          >
             <View className="input-field">
-              <Text className="input-label font-sans-bold">Tags</Text>
-              <View className="place-details-tags">
-                {place.tags.map((tag) => (
-                  <View key={tag} className="multi-select-chip">
-                    <Text className="multi-select-chip-text">{tag}</Text>
-                  </View>
-                ))}
+              <Text className="input-label font-sans-bold">Title</Text>
+              <Text className="place-details-title">{place.title}</Text>
+            </View>
+
+            <View className="input-field">
+              <Text className="input-label font-sans-bold">Description</Text>
+              <Text className="place-details-text">{place.description}</Text>
+            </View>
+
+            <View className="input-field">
+              <Text className="input-label font-sans-bold">Location</Text>
+              <View className="place-details-coords">
+                <Text className="place-details-text">
+                  {`${place.location.latitude} ${place.location.longitude}`}
+                </Text>
+                <Pressable
+                  hitSlop={8}
+                  onPress={() =>
+                    void Clipboard.setStringAsync(
+                      `${place.location.latitude} ${place.location.longitude}`,
+                    )
+                  }
+                >
+                  <Image
+                    source={icons.copy}
+                    className="place-details-copy-icon"
+                    tintColor={theme.colors.mutedForeground}
+                  />
+                </Pressable>
               </View>
+              {region && (
+                <MiniMap
+                  region={region}
+                  location={{
+                    latitude: place.location.latitude,
+                    longitude: place.location.longitude,
+                    icon: place.icon,
+                    color: place.color,
+                  }}
+                />
+              )}
+              <Button
+                label="Show on map"
+                className="button-secondary"
+                classNameLabel="button-secondary-text"
+                onPress={() =>
+                  router.push({ pathname: "/map", params: { place: place.id } })
+                }
+              />
             </View>
-          )}
 
-          {images.length > 0 && (
-            <View className="input-field">
-              <Text className="input-label font-sans-bold">Images</Text>
-              <PlaceImageCarousel images={images} />
-            </View>
-          )}
-        </ScrollView>
+            {!!place.tags?.length && (
+              <View className="input-field">
+                <Text className="input-label font-sans-bold">Tags</Text>
+                <View className="place-details-tags">
+                  {place.tags.map((tag) => (
+                    <View key={tag} className="multi-select-chip">
+                      <Text className="multi-select-chip-text">{tag}</Text>
+                    </View>
+                  ))}
+                </View>
+              </View>
+            )}
+
+            {images.length > 0 && (
+              <View className="input-field">
+                <Text className="input-label font-sans-bold">Images</Text>
+                <PlaceImageCarousel images={images} />
+              </View>
+            )}
+          </ScrollView>
+
+          <PlaceDeleteButton
+            placeId={place.id}
+            onDeleted={() => router.back()}
+            className="mt-2"
+          />
+        </>
       ) : isResolving ? (
         <View className="place-details-state">
           <ActivityIndicator />

@@ -16,9 +16,9 @@ import {
   Timestamp,
 } from "@react-native-firebase/firestore";
 import { getFunctions, httpsCallable } from "@react-native-firebase/functions";
-import * as auth from "@react-native-firebase/auth";
+import { getAuth } from "@react-native-firebase/auth";
 
-import type { NewPlaceInput, Place, Tag } from "./types";
+import type { NewPlace, Place, Tag } from "./types";
 import { icons } from "@/constants/icons";
 import { theme } from "@/constants/theme";
 
@@ -141,7 +141,7 @@ type AddPlaceResult = Omit<PlaceDoc, "createdAt" | "location" | "imageUrl"> & {
  * NewPlaceInput - the payload of the `dbAddPlaceApp` callable - the backend's shape.
  *
  */
-const dbAddPlaceCallable = httpsCallable<NewPlaceInput, AddPlaceResult>(
+const dbAddPlaceCallable = httpsCallable<NewPlace, AddPlaceResult>(
   getFunctions(),
   "dbAddPlaceApp",
 );
@@ -159,12 +159,7 @@ export async function getUserName(uid: string): Promise<string | undefined> {
   return undefined;
 }
 
-export async function addPlace(placeInput: NewPlaceInput): Promise<Place> {
-  const uid = auth.getAuth().currentUser?.uid;
-  if (!uid) throw new Error("You must be signed in to add a place.");
-
-  const data = { ...placeInput, uid };
-
+export async function addPlace(placeInput: NewPlace): Promise<Place> {
   // 1. Use the client Firebase Firestore API - this could be disabled in the Firestore rules
   // so that only Firebase Functions should be used
   // const ref = await addDoc(placesRef, data);
@@ -181,7 +176,7 @@ export async function addPlace(placeInput: NewPlaceInput): Promise<Place> {
   // }).then(res => res.json());
 
   // 3. Use the Firebase Callable function
-  const { data: place } = await dbAddPlaceCallable(data);
+  const { data: place } = await dbAddPlaceCallable(placeInput);
 
   const created = decoratePlace(
     {
@@ -196,7 +191,7 @@ export async function addPlace(placeInput: NewPlaceInput): Promise<Place> {
     },
     place.id,
   );
-  created.creatorName = auth.getAuth().currentUser?.displayName ?? "Unknown";
+  created.creatorName = getAuth().currentUser?.displayName ?? "Unknown";
   return created;
 }
 
@@ -207,7 +202,7 @@ export async function addPlace(placeInput: NewPlaceInput): Promise<Place> {
  */
 export async function updatePlace(
   existing: Place,
-  placeInput: NewPlaceInput,
+  placeInput: NewPlace,
 ): Promise<Place> {
   // `icon`/`color` are derived locally - never persist them
   // pass only "valid" fields - cannot pass 'undefined' (and 'null' is a valid value)

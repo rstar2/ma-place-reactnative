@@ -25,7 +25,7 @@ export type Place = {
    * Any additional meta data,
    * currently just the Cloudinary ID of the image
    */
-  meta: {
+  meta?: {
     // Like: ma-place/m4b3lllxapindctqlxdq
     cloudinaryId?: string;
   };
@@ -47,12 +47,30 @@ export type Place = {
   creatorName?: string;
 };
 
-export type NewPlaceInput = Omit<
+/**
+ * RN FormData file part — build from an expo-image-picker asset:
+ * { uri: asset.uri, type: asset.mimeType ?? "image/jpeg", name: asset.fileName ?? "upload.jpg" }
+ */
+export type ImageUploadData = { uri: string; type?: string; name?: string };
+
+export type NewPlace = Omit<
   Place,
-  "id" | "uid" | "createdAt" | "color" | "icon" | "creatorName" | "location"
+  "id" | "createdAt" | "color" | "icon" | "creatorName" | "location"
 > & {
   location: {
     longitude: string;
     latitude: string;
   };
+};
+
+export type NewPlaceInput = Omit<
+  NewPlace,
+  // this is added later, as the authorized user ID
+  | "uid"
+
+  // these are later populated after upload to Cloudinary
+  | "imageUrl"
+  | "meta"
+> & {
+  imageUploadData?: ImageUploadData;
 };

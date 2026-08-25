@@ -127,11 +127,13 @@ export default function ModalAddEditPlace({
       location: location!,
       tags: selectedTags,
 
-      // TODO
-      imageUrl: "todo",
-      meta: {
-        cloudinaryId: "todo",
-      },
+      imageUploadData: pickedImage
+        ? {
+            uri: pickedImage.uri,
+            type: pickedImage.type || undefined,
+            name: pickedImage.fileName ?? undefined,
+          }
+        : undefined,
     });
   }
 

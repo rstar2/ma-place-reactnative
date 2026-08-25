@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import { getAuth } from "@react-native-firebase/auth";
 
 import {
   addPlace as addPlaceDoc,
@@ -7,7 +8,8 @@ import {
   loadTags,
   updatePlace as updatePlaceDoc,
 } from "@/lib/db";
-import type { Place, NewPlaceInput } from "@/lib/types";
+import type { Place, NewPlaceInput, NewPlace } from "@/lib/types";
+import { uploadFile } from "@/lib/claudinary";
 
 type PlacesStore = {
   places: Place[];
@@ -45,6 +47,21 @@ let tagsRequest: Promise<void> | null = null;
 
 function toErrorMessage(err: unknown): string {
   return err instanceof Error ? err.message : String(err);
+}
+
+/** Cloudinary context meta shared by the add and edit flows. */
+function toUploadMeta(uid: string, input: Omit<NewPlaceInput, "imageUploadData">) {
+  return {
+    uid,
+    title: input.title,
+    description: input.description,
+    tags: input.tags ?? [],
+    // NewPlace keeps the coords as strings — Cloudinary wants numbers
+    location: {
+      latitude: Number(input.location.latitude),
+      longitude: Number(input.location.longitude),
+    },
+  };
 }
 
 export const usePlacesStore = create<PlacesStore>()((set, get) => ({
@@ -93,7 +110,34 @@ export const usePlacesStore = create<PlacesStore>()((set, get) => ({
   },
 
   addPlace: async (input) => {
-    const place = await addPlaceDoc(input);
+    // split off the upload payload so the persisted object never carries it
+    const { imageUploadData, ...placeInput } = input;
+
+    // same uid resolution as db.addPlace — the Cloudinary context tags
+    // the asset with its creator
+    const uid = getAuth().currentUser?.uid;
+    if (!uid) throw new Error("You must be signed in to add a place.");
+
+    let newPlace: NewPlace = { uid, ...placeInput };
+
+    // upload to Cloudinary first
+    if (imageUploadData) {
+      const { imageUrl, cloudinaryId } = await uploadFile(
+        imageUploadData,
+        toUploadMeta(uid, placeInput),
+      );
+
+      newPlace = {
+        ...placeInput,
+        uid,
+        imageUrl,
+        meta: {
+          cloudinaryId,
+        },
+      };
+    }
+
+    const place = await addPlaceDoc(newPlace);
 
     // the list is ordered by createdAt desc → the new place goes on top
     set({ places: [place, ...get().places] });
@@ -103,7 +147,28 @@ export const usePlacesStore = create<PlacesStore>()((set, get) => ({
     const existing = get().places.find((p) => p.id === id);
     if (!existing) throw new Error(`Place ${id} not found in the cache.`);
 
-    const place = await updatePlaceDoc(existing, input);
+    // split off the upload payload so the persisted object never carries it
+    const { imageUploadData, ...placeInput } = input;
+
+    // the owner never changes on edit — keep the existing place's uid
+    let updated: NewPlace = { uid: existing.uid, ...placeInput };
+
+    // upload a newly picked image first
+    if (imageUploadData) {
+      const { imageUrl, cloudinaryId } = await uploadFile(
+        imageUploadData,
+        toUploadMeta(existing.uid, placeInput),
+      );
+
+      updated = {
+        ...placeInput,
+        uid: existing.uid,
+        imageUrl,
+        meta: { cloudinaryId },
+      };
+    }
+
+    const place = await updatePlaceDoc(existing, updated);
     set({
       places: get().places.map((p) => (p.id === place.id ? place : p)),
     });

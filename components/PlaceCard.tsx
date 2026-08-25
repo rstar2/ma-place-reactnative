@@ -14,6 +14,7 @@ import { cn, formatDateTime } from "@/lib/utils";
 import { Place } from "@/lib/types";
 import { theme } from "@/constants/theme";
 import { icons } from "@/constants/icons";
+import PlaceDeleteButton from "./PlaceDeleteButton";
 
 type PlaceCardProps = {
   place: Place;
@@ -21,7 +22,8 @@ type PlaceCardProps = {
   expanded?: boolean;
   onExpand: () => void;
   onEdit?: () => void;
-  onDelete?: () => void;
+  showView?: boolean;
+  showDelete?: boolean;
   showOnMap?: boolean;
   /** Auth uid of the currently signed-in user - shows "Me" for own places. */
   currentUid?: string;
@@ -46,10 +48,17 @@ export default function PlaceCard({
   expanded = false,
   onExpand,
   onEdit,
-  onDelete,
+  showView = false,
+  showDelete = false,
   showOnMap,
   currentUid,
 }: PlaceCardProps) {
+  const router = useRouter();
+
+  const onShowOnMap = () =>
+    router.push({ pathname: "/map", params: { place: id } });
+  const onView = () => router.push(`/place/${id}`);
+
   return (
     <Pressable
       onPress={onExpand}
@@ -85,7 +94,7 @@ export default function PlaceCard({
 
         {showOnMap && (
           <View className="absolute -right-2 -top-2">
-            <PlaceShowOnMap placeId={id} />
+            <PlaceShowOnMap onShowOnMap={onShowOnMap} />
           </View>
         )}
       </View>
@@ -129,21 +138,24 @@ export default function PlaceCard({
             </Text>
           </View>
 
-          {(onEdit || onDelete) && (
+          {(showView || onEdit || showDelete) && (
             <View className="flex-row gap-3">
+              {showView && (
+                <Button
+                  className="flex-1 w-1/3"
+                  onPress={onView}
+                  label="View"
+                ></Button>
+              )}
               {onEdit && (
                 <Button
-                  className="flex-1 w-1/2"
+                  className="flex-1 w-1/3"
                   onPress={onEdit}
                   label="Edit"
                 ></Button>
               )}
 
-              <Button
-                onPress={onDelete}
-                className="bg-destructive flex-1 w-1/2"
-                label="Delete"
-              />
+              <PlaceDeleteButton placeId={id} className="flex-1 w-1/3" />
             </View>
           )}
         </View>
@@ -152,14 +164,9 @@ export default function PlaceCard({
   );
 }
 
-export function PlaceShowOnMap({ placeId }: { placeId: string }) {
-  const router = useRouter();
+export function PlaceShowOnMap({ onShowOnMap }: { onShowOnMap: () => void }) {
   return (
-    <Pressable
-      onPress={() =>
-        router.push({ pathname: "/map", params: { place: placeId } })
-      }
-    >
+    <Pressable onPress={onShowOnMap}>
       <Image
         source={icons.place}
         className="place-card-show_in_map-icon"

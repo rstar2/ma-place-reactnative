@@ -21,8 +21,7 @@ import { useAuth } from "@/lib/auth";
 import { usePlacesStore } from "@/store/places-store";
 
 export default function PlacesScreen() {
-  const { onEditPlace: handleEditPlace, onDeletePlace: handleDeletePlace } =
-    useManagePlace();
+  const { onEditPlace: handleEditPlace } = useManagePlace();
   const { user } = useAuth();
   const places = usePlacesStore((state) => state.places);
   const tags = usePlacesStore((state) => state.tags);
@@ -93,7 +92,8 @@ export default function PlacesScreen() {
               expanded={expandedPlaceId === place.id}
               onExpand={() => handleExpandPlace(place)}
               onEdit={() => handleEditPlace(place)}
-              onDelete={() => handleDeletePlace(place)}
+              showView
+              showDelete
               showOnMap
             />
           )}

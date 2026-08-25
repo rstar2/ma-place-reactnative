@@ -14,21 +14,20 @@ const HEIGHT_RATIO = 3 / 4;
 /** http(s) only — drops missing values and the literal "todo" placeholder. */
 const isRemoteImage = (uri: string) => /^https?:\/\//i.test(uri);
 
+//  demo images so the carousel shows without backend data
+const PLACEHOLDER_IMAGE_URLS: string[] = [
+  //   "https://picsum.photos/id/1015/800/600",
+  //   "https://picsum.photos/id/1016/800/600",
+  //   "https://picsum.photos/id/1018/800/600",
+];
+
 /**
  * Derives the displayable images for a place. Today that is the single
  * `url`; when the backend grows an `images: string[]` field this is the
  * ONLY place to change: `place.images ?? [place.url]`.
  */
-// TODO(temp): remove — demo images so the carousel shows without backend data
-const PLACEHOLDER_IMAGE_URLS = [
-  "https://picsum.photos/id/1015/800/600",
-  "https://picsum.photos/id/1016/800/600",
-  "https://picsum.photos/id/1018/800/600",
-];
-
 export function placeImageUrls(place: Pick<Place, "url">): string[] {
   const urls = (place.url ? [place.url] : []).filter(isRemoteImage);
-  // TODO(temp): remove — fall back to demo images
   return urls.length > 0 ? urls : PLACEHOLDER_IMAGE_URLS;
 }
 

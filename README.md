@@ -31,6 +31,6 @@ Project created with ```pnpm dlx create-expo-app --template default@54```, then 
 
 ## TODO
 
-- Upload the selected image to `Claudinary` on `addPlace/editPlace`
-- On `deletePlace` can also delete the image from `Claudinary`
-- Proper splash screen, logo and avatar for the authenticated user
+- ? On `deletePlace` can also delete the image from `Claudinary`
+- Proper splash screen, logo
+- Offline support - discuss/grill-me (native SQLite maybe)

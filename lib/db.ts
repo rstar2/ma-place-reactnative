@@ -125,11 +125,10 @@ export async function loadPlaces(count = -1): Promise<Place[]> {
   }
 }
 /**
- * Place doc as returned by `dbAddPlaceApp`: the stored doc shape, i.e. `url`
- * instead of `imageUrl`, a plain lat/lng `location` (not a GeoPoint) and
- * `createdAt` as epoch millis.
+ * Place doc as returned by `dbAddPlaceApp`: the stored doc shape,
+ * i.e. a plain lat/lng `location` (not a GeoPoint) and `createdAt` as epoch millis.
  */
-type AddPlaceResult = Omit<PlaceDoc, "createdAt" | "location" | "imageUrl"> & {
+type AddPlaceResult = Omit<PlaceDoc, "createdAt" | "location" | "url"> & {
   id: string;
   createdAt: number;
   location: { latitude: number; longitude: number };
@@ -186,7 +185,7 @@ export async function addPlace(placeInput: NewPlace): Promise<Place> {
       description: place.description,
       location: new GeoPoint(place.location.latitude, place.location.longitude),
       tags: place.tags,
-      imageUrl: place.url ?? "",
+      url: place.url ?? "",
       meta: place.meta,
     },
     place.id,

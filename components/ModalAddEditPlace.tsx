@@ -57,8 +57,7 @@ export default function ModalAddEditPlace({
   const [selectedTags, setSelectedTags] = useState<Tag[]>(
     isEdit ? (place.tags ?? []) : [],
   );
-  // Locally picked image (camera or gallery); preview only — the Cloudinary
-  // upload and the imageUrl/meta wiring are phase 2
+  // Locally picked image (camera or gallery)
   const [pickedImage, setPickedImage] = useState<ImagePickerAsset | null>(null);
 
   const location = parseLocation(locationText);
@@ -130,7 +129,9 @@ export default function ModalAddEditPlace({
       imageUploadData: pickedImage
         ? {
             uri: pickedImage.uri,
-            type: pickedImage.type || undefined,
+            // asset.type is the coarse kind ("image"), not a MIME type — an
+            // invalid part content-type makes Android abort the request
+            type: pickedImage.mimeType ?? "image/jpeg",
             name: pickedImage.fileName ?? undefined,
           }
         : undefined,

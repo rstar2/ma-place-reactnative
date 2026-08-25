@@ -9,7 +9,7 @@ import {
   updatePlace as updatePlaceDoc,
 } from "@/lib/db";
 import type { Place, NewPlaceInput, NewPlace } from "@/lib/types";
-import { uploadFile } from "@/lib/claudinary";
+import { uploadImage } from "@/lib/claudinary";
 
 type PlacesStore = {
   places: Place[];
@@ -50,7 +50,10 @@ function toErrorMessage(err: unknown): string {
 }
 
 /** Cloudinary context meta shared by the add and edit flows. */
-function toUploadMeta(uid: string, input: Omit<NewPlaceInput, "imageUploadData">) {
+function toUploadMeta(
+  uid: string,
+  input: Omit<NewPlaceInput, "imageUploadData">,
+) {
   return {
     uid,
     title: input.title,
@@ -122,7 +125,7 @@ export const usePlacesStore = create<PlacesStore>()((set, get) => ({
 
     // upload to Cloudinary first
     if (imageUploadData) {
-      const { imageUrl, cloudinaryId } = await uploadFile(
+      const { url, cloudinaryId } = await uploadImage(
         imageUploadData,
         toUploadMeta(uid, placeInput),
       );
@@ -130,7 +133,7 @@ export const usePlacesStore = create<PlacesStore>()((set, get) => ({
       newPlace = {
         ...placeInput,
         uid,
-        imageUrl,
+        url,
         meta: {
           cloudinaryId,
         },
@@ -155,7 +158,7 @@ export const usePlacesStore = create<PlacesStore>()((set, get) => ({
 
     // upload a newly picked image first
     if (imageUploadData) {
-      const { imageUrl, cloudinaryId } = await uploadFile(
+      const { url, cloudinaryId } = await uploadImage(
         imageUploadData,
         toUploadMeta(existing.uid, placeInput),
       );
@@ -163,7 +166,7 @@ export const usePlacesStore = create<PlacesStore>()((set, get) => ({
       updated = {
         ...placeInput,
         uid: existing.uid,
-        imageUrl,
+        url,
         meta: { cloudinaryId },
       };
     }

@@ -11,7 +11,7 @@
 - Tags = read-only chips reusing `.multi-select-chip` + `.multi-select-chip-text` (pure presentation classes; ✕ lives in MultiSelect, not CSS) + new wrapper `.place-details-tags`.
 - Carousel width = `useWindowDimensions().width - 40` (ScreenBase `p-5`), height = width × 3/4 (matches `.place-image-preview` aspect-4/3).
 - Data: `usePlacesStore` — `ensurePlacesLoaded()` in `useFocusEffect` (repo pattern), `places.find(p => p.id === id)`. No store changes.
-- Images: `placeImageUrls(place)` helper filters non-http uris (`imageUrl` is literal `"todo"` for all current data → carousel section hidden until real URLs exist). Designed as the ONLY change point when `images: string[]` arrives.
+- Images: `placeImageUrls(place)` helper filters non-http uris (`url` is literal `"todo"` for all current data → carousel section hidden until real URLs exist). Designed as the ONLY change point when `images: string[]` arrives.
 
 ## Steps
 
@@ -57,7 +57,7 @@
 
 ### 3. New `components/PlaceImageCarousel.tsx`
 
-- Export `placeImageUrls(place: Pick<Place,"imageUrl">): string[]` — `[imageUrl].filter(/^https?:\/\//)` with doc comment: future array swap point.
+- Export `placeImageUrls(place: Pick<Place,"url">): string[]` — `[url].filter(/^https?:\/\//)` with doc comment: future array swap point.
 - Default export `PlaceImageCarousel({ images }: { images: string[] })`:
   - `useState(0)` activeIndex; `onProgressChange` handler rounds progress, guarded setState (`prev === next ? prev : next`) — fires every frame.
   - `if (images.length === 0) return null` AFTER hooks.
@@ -98,7 +98,7 @@ Details:
 ## Gotchas
 
 - RNRC v5 ≠ v4 API (style vs width/height props, `onSnapToItem` not `onScrollEnd`) — don't copy v4 examples.
-- All current places have `imageUrl: "todo"` → carousel hidden is EXPECTED, not a bug.
+- All current places have `url: "todo"` → carousel hidden is EXPECTED, not a bug.
 - expo-image needs explicit dims → carousel style provides them.
 
 ## Verification

@@ -20,7 +20,7 @@ export type Place = {
    * Image url - like:
    * https://res.cloudinary.com/magic-media/image/upload/v1569150316/ma-place/m4b3lllxapindctqlxdq.jpg
    */
-  imageUrl?: string;
+  url?: string;
   /**
    * Any additional meta data,
    * currently just the Cloudinary ID of the image
@@ -69,7 +69,7 @@ export type NewPlaceInput = Omit<
   | "uid"
 
   // these are later populated after upload to Cloudinary
-  | "imageUrl"
+  | "url"
   | "meta"
 > & {
   imageUploadData?: ImageUploadData;

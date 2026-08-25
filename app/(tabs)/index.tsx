@@ -144,7 +144,7 @@ function Header({
   const router = useRouter();
   const [listWidth, setListWidth] = useState(0);
   const { region, granted } = useUserLocation();
-  console.log("location", granted, region);
+  // console.log("location", granted, region);
 
   return (
     <>

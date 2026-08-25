@@ -2,7 +2,7 @@
 
 ## Context
 
-"Choose" button in `ModalAddEditPlace.tsx` Image field must let user pick gallery image or take photo. Phase 2 (later): Cloudinary upload + wire `imageUrl`/`meta.cloudinaryId` (stubs stay `"todo"` — untouched now).
+"Choose" button in `ModalAddEditPlace.tsx` Image field must let user pick gallery image or take photo. Phase 2 (later): Cloudinary upload + wire `url`/`meta.cloudinaryId` (stubs stay `"todo"` — untouched now).
 
 Decisions (user): `expo-image-picker`
 · two buttons in form (Camera/Gallery)
@@ -132,16 +132,16 @@ pnpm android              # rebuild dev client — run:android does NOT re-prebu
 - Camera: grant → photo preview; ✕ removes; deny → toast, no crash
 - Gallery: opens w/o permission prompt; cancel → no-op; re-pick replaces
 - Edit mode: no preview initially; reopen modal → preview cleared
-- Submit works w/ and w/o image (saved place still `imageUrl: "todo"` — phase 2)
+- Submit works w/ and w/o image (saved place still `url: "todo"` — phase 2)
 - Blank preview → restart metro `pnpm start --clear` (NativeWind CSS change)
 
 ## Notes / risks
 
 - Prebuild regenerates gitignored native dirs — inspected: only generated content; backup first if cautious (`cp -r android android.bak ios ios.bak`).
 - iOS untestable on Linux (pod install skipped); on Mac: `pnpm expo prebuild -p ios` runs pods.
-- Phase 2 hook: `pickedImage` (uri/mimeType/fileSize/…) → `handleSubmit` → Cloudinary upload → real `imageUrl`/`cloudinaryId`.
+- Phase 2 hook: `pickedImage` (uri/mimeType/fileSize/…) → `handleSubmit` → Cloudinary upload → real `url`/`cloudinaryId`.
 
 ## Next steps (phase 2)
 
 1. Upload to `Claudinary` when finally calling the `addPlace` method
-1. Edit mode to show a preview of existing remote `place.imageUrl`
+1. Edit mode to show a preview of existing remote `place.url`

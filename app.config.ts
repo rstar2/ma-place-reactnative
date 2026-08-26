@@ -18,6 +18,7 @@ const config: ExpoConfig = {
   userInterfaceStyle: "automatic",
   newArchEnabled: true,
   ios: {
+    icon: "./assets/app-icon.icon",
     supportsTablet: true,
     bundleIdentifier: "com.magicmedia.maplace",
     googleServicesFile: "./GoogleService-Info.plist",
@@ -27,7 +28,7 @@ const config: ExpoConfig = {
   },
   android: {
     adaptiveIcon: {
-      backgroundColor: "#E6F4FE",
+      backgroundColor: "#182D45",
       foregroundImage: "./assets/images/android-icon-foreground.png",
       backgroundImage: "./assets/images/android-icon-background.png",
       monochromeImage: "./assets/images/android-icon-monochrome.png",

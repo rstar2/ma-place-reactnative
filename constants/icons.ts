@@ -9,6 +9,8 @@ import map from "@/assets/icons/map2.png";
 import plus from "@/assets/icons/plus.png";
 import setting from "@/assets/icons/setting.png";
 
+import avatar from "@/assets/icons/avatar.png";
+
 import place from "@/assets/icons/place.png";
 import sleep from "@/assets/icons/sleep.png";
 import oil from "@/assets/icons/oil.png";
@@ -26,6 +28,7 @@ export const icons = {
   back,
   copy,
   plus,
+  avatar,
 
   place,
   // tags

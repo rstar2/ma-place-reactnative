@@ -19,7 +19,6 @@ import {
 } from "@/components/ListItemSeparator";
 import { isNearBy, noop } from "@/lib/utils";
 import { Place } from "@/lib/types";
-import { images } from "@/constants/images";
 import { posthog } from "@/lib/posthog";
 import { icons } from "@/constants/icons";
 import { useManagePlace } from "@/lib/places";
@@ -152,7 +151,7 @@ function Header({
         {user && (
           <View className="home-user">
             <Image
-              source={user.photoURL ? { uri: user.photoURL } : images.avatar}
+              source={user.photoURL ? { uri: user.photoURL } : icons.avatar}
               className="home-avatar"
             />
             <Text className="home-user-name">{user.displayName}</Text>

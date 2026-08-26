@@ -61,3 +61,17 @@ Wiring: `metro.config.js` wraps the Metro config with `withNativeWind({ input: '
 - Auth: uses `Firebase Auth` for both *email/password* and *Google* sign-in
 - Uploaded images: uses `Claudinary` for images for a place
 - Maps: `react-native-maps` - both `Google Maps for Android` and `Google Maps for iOS` APIs are enabled and proper API keys are created and saved in to `.env`
+
+## Agent skills
+
+### Issue tracker
+
+Issues live in GitHub Issues (rstar2/ma-place-reactnative); use the `gh` CLI. See `docs/agents/issue-tracker.md`.
+
+### Triage labels
+
+Default five canonical labels used as-is (needs-triage, needs-info, ready-for-agent, ready-for-human, wontfix). See `docs/agents/triage-labels.md`.
+
+### Domain docs
+
+Single-context: root `CONTEXT.md` + `docs/adr/`, created lazily by `/domain-modeling`. See `docs/agents/domain.md`.

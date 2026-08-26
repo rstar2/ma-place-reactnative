@@ -28,3 +28,13 @@ Project created with ```pnpm dlx create-expo-app --template default@54```, then 
   - Update `metro.config.js`
 - Firebase `@react-native-firebase/app` - only working with `development build`
   - auth - `@react-native-firebase/auth` and `@react-native-google-signin/google-signin`.  Note that the Firebase Android app has to be with generate a SHA-fingerprint in order the Google sign-in method to work. One can be generated with `./android/gradlew signingReport` and added to the Firebase Android app [generate](https://developers.google.com/android/guides/client-auth)
+- Google maps
+
+## SplashScreen + app icons
+
+> Used `snapai` to generate them for me. There's a skill `app-icon` installed for calling it. Used the Google's `banana` model.
+
+## TODO
+
+- ? On `deletePlace` can also delete the image from `Cloudinary`
+- Offline support - discuss/grill-me (native SQLite maybe)

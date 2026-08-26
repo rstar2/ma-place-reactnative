@@ -1,9 +1,8 @@
-/* NOTE: Do not declare layers order as NativeWind will not transform CSS to native styles properly */ 
+/* NOTE: Do not declare layers order as NativeWind will not transform CSS to native styles properly */
 /* @layer theme, base, components, utilities; */
 
 @import "tailwindcss/theme.css" layer(theme);
 @import "tailwindcss/preflight.css" layer(base);
-@import "tailwindcss/utilities.css";
 
 @import "nativewind/theme";
 
@@ -12,7 +11,7 @@
   --color-foreground: #081126;
   --color-card: #fff8e7;
   --color-muted: #f6eecf;
-  --color-muted-foreground: rgba(0, 0, 0, 0.6);
+  --color-muted-foreground: rgba(0, 0, 0, 0.43);
   --color-primary: #081126;
   --color-accent: #ea7a53;
   --color-border: rgba(0, 0, 0, 0.1);
@@ -46,6 +45,198 @@
   --font-sans-semibold: sans-semibold;
   --font-sans-bold: sans-bold;
   --font-sans-extrabold: sans-extrabold;
+}
+
+
+@layer components{
+  .txt {
+    @apply font-sans text-foreground;
+  }
+
+  .button {
+    @apply items-center rounded-2xl bg-accent;
+  }
+
+  .button-disabled {
+    @apply opacity-50;
+  }
+
+  .button-text {
+    @apply text-base font-sans-bold text-white;
+  }
+
+  .button-destructive {
+    @apply items-center rounded-2xl bg-destructive;
+  }
+
+  .button-secondary {
+    @apply items-center rounded-2xl border border-accent/30 bg-accent/10;
+  }
+
+  .button-secondary-text {
+    @apply text-sm font-sans-semibold text-accent;
+  }
+
+  .confirm-overlay {
+    @apply flex-1 items-center justify-center bg-[rgba(0,0,0,0.5)];
+  }
+
+  .confirm-container {
+    @apply rounded-3xl bg-background min-w-xs;
+  }
+
+  .confirm-body {
+    @apply gap-5 p-5;
+  }
+
+  .confirm-buttons {
+    @apply flex-row justify-end gap-5 p-5 border-t border-border;
+  }
+
+  .modal-body {
+    @apply gap-5 p-5;
+  }
+
+  .modal-overlay {
+    /* for some reason bg-black/50 is not parsed properly from NativeWind, so set it directly*/
+    @apply flex-1 bg-[rgba(0,0,0,0.5)];
+  }
+
+  .modal-container {
+    @apply mt-auto max-h-[85%] rounded-t-3xl bg-background;
+  }
+
+  .modal-header {
+    @apply flex-row items-center justify-between border-b border-border px-5 py-4;
+  }
+
+  .modal-title {
+    @apply text-xl font-sans-bold text-primary;
+  }
+
+  .modal-close {
+    @apply size-8 items-center justify-center rounded-full bg-muted;
+  }
+
+  .modal-close-text {
+    @apply text-lg font-sans-bold text-primary;
+  }
+
+  .modal-body {
+    @apply gap-5 p-5;
+  }
+
+  .select-trigger {
+    @apply flex-row items-center justify-between rounded-2xl border border-border bg-background px-1 py-3;
+  }
+
+  .select-trigger-label {
+    @apply text-base font-sans-medium text-primary;
+  }
+
+  .select-trigger-placeholder {
+    @apply text-base font-sans-medium text-muted-foreground;
+  }
+
+  .select-chevron {
+    @apply ml-1 text-base text-muted-foreground;
+  }
+
+  .select-sheet {
+    @apply mt-auto max-h-[60%] gap-1 rounded-t-3xl bg-background pb-8 pt-3;
+  }
+
+  .select-sheet-handle {
+    @apply mb-3 h-1.5 w-10 self-center rounded-full bg-muted;
+  }
+
+  .select-option {
+    @apply rounded-2xl px-4 py-3;
+  }
+
+  .select-option-active {
+    @apply bg-accent/10;
+  }
+
+  .select-option-text {
+    @apply text-base font-sans-medium text-primary;
+  }
+
+  .select-option-text-active {
+    @apply font-sans-bold text-accent;
+  }
+
+  .multi-select-trigger {
+    @apply flex-row items-center justify-between gap-2 rounded-2xl border border-border bg-background px-4 py-3;
+  }
+
+  .multi-select-chips {
+    @apply flex-1 flex-row flex-wrap items-center gap-2;
+  }
+
+  .multi-select-chip {
+    @apply flex-row items-center gap-1 rounded-2xl border border-border bg-accent px-3 py-1;
+  }
+
+  .multi-select-chip-text {
+    @apply text-sm font-sans-medium text-primary;
+  }
+
+  .multi-select-chip-remove {
+    @apply text-xs text-muted-foreground;
+  }
+
+  .checkbox-row {
+    @apply flex-row items-center gap-3;
+  }
+
+  .checkbox-row-active {
+    @apply bg-accent/10;
+  }
+
+  .checkbox-label {
+    @apply text-base font-sans-medium text-primary;
+  }
+
+  .checkbox {
+    @apply h-5 w-5 items-center justify-center rounded-md border border-border;
+  }
+
+  .checkbox-active {
+    @apply border-transparent bg-accent;
+  }
+
+  .checkbox-check {
+    @apply text-xs font-sans-bold text-background;
+  }
+
+  .card {
+    @apply mt-8 rounded-3xl border border-border bg-card p-5;
+  }
+
+  .form {
+    @apply gap-4;
+  }
+
+  .input-field {
+    @apply gap-2;
+  }
+
+  .input-label {
+    @apply text-sm font-sans-semibold text-primary;
+  }
+
+  .input {
+    @apply rounded-2xl border border-border bg-background px-4 py-8 text-base font-sans-medium text-primary;
+  }
+
+  .input-multiline {
+    @apply min-h-24;
+  }
+
+  .input-error {
+    @apply border-destructive;
+  }
 }
 
 @layer components {
@@ -85,24 +276,27 @@
     @apply size-12;
   }
 
-  .home-balance-card {
-    @apply my-2.5 min-h-50 justify-between gap-5 rounded-bl-4xl rounded-tr-4xl bg-accent p-6;
+  .home-map-card {
+    @apply my-2.5 min-h-50 rounded-bl-4xl rounded-tr-4xl bg-accent relative;
+  }
+  .home-map-card-open {
+    @apply absolute right-3 bottom-3 bg-white/90 p-0.5 shadow;
+  }
+  .home-map-card-open-icon {
+    @apply size-8;
+  }
+  .home-map-card-map {
+    /* overflow-hidden is what actually clips the square MapView to the
+       rounded shape — borderRadius alone does not clip children */
+    @apply flex-1 overflow-hidden rounded-bl-4xl rounded-tr-4xl;
   }
 
-  .home-balance-label {
+  .home-map-label {
     @apply text-xl font-sans-semibold text-white/80;
   }
 
-  .home-balance-row {
-    @apply flex-row items-center justify-between;
-  }
-
-  .home-balance-amount {
-    @apply text-4xl font-sans-extrabold text-white;
-  }
-
-  .home-balance-date {
-    @apply text-xl font-sans-medium text-white;
+  .mini-map {
+    @apply h-32 w-full overflow-hidden rounded-2xl;
   }
 
   .list-head {
@@ -121,111 +315,82 @@
     @apply text-lg font-sans-semibold text-primary;
   }
 
-  .upcoming-card {
-    @apply mr-4 w-44 rounded-2xl border border-black/10 bg-background p-4;
+  .place-card {
+    @apply rounded-2xl border border-border px-4 py-4;
   }
 
-  .upcoming-row {
-    @apply flex-row items-center gap-3;
+  .place-card-expanded {
+    @apply elevation-md;
   }
 
-  .upcoming-icon {
-    @apply size-14;
+  .place-head {
+    @apply flex-row items-center py-2 gap-3;
   }
 
-  .upcoming-price {
+  .place-head-icon-box {
+    @apply rounded-2xl p-2 bg-white/30;
+  }
+
+  .place-head-icon {
+    @apply size-12;
+  }
+
+  .place-head-main {
+    @apply min-w-0 flex-1 gap-1;
+  }
+  
+  .place-head-main-title {
     @apply text-lg font-sans-bold text-primary;
   }
 
-  .upcoming-meta {
-    @apply text-sm font-sans-semibold text-muted-foreground;
+
+  .place-head-main-meta {
+    @apply flex-row items-center gap-1;
   }
 
-  .upcoming-name {
-    @apply mt-2 text-lg font-sans-bold text-primary;
+  .place-head-main-desc {
+    @apply flex-1 text-sm font-sans-semibold text-muted-foreground;
   }
 
-  .sub-card {
-    @apply rounded-2xl border border-border p-4;
-  }
-
-  .sub-card-expanded {
-    @apply bg-place;
-  }
-
-  .sub-head {
-    @apply flex-row items-center py-2;
-  }
-
-  .sub-main {
-    @apply min-w-0 flex-1 flex-row items-center gap-3;
-  }
-
-  .sub-icon {
-    @apply size-16 rounded-lg;
-  }
-
-  .sub-copy {
-    @apply min-w-0 flex-1;
-  }
-
-  .sub-title {
-    @apply mb-1 text-lg font-sans-bold text-primary;
-  }
-
-  .sub-meta {
-    @apply text-sm font-sans-semibold text-muted-foreground;
-  }
-
-  .sub-price-box {
-    @apply ml-3 shrink-0 items-end;
-  }
-
-  .sub-price {
-    @apply mb-1 text-lg font-sans-bold text-primary;
-  }
-
-  .sub-billing {
+  .place-head-main-date {
     @apply text-sm font-sans-medium text-muted-foreground;
   }
 
-  .sub-body {
+  .place-card-show_in_map-icon {
+    @apply size-8;
+  }
+
+  .place-body {
     @apply mt-6 gap-4;
   }
 
-  .sub-details {
-    @apply gap-6;
+  .place-body-row {
+    @apply flex-1 flex-row items-center justify-between gap-3;
   }
 
-  .sub-row {
-    @apply flex-row items-center justify-between gap-3;
-  }
-
-  .sub-row-copy {
-    @apply min-w-0 flex-1 flex-row items-center gap-2;
-  }
-
-  .sub-label {
+  .place-body-row-label {
     @apply shrink-0 text-base font-sans-medium text-muted-foreground;
   }
 
-  .sub-value {
-    @apply flex-1 font-sans-bold text-primary;
+  .place-body-row-value {
+    @apply shrink font-sans-bold text-primary;
   }
 
-  .sub-cancel {
-    @apply mt-2 items-center rounded-full bg-primary py-4;
+  .place-image-preview-wrap {
+    @apply relative;
   }
 
-  .sub-cancel-disabled {
-    @apply bg-primary/35;
+  /* NOTE: the Image from expo-image requires width/height (or width + aspect-ratio)
+     to be set, otherwise it will not render */
+  .place-image-preview {
+    @apply aspect-4/3 w-full rounded-2xl border border-border;
   }
 
-  .sub-cancel-text {
-    @apply font-sans-bold text-background;
+  .place-image-remove {
+    @apply size-8 items-center justify-center rounded-full bg-muted absolute right-2 top-2;
   }
 
-  .home-empty-state {
+  .empty-state {
     @apply py-4 text-sm font-sans-medium text-black/60;
   }
 
@@ -273,56 +438,12 @@
     @apply mt-2 max-w-[320px] text-center text-base font-sans-medium text-muted-foreground;
   }
 
-  .auth-card {
-    @apply mt-8 rounded-3xl border border-border bg-card p-5;
-  }
-
-  .auth-form {
-    @apply gap-4;
-  }
-
-  .auth-field {
-    @apply gap-2;
-  }
-
-  .auth-label {
-    @apply text-sm font-sans-semibold text-primary;
-  }
-
-  .auth-input {
-    @apply rounded-2xl border border-border bg-background px-4 py-4 text-base font-sans-medium text-primary;
-  }
-
-  .auth-input-error {
-    @apply border-destructive;
-  }
-
   .auth-error {
     @apply text-xs font-sans-medium text-destructive;
   }
 
   .auth-helper {
     @apply text-sm font-sans-medium text-muted-foreground;
-  }
-
-  .auth-button {
-    @apply mt-1 items-center rounded-2xl bg-accent py-4;
-  }
-
-  .auth-button-disabled {
-    @apply bg-accent/45;
-  }
-
-  .auth-button-text {
-    @apply text-base font-sans-bold text-primary;
-  }
-
-  .auth-secondary-button {
-    @apply items-center rounded-2xl border border-accent/30 bg-accent/10 py-3;
-  }
-
-  .auth-secondary-button-text {
-    @apply text-sm font-sans-semibold text-accent;
   }
 
   .auth-divider-row {
@@ -349,71 +470,130 @@
     @apply text-sm font-sans-bold text-accent underline;
   }
 
-  .modal-overlay {
-    @apply flex-1 bg-black/50;
+  .tag-filter {
+    @apply mt-3;
   }
 
-  .modal-container {
-    @apply mt-auto max-h-[85%] rounded-t-3xl bg-background;
+  .map-screen {
+    @apply flex-1 bg-background;
   }
 
-  .modal-header {
-    @apply flex-row items-center justify-between border-b border-border px-5 py-4;
+  .map-overlay-top {
+    @apply absolute inset-x-5 flex-row items-center justify-between;
   }
 
-  .modal-title {
-    @apply text-xl font-sans-bold text-primary;
+  .map-title-chip {
+    @apply flex-row items-center gap-1 rounded-full bg-white/90 px-4 py-1;
   }
 
-  .modal-close {
-    @apply size-8 items-center justify-center rounded-full bg-muted;
-  }
-
-  .modal-close-text {
+  .map-title {
     @apply text-lg font-sans-bold text-primary;
   }
 
-  .modal-body {
-    @apply gap-5 p-5;
+  .map-status-wrap {
+    @apply absolute inset-0 items-center justify-center;
   }
 
-  .picker-row {
+  .map-status {
+    @apply rounded-full bg-background/80 px-4 py-1;
+  }
+
+  .map-status-text {
+    @apply text-sm font-sans-medium text-primary;
+  }
+
+  .map-cluster {
+    @apply size-8 items-center justify-center rounded-full border-2 border-white bg-accent;
+  }
+
+  .map-cluster-text {
+    @apply text-sm font-sans-bold text-white;
+  }
+
+  .map-pin {
+    @apply size-8 items-center justify-center rounded-full border-2 border-white;
+  }
+
+  .map-pin-icon {
+    @apply size-6;
+  }
+
+  .map-callout {
+    @apply w-full gap-2 rounded-2xl bg-background p-2 shadow-lg;
+  }
+
+  .map-callout-actions {
     @apply flex-row gap-3;
   }
 
-  .picker-option {
-    @apply flex-1 items-center rounded-2xl border border-border bg-background py-3;
+  /* must come after .map-pin so it wins its border color */
+  .map-pin-pending {
+    @apply border-dashed border-accent bg-accent/25;
   }
 
-  .picker-option-active {
-    @apply border-accent bg-accent/10;
+  .map-callout-pending-title {
+    @apply px-1 text-base font-sans-bold text-primary;
   }
 
-  .picker-option-text {
-    @apply text-sm font-sans-semibold text-muted-foreground;
+  .map-callout-pending-coords {
+    @apply px-1 text-sm font-sans-medium text-muted-foreground;
   }
 
-  .picker-option-text-active {
-    @apply text-accent;
+  /* --- Place details screen (app/place/[id]) --- */
+  .place-details-header {
+    @apply mb-4 flex-row items-center justify-between;
   }
 
-  .category-scroll {
+  .place-details-state {
+    @apply flex-1 items-center justify-center gap-4;
+  }
+
+  .place-details-title {
+    @apply text-xl font-sans-bold text-primary;
+  }
+
+  .place-details-text {
+    @apply text-base font-sans-medium text-foreground;
+  }
+
+  .place-details-coords {
+    @apply flex-row items-center gap-2;
+  }
+
+  .place-details-copy-icon {
+    @apply size-5;
+  }
+
+  .place-details-tags {
     @apply flex-row flex-wrap gap-2;
   }
 
-  .category-chip {
-    @apply rounded-full border border-border bg-background px-4 py-2;
+  .place-details-carousel {
+    @apply overflow-hidden rounded-2xl border border-border bg-muted;
   }
 
-  .category-chip-active {
-    @apply border-accent bg-accent/10;
+  .place-details-dots {
+    @apply flex-row justify-center gap-2 pt-3;
   }
 
-  .category-chip-text {
-    @apply text-sm font-sans-semibold text-muted-foreground;
+  .place-details-dot {
+    @apply size-2 rounded-full bg-primary/20;
   }
 
-  .category-chip-text-active {
-    @apply text-accent;
+  /* must come after .place-details-dot so it wins its background color */
+  .place-details-dot-active {
+    @apply bg-accent;
+  }
+
+  .place-details-notfound {
+    @apply text-center text-base font-sans-medium text-muted-foreground;
   }
 }
+
+/*
+import it last as per the NOTE about layers at the top,
+thus Utilities now compile after
+@layer components, so NativeWind's "later rule wins" resolution makes
+any utility override any component class (there's no layers in ReactNative
+*/
+@import "tailwindcss/utilities.css";

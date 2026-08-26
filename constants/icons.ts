@@ -2,42 +2,42 @@ import { type ImageSourcePropType } from "react-native";
 
 import activity from "@/assets/icons/activity.png";
 import add from "@/assets/icons/add.png";
-import adobe from "@/assets/icons/adobe.png";
 import back from "@/assets/icons/back.png";
-import canva from "@/assets/icons/canva.png";
-import claude from "@/assets/icons/claude.png";
-import dropbox from "@/assets/icons/dropbox.png";
-import figma from "@/assets/icons/figma.png";
-import github from "@/assets/icons/github.png";
+import copy from "@/assets/icons/copy.png";
 import home from "@/assets/icons/home.png";
-import medium from "@/assets/icons/medium.png";
-import menu from "@/assets/icons/menu.png";
-import notion from "@/assets/icons/notion.png";
-import openai from "@/assets/icons/openai.png";
+import map from "@/assets/icons/map2.png";
 import plus from "@/assets/icons/plus.png";
 import setting from "@/assets/icons/setting.png";
-import spotify from "@/assets/icons/spotify.png";
-import wallet from "@/assets/icons/wallet.png";
+
+import avatar from "@/assets/icons/avatar.png";
+
+import place from "@/assets/icons/place.png";
+import sleep from "@/assets/icons/sleep.png";
+import oil from "@/assets/icons/oil.png";
+import water from "@/assets/icons/water.png";
+import crag from "@/assets/icons/crag.png";
+import playground from "@/assets/icons/playground.png";
+import parking from "@/assets/icons/parking.png";
 
 export const icons = {
   home,
-  wallet,
   setting,
   activity,
+  map,
   add,
   back,
-  menu,
+  copy,
   plus,
-  notion,
-  dropbox,
-  openai,
-  adobe,
-  medium,
-  figma,
-  spotify,
-  github,
-  claude,
-  canva,
+  avatar,
+
+  place,
+  // tags
+  sleep,
+  oil,
+  water,
+  crag,
+  parking,
+  playground,
 } as const satisfies Record<string, ImageSourcePropType>;
 
 export type IconKey = keyof typeof icons;

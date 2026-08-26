@@ -1,10 +1,10 @@
 import { useState } from "react";
-import { ActivityIndicator, Pressable, View } from "react-native";
+import { View } from "react-native";
 
-import ScreenBase from "@/app/components/ScreenBase";
-import Text from "@/app/components/Text";
+import ScreenBase from "@/components/ScreenBase";
+import Button from "@/components/ui/Button";
+import Text from "@/components/ui/Text";
 import { useAuth } from "@/lib/auth";
-import { cn } from "@/lib/utils";
 import { posthog } from "@/lib/posthog";
 
 export default function SettingsScreen() {
@@ -38,20 +38,12 @@ export default function SettingsScreen() {
         </Text>
       </View>
 
-      <Pressable
+      <Button
+        label="Sign out"
         onPress={handleSignOut}
-        disabled={submitting}
-        className={cn(
-          "auth-button bg-destructive",
-          submitting && "opacity-50",
-        )}
-      >
-        {submitting ? (
-          <ActivityIndicator color="#ffffff" />
-        ) : (
-          <Text className="auth-button-text text-white">Sign out</Text>
-        )}
-      </Pressable>
+        loading={submitting}
+        className="bg-destructive mt-6"
+      />
     </ScreenBase>
   );
 }

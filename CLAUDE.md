@@ -32,8 +32,8 @@ This is the non-obvious part. Almost all styling is **CSS-class-based**, not inl
 
 - All styles live in `assets/global.css`:
   - `@theme` block defines design tokens: colors (`--color-primary`, `--color-accent`, `--color-card`, `--color-place`, etc.), spacing scale, and font families (`--font-sans` → `sans-regular`, etc.).
-  - `@layer components` defines named component classes grouped by feature: `.home-*`, `.sub-*`, `.auth-*`, `.modal-*`, `.tabs-*`, `.picker-*`, `.category-*`. Compose with `@apply`.
-- Components reference these by class name, e.g. `className="sub-card"` / `className="auth-input"`.
+  - `@layer components` defines named component classes grouped by feature: `.home-*`, `.sub-*`, `.auth-*`, `.modal-*`, `.tabs-*`.category-*`. Compose with `@apply`.
+- Components reference these by class name, e.g. `className="place-card"` / `className="input"`.
 - **Add new reusable styles as a component class in `global.css`**, then apply the class name. Reach for utility classes inline only for one-off tweaks.
 - Conditional class toggling uses the `cn()` helper (`lib/utils.ts`, clsx + tailwind-merge), e.g. `cn("tabs-pill", focused && "tabs-active")`.
 
@@ -49,3 +49,29 @@ Wiring: `metro.config.js` wraps the Metro config with `withNativeWind({ input: '
 - Icons: import from `constants/icons.ts` (PNG assets). It exports the `icons` map and an `IconKey` type — the `(tabs)` layout's `tabs` array is `satisfies TabScreen[]` against it. Add new PNGs there. Same pattern for images in `constants/images.ts`.
 - Formatting/domain helpers live in `lib/utils.ts` (`formatCurrency`, `formatDateTime`, `formatStatusLabel`, `cn`).
 - Fonts: `global.css` `@theme` maps `--font-sans-*` to family names (`sans-regular` … `sans-extrabold`); the TTFs are in `assets/fonts/PlusJakartaSans-*.ttf`. No `expo-font` loader is wired into the layouts yet — add `useFonts` in a root layout if you start using `font-sans-*` classes.
+
+## UI style
+
+- Custom base UI components in `components/ui`, like `Button`, `Modal`, plain `Text` and etc.. Any new one should be put there.
+- Shared components in just `components` like `ScreenBase`
+
+## Backend/API
+
+- DB: uses `Firebase Firestore`.
+- Auth: uses `Firebase Auth` for both *email/password* and *Google* sign-in
+- Uploaded images: uses `Claudinary` for images for a place
+- Maps: `react-native-maps` - both `Google Maps for Android` and `Google Maps for iOS` APIs are enabled and proper API keys are created and saved in to `.env`
+
+## Agent skills
+
+### Issue tracker
+
+Issues live in GitHub Issues (rstar2/ma-place-reactnative); use the `gh` CLI. See `docs/agents/issue-tracker.md`.
+
+### Triage labels
+
+Default five canonical labels used as-is (needs-triage, needs-info, ready-for-agent, ready-for-human, wontfix). See `docs/agents/triage-labels.md`.
+
+### Domain docs
+
+Single-context: root `CONTEXT.md` + `docs/adr/`, created lazily by `/domain-modeling`. See `docs/agents/domain.md`.

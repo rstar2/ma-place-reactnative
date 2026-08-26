@@ -8,6 +8,8 @@ import {
   useRouter,
   useSegments,
 } from "expo-router";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 
 import "@/assets/global.css";
 import { AuthProvider, useAuth } from "@/lib/auth";
@@ -22,9 +24,14 @@ export default function RootLayout() {
   // so no need to wrap it again. Thus `useSafeAreaInsets` can be used directly even here
 
   const app = (
-    <AuthProvider>
-      <RootNavigator />
-    </AuthProvider>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      {/* Required by @gorhom/bottom-sheet (gestures + modal portal) */}
+      <BottomSheetModalProvider>
+        <AuthProvider>
+          <RootNavigator />
+        </AuthProvider>
+      </BottomSheetModalProvider>
+    </GestureHandlerRootView>
   );
 
   return posthog ? (

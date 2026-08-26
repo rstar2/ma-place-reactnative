@@ -1,22 +1,17 @@
-import { useState } from "react";
-import {
-  ActivityIndicator,
-  KeyboardAvoidingView,
-  Platform,
-  Pressable,
-  ScrollView,
-  TextInput,
-  View,
-} from "react-native";
 import { Link } from "expo-router";
+import { useState } from "react";
+import { KeyboardAvoidingView, Platform, ScrollView, View } from "react-native";
 
-import Text from "@/app/components/Text";
+import Button from "@/components/ui/Button";
+import Text from "@/components/ui/Text";
+import TextInput from "@/components/ui/TextInput";
 import { friendlyAuthError, useAuth } from "@/lib/auth";
 import { cn } from "@/lib/utils";
 
 export default function SignUpScreen() {
   const { signUp } = useAuth();
 
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -25,11 +20,13 @@ export default function SignUpScreen() {
 
   const canSubmit =
     !submitting &&
+    name.trim().length > 0 &&
     email.trim().length > 0 &&
     password.length > 0 &&
     confirmPassword.length > 0;
 
   function validate(): string | null {
+    if (name.trim().length < 2) return "Enter your name.";
     if (!email.trim().includes("@")) return "Enter a valid email address.";
     if (password.length < 6) return "Password must be at least 6 characters.";
     if (password !== confirmPassword) return "Passwords don't match.";
@@ -46,7 +43,7 @@ export default function SignUpScreen() {
     setError(null);
     setSubmitting(true);
     try {
-      await signUp(email.trim(), password);
+      await signUp(name.trim(), email.trim(), password);
     } catch (err) {
       setError(friendlyAuthError(err));
     } finally {
@@ -75,83 +72,75 @@ export default function SignUpScreen() {
             </View>
           </View>
           <Text className="auth-title">Create account</Text>
-          <Text className="auth-subtitle">
-            Start tracking your places.
-          </Text>
+          <Text className="auth-subtitle">Start tracking your places.</Text>
         </View>
 
-        <View className="auth-card">
-          <View className="auth-form">
-            <View className="auth-field">
-              <Text className="auth-label">Email</Text>
+        <View className="card">
+          <View className="form">
+            <View className="input-field">
+              <Text className="input-label">Name</Text>
+              <TextInput
+                value={name}
+                onChangeText={setName}
+                placeholder="Your name"
+                autoCapitalize="words"
+                textContentType="name"
+                className={cn(error && "input-error")}
+              />
+            </View>
+
+            <View className="input-field">
+              <Text className="input-label">Email</Text>
               <TextInput
                 value={email}
                 onChangeText={setEmail}
                 placeholder="you@example.com"
-                placeholderTextColor="rgba(0,0,0,0.35)"
                 keyboardType="email-address"
-                autoCapitalize="none"
-                autoCorrect={false}
                 textContentType="emailAddress"
-                className={cn("auth-input", error && "auth-input-error")}
+                className={cn(error && "input-error")}
               />
             </View>
 
-            <View className="auth-field">
-              <Text className="auth-label">Password</Text>
+            <View className="input-field">
+              <Text className="input-label">Password</Text>
               <TextInput
                 value={password}
                 onChangeText={setPassword}
                 placeholder="••••••••"
-                placeholderTextColor="rgba(0,0,0,0.35)"
                 secureTextEntry
-                autoCapitalize="none"
-                autoCorrect={false}
                 textContentType="newPassword"
-                className={cn("auth-input", error && "auth-input-error")}
+                className={cn(error && "input-error")}
               />
             </View>
 
-            <View className="auth-field">
-              <Text className="auth-label">Confirm password</Text>
+            <View className="input-field">
+              <Text className="input-label">Confirm password</Text>
               <TextInput
                 value={confirmPassword}
                 onChangeText={setConfirmPassword}
                 placeholder="••••••••"
-                placeholderTextColor="rgba(0,0,0,0.35)"
                 secureTextEntry
-                autoCapitalize="none"
-                autoCorrect={false}
                 textContentType="newPassword"
-                className={cn("auth-input", error && "auth-input-error")}
+                className={cn(error && "input-error")}
               />
             </View>
 
             {error ? <Text className="auth-error">{error}</Text> : null}
 
-            <Pressable
+            <Button
+              label="Sign up"
               onPress={handleSignUp}
               disabled={!canSubmit}
-              className={cn(
-                "auth-button",
-                !canSubmit && "auth-button-disabled",
-              )}
-            >
-              {submitting ? (
-                <ActivityIndicator color="#081126" />
-              ) : (
-                <Text className="auth-button-text">Sign up</Text>
-              )}
-            </Pressable>
+              loading={submitting}
+              className="py-3 mt-6"
+            />
           </View>
         </View>
 
         <View className="auth-link-row">
           <Text className="auth-link-copy">Already have an account?</Text>
           <Link href="/sign-in" asChild>
-            <Pressable>
-              <Text className="auth-link">Sign in</Text>
-            </Pressable>
+            <Text className="auth-link">Sign in</Text>
           </Link>
         </View>
       </ScrollView>

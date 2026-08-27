@@ -11,7 +11,7 @@ const GOOGLE_MAPS_IOS_API_KEY = process.env.GOOGLE_MAPS_IOS_API_KEY ?? "";
 const config: ExpoConfig = {
   name: "MaPlace",
   slug: "maplace",
-  version: "1.0.0",
+  version: "1.1.0",
   orientation: "portrait",
   icon: "./assets/images/icon.png",
   scheme: "maplace",

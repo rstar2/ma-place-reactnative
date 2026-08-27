@@ -23,6 +23,7 @@ import { usePlacesStore } from "@/store/places-store";
 import { icons } from "@/constants/icons";
 import { theme } from "@/constants/theme";
 import type { Place } from "@/lib/types";
+import { openNavigation } from "@/lib/location";
 
 export default function PlaceDetails() {
   const router = useRouter();
@@ -127,6 +128,17 @@ export default function PlaceDetails() {
                   }}
                 />
               )}
+              <Button
+                className="flex-1"
+                onPress={() =>
+                  openNavigation(
+                    place.location.latitude,
+                    place.location.longitude,
+                  )
+                }
+                label="Go"
+              ></Button>
+
               <Button
                 label="Show on map"
                 className="button-secondary"

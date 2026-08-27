@@ -92,6 +92,7 @@ export default function PlacesScreen() {
               expanded={expandedPlaceId === place.id}
               onExpand={() => handleExpandPlace(place)}
               onEdit={() => handleEditPlace(place)}
+              showGo
               showView
               showDelete
               showOnMap

@@ -15,6 +15,7 @@ import { Place } from "@/lib/types";
 import { theme } from "@/constants/theme";
 import { icons } from "@/constants/icons";
 import PlaceDeleteButton from "./PlaceDeleteButton";
+import { openNavigation } from "@/lib/location";
 
 type PlaceCardProps = {
   place: Place;
@@ -22,6 +23,7 @@ type PlaceCardProps = {
   expanded?: boolean;
   onExpand: () => void;
   onEdit?: () => void;
+  showGo?: boolean;
   showView?: boolean;
   showDelete?: boolean;
   showOnMap?: boolean;
@@ -48,6 +50,7 @@ export default function PlaceCard({
   expanded = false,
   onExpand,
   onEdit,
+  showGo = false,
   showView = false,
   showDelete = false,
   showOnMap,
@@ -55,8 +58,11 @@ export default function PlaceCard({
 }: PlaceCardProps) {
   const router = useRouter();
 
+  const onGo = () => openNavigation(location.latitude, location.longitude);
+
   const onShowOnMap = () =>
     router.push({ pathname: "/map", params: { place: id } });
+
   const onView = () => router.push(`/place/${id}`);
 
   return (
@@ -138,6 +144,10 @@ export default function PlaceCard({
             </Text>
           </View>
 
+          {showGo && (
+            <Button className="flex-1" onPress={onGo} label="Go"></Button>
+          )}
+
           {(showView || onEdit || showDelete) && (
             <View className="flex-row gap-3">
               {showView && (
@@ -155,7 +165,9 @@ export default function PlaceCard({
                 ></Button>
               )}
 
-              <PlaceDeleteButton placeId={id} className="flex-1 w-1/3" />
+              {showDelete && (
+                <PlaceDeleteButton placeId={id} className="flex-1 w-1/3" />
+              )}
             </View>
           )}
         </View>

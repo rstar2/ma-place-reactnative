@@ -67,8 +67,8 @@ export default function Index() {
       // check if this is "my" place (created by me)
       if (place.uid === user?.uid) out.myPlaces.push(place);
 
-      if (region && isNearBy(region, place.location, nearByRadiusKm))
-        out.nearestPlaces.push(place);
+      //   if (region && isNearBy(region, place.location, nearByRadiusKm))
+      out.nearestPlaces.push(place);
 
       return out;
     },
@@ -97,6 +97,8 @@ export default function Index() {
             currentUid={user?.uid}
             expanded={expandedPlaceId === place.id}
             onExpand={() => handleExpandPlace(place)}
+            showGo
+            showView
             showOnMap
           />
         )}
@@ -105,7 +107,9 @@ export default function Index() {
           isLoading ? (
             <ActivityIndicator className="mt-10" />
           ) : (
-            <Text className="empty-state">{region ? "No places nearby" : "Checking your location"}</Text>
+            <Text className="empty-state">
+              {region ? "No places nearby" : "Checking your location"}
+            </Text>
           )
         }
         showsVerticalScrollIndicator={false}

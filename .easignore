@@ -1,3 +1,5 @@
+# 1. Paste everything from your .gitignore first
+
 # dependencies
 node_modules/
 
@@ -6,9 +8,6 @@ node_modules/
 dist/
 web-build/
 expo-env.d.ts
-
-# Build outputs
-*.apk
 
 # Native
 .kotlin/
@@ -49,3 +48,13 @@ app-example
 
 # PostHog
 /.posthog-wizard-cache
+
+
+# 2. Add native folders if you want them generated fresh by prebuild
+# /android
+# /ios
+
+
+# 3. FORCE EAS to include the .env file (must be at the bottom)
+!.env
+!.env*.local

@@ -1,11 +1,13 @@
 import { useState } from "react";
 import { View } from "react-native";
+import Constants from "expo-constants";
 
 import ScreenBase from "@/components/ScreenBase";
 import Button from "@/components/ui/Button";
 import Text from "@/components/ui/Text";
 import { useAuth } from "@/lib/auth";
 import { posthog } from "@/lib/posthog";
+import { Toast } from "@/components/ui/Toast";
 
 export default function SettingsScreen() {
   const { user, signOut } = useAuth();
@@ -18,8 +20,7 @@ export default function SettingsScreen() {
       posthog?.capture("sign_out_requested");
       await signOut();
     } catch {
-      // ignore — staying signed in is harmless
-      // TODO: show a toast or something to indicate failure
+      Toast.error("Failure", "Could not sign you out");
     } finally {
       setSubmitting(false);
     }
@@ -44,6 +45,10 @@ export default function SettingsScreen() {
         loading={submitting}
         className="bg-destructive mt-6"
       />
+
+      <Text className="text-muted-foreground mt-6 text-center text-xs font-sans-semibold">
+        Version {Constants.expoConfig?.version ?? "unknown"}
+      </Text>
     </ScreenBase>
   );
 }

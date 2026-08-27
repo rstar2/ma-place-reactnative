@@ -9,9 +9,9 @@ const GOOGLE_MAPS_ANDROID_API_KEY =
 const GOOGLE_MAPS_IOS_API_KEY = process.env.GOOGLE_MAPS_IOS_API_KEY ?? "";
 
 const config: ExpoConfig = {
-  name: "ma-place",
-  slug: "ma-place",
-  version: "1.0.0",
+  name: "MaPlace",
+  slug: "maplace",
+  version: "1.1.0",
   orientation: "portrait",
   icon: "./assets/images/icon.png",
   scheme: "maplace",
@@ -76,8 +76,8 @@ const config: ExpoConfig = {
     [
       "expo-image-picker",
       {
-        photosPermission: "Allow ma-place to access your photos",
-        cameraPermission: "Allow ma-place to take a photo",
+        photosPermission: "Allow MaPlace to access your photos",
+        cameraPermission: "Allow MaPlace to take a photo",
         microphonePermission: false,
       },
     ],
@@ -85,7 +85,7 @@ const config: ExpoConfig = {
       "expo-location",
       {
         locationWhenInUsePermission:
-          "Allow ma-place to show your location on the map",
+          "Allow MaPlace to show your location on the map",
       },
     ],
   ],
@@ -93,6 +93,14 @@ const config: ExpoConfig = {
     typedRoutes: true,
     reactCompiler: true,
   },
+
+  // The Expo/EAS project
+  extra: {
+    eas: {
+      projectId: "9a212cf2-858d-4ded-ba8a-63af9056ed8d",
+    },
+  },
+  owner: "magic-media",
 };
 
 export default config;

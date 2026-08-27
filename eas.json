@@ -1,0 +1,32 @@
+{
+  "cli": {
+    "version": ">= 22.4.0",
+    "appVersionSource": "remote"
+  },
+  "build": {
+    "development": {
+      "developmentClient": true,
+      "distribution": "internal"
+    },
+    "preview": {
+      "distribution": "internal"
+    },
+    "production-base": {
+      "developmentClient": false,
+      "autoIncrement": true
+    },
+    "production": {
+      "extends": "production-base"
+    },
+    "production-local": {
+      "extends": "production-base",
+      "distribution": "internal",
+      "android": {
+        "buildType": "apk"
+      }
+    }
+  },
+  "submit": {
+    "production": {}
+  }
+}

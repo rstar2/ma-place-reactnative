@@ -11,7 +11,8 @@
     "postinstall": "patch-package",
     "lint": "expo lint",
     "android:fingerprint": "./android/gradlew signingReport",
-    "android:clean": "./android/gradlew clean *"
+    "android:clean": "./android/gradlew clean *",
+    "build:android:local": "eas build --platform android --profile production-local --clear-cache --local"
   },
   "dependencies": {
     "@baronha/ting": "^1.2.3",
@@ -29,10 +30,11 @@
     "clsx": "^2.1.1",
     "culori": "^4.0.2",
     "dayjs": "^1.11.21",
-    "expo": "~54.0.35",
-    "expo-build-properties": "^57.0.10",
+    "expo": "~54.0.37",
+    "expo-build-properties": "^1.0.10",
     "expo-clipboard": "~8.0.8",
-    "expo-constants": "~18.0.13",
+    "expo-constants": "~18.0.14",
+    "expo-dev-client": "~6.0.21",
     "expo-font": "~14.0.12",
     "expo-haptics": "~15.0.8",
     "expo-image": "~3.0.11",
